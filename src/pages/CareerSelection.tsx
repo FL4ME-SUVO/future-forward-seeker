@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { GraduationCap, Cpu, Calculator, Stethoscope, PaintBrush, Briefcase, ArrowRight } from 'lucide-react';
+import { GraduationCap, Cpu, Calculator, Stethoscope, Paintbrush, Briefcase, ArrowRight } from 'lucide-react';
 
 const CareerSelection = () => {
   const [selectedCareer, setSelectedCareer] = useState('');
@@ -35,7 +35,7 @@ const CareerSelection = () => {
       id: 'design',
       title: 'Design & Arts',
       description: 'Fashion Design, Graphic Design, Architecture',
-      icon: PaintBrush,
+      icon: Paintbrush,
       color: 'bg-purple-100 text-purple-600',
       border: 'border-purple-200 hover:border-purple-400'
     },
