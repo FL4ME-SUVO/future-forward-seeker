@@ -22,16 +22,20 @@ import {
   BookOpen,
   Phone,
   Mail,
-  ExternalLink
+  ExternalLink,
+  BarChart3,
+  Calendar,
+  BookOpenCheck,
+  GraduationCap as GraduationCapIcon
 } from 'lucide-react';
 
-const CollegeList = () => {
-  const [selectedColleges, setSelectedColleges] = useState([]);
+const CollegeSelection = () => {
+  const [selectedColleges, setSelectedColleges] = useState([1, 3]); // Pre-selected for demo
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [selectedProgram, setSelectedProgram] = useState('all');
   const [priceRange, setPriceRange] = useState('all');
-  const [showFavorites, setShowFavorites] = useState(false);
+  const [showComparison, setShowComparison] = useState(false);
 
   const locations = [
     { id: 'all', name: 'All Locations', flag: '🌍' },
@@ -74,7 +78,11 @@ const CollegeList = () => {
       facilities: ['Research Labs', 'Library', 'Sports Complex', 'Hostels'],
       favorite: false,
       image: '🏛️',
-      rating: 4.8
+      rating: 4.8,
+      placementRate: '95%',
+      avgSalary: '$85,000',
+      researchFunding: '$50M',
+      internationalStudents: '15%'
     },
     {
       id: 2,
@@ -95,7 +103,11 @@ const CollegeList = () => {
       facilities: ['Research Centers', 'Libraries', 'Sports Facilities', 'Dining'],
       favorite: false,
       image: '🌉',
-      rating: 4.9
+      rating: 4.9,
+      placementRate: '98%',
+      avgSalary: '$120,000',
+      researchFunding: '$1.1B',
+      internationalStudents: '25%'
     },
     {
       id: 3,
@@ -116,7 +128,11 @@ const CollegeList = () => {
       facilities: ['Research Labs', 'Library', 'Sports Center', 'Student Union'],
       favorite: false,
       image: '🇬🇧',
-      rating: 4.7
+      rating: 4.7,
+      placementRate: '96%',
+      avgSalary: '$95,000',
+      researchFunding: '$400M',
+      internationalStudents: '60%'
     },
     {
       id: 4,
@@ -137,7 +153,11 @@ const CollegeList = () => {
       facilities: ['Labs', 'Library', 'Sports', 'Hostels'],
       favorite: false,
       image: '🏛️',
-      rating: 4.6
+      rating: 4.6,
+      placementRate: '92%',
+      avgSalary: '$75,000',
+      researchFunding: '$25M',
+      internationalStudents: '8%'
     },
     {
       id: 5,
@@ -158,7 +178,11 @@ const CollegeList = () => {
       facilities: ['Research Labs', 'Libraries', 'Museums', 'Sports'],
       favorite: false,
       image: '🎓',
-      rating: 4.9
+      rating: 4.9,
+      placementRate: '99%',
+      avgSalary: '$130,000',
+      researchFunding: '$1.8B',
+      internationalStudents: '30%'
     },
     {
       id: 6,
@@ -179,53 +203,15 @@ const CollegeList = () => {
       facilities: ['Libraries', 'Research Centers', 'Sports', 'Student Services'],
       favorite: false,
       image: '🍁',
-      rating: 4.5
-    },
-    {
-      id: 7,
-      name: 'IISc Bangalore',
-      location: 'bangalore',
-      locationName: 'Bangalore, India',
-      description: 'Premier research institution focused on science and engineering.',
-      programs: ['engineering', 'technology', 'science'],
-      tuition: '$2,000 - $4,000',
-      acceptanceRate: '3%',
-      ranking: 7,
-      students: 4000,
-      established: 1909,
-      website: 'https://www.iisc.ac.in',
-      phone: '+91-80-2360-1001',
-      email: 'registrar@iisc.ac.in',
-      topPrograms: ['Engineering', 'Physics', 'Chemistry', 'Biology'],
-      facilities: ['Research Labs', 'Library', 'Computing', 'Sports'],
-      favorite: false,
-      image: '🔬',
-      rating: 4.7
-    },
-    {
-      id: 8,
-      name: 'Harvard University',
-      location: 'newyork',
-      locationName: 'New York, USA',
-      description: 'Ivy League university with world-class education and research.',
-      programs: ['business', 'science', 'arts', 'medicine'],
-      tuition: '$55,000 - $60,000',
-      acceptanceRate: '5%',
-      ranking: 8,
-      students: 31000,
-      established: 1636,
-      website: 'https://www.harvard.edu',
-      phone: '+1-617-495-1000',
-      email: 'admissions@harvard.edu',
-      topPrograms: ['Business', 'Medicine', 'Law', 'Arts & Sciences'],
-      facilities: ['Libraries', 'Museums', 'Research Centers', 'Sports'],
-      favorite: false,
-      image: '🎓',
-      rating: 4.8
+      rating: 4.5,
+      placementRate: '89%',
+      avgSalary: '$80,000',
+      researchFunding: '$1.2B',
+      internationalStudents: '20%'
     }
   ];
 
-  const toggleFavorite = (collegeId) => {
+  const toggleSelection = (collegeId) => {
     setSelectedColleges(prev => 
       prev.includes(collegeId) 
         ? prev.filter(id => id !== collegeId)
@@ -238,19 +224,18 @@ const CollegeList = () => {
                          college.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesLocation = selectedLocation === 'all' || college.location === selectedLocation;
     const matchesProgram = selectedProgram === 'all' || college.programs.includes(selectedProgram);
-    const matchesFavorites = !showFavorites || selectedColleges.includes(college.id);
     
     // Price range filtering
     let matchesPrice = true;
     if (priceRange === 'low') {
-      matchesPrice = college.tuition.includes('$2,000') || college.tuition.includes('$3,000') || college.tuition.includes('$4,000');
+      matchesPrice = college.tuition.includes('$3,000') || college.tuition.includes('$4,000') || college.tuition.includes('$5,000');
     } else if (priceRange === 'medium') {
-      matchesPrice = college.tuition.includes('$5,000') || college.tuition.includes('$6,000') || college.tuition.includes('$7,000');
+      matchesPrice = college.tuition.includes('$6,000') || college.tuition.includes('$7,000') || college.tuition.includes('$8,000');
     } else if (priceRange === 'high') {
       matchesPrice = college.tuition.includes('$50,000') || college.tuition.includes('$55,000') || college.tuition.includes('£35,000');
     }
     
-    return matchesSearch && matchesLocation && matchesProgram && matchesFavorites && matchesPrice;
+    return matchesSearch && matchesLocation && matchesProgram && matchesPrice;
   });
 
   const selectedCollegesData = colleges.filter(college => selectedColleges.includes(college.id));
@@ -275,7 +260,7 @@ const CollegeList = () => {
             
             <div className="flex items-center space-x-4">
               <Link 
-                to="/college-selection" 
+                to="/aptitude-test" 
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-105"
               >
                 Continue
@@ -290,11 +275,11 @@ const CollegeList = () => {
         {/* Page Header */}
         <div className="text-center mb-8">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Find Your Perfect College
+            Select Your Top Colleges
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover colleges that match your career goals and preferences. 
-            Compare programs, costs, and opportunities to make the best choice.
+            Choose your preferred colleges and compare them side by side. 
+            We'll help you make the best decision for your future.
           </p>
         </div>
 
@@ -355,35 +340,11 @@ const CollegeList = () => {
                 className="block w-full px-3 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
               >
                 <option value="all">💰 All Prices</option>
-                <option value="low">💵 Low ($2K-$5K)</option>
-                <option value="medium">💵💵 Medium ($5K-$10K)</option>
+                <option value="low">💵 Low ($3K-$5K)</option>
+                <option value="medium">💵💵 Medium ($6K-$10K)</option>
                 <option value="high">💵💵💵 High ($50K+)</option>
               </select>
             </div>
-          </div>
-
-          {/* Favorites Toggle */}
-          <div className="mt-4 flex justify-center">
-            <button
-              onClick={() => setShowFavorites(!showFavorites)}
-              className={`inline-flex items-center px-4 py-2 border rounded-xl font-medium transition-all duration-200 ${
-                showFavorites
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
-              }`}
-            >
-              {showFavorites ? (
-                <>
-                  <Heart className="h-4 w-4 mr-2" />
-                  Show Favorites Only
-                </>
-              ) : (
-                <>
-                  <HeartOff className="h-4 w-4 mr-2" />
-                  Show All Colleges
-                </>
-              )}
-            </button>
           </div>
         </div>
 
@@ -394,13 +355,26 @@ const CollegeList = () => {
               <h3 className="text-lg font-semibold text-gray-900">
                 Selected Colleges ({selectedColleges.length})
               </h3>
-              <button
-                onClick={() => setSelectedColleges([])}
-                className="text-sm text-gray-500 hover:text-gray-700 flex items-center"
-              >
-                <X className="h-4 w-4 mr-1" />
-                Clear All
-              </button>
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => setShowComparison(!showComparison)}
+                  className={`inline-flex items-center px-4 py-2 border rounded-xl font-medium transition-all duration-200 ${
+                    showComparison
+                      ? 'border-blue-500 bg-blue-50 text-blue-700'
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  {showComparison ? 'Hide Comparison' : 'Compare Colleges'}
+                </button>
+                <button
+                  onClick={() => setSelectedColleges([])}
+                  className="text-sm text-gray-500 hover:text-gray-700 flex items-center"
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Clear All
+                </button>
+              </div>
             </div>
             <div className="flex flex-wrap gap-2">
               {selectedCollegesData.map(college => (
@@ -410,7 +384,7 @@ const CollegeList = () => {
                 >
                   {college.image} {college.name}
                   <button
-                    onClick={() => toggleFavorite(college.id)}
+                    onClick={() => toggleSelection(college.id)}
                     className="ml-2 text-blue-600 hover:text-blue-800"
                   >
                     <X className="h-3 w-3" />
@@ -418,6 +392,86 @@ const CollegeList = () => {
                 </span>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Comparison Table */}
+        {showComparison && selectedColleges.length > 1 && (
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100 overflow-x-auto">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6">College Comparison</h3>
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">Criteria</th>
+                  {selectedCollegesData.map(college => (
+                    <th key={college.id} className="text-center py-3 px-4 font-medium text-gray-900">
+                      {college.name}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 px-4 font-medium text-gray-700">Location</td>
+                  {selectedCollegesData.map(college => (
+                    <td key={college.id} className="py-3 px-4 text-center text-gray-600">
+                      {college.locationName}
+                    </td>
+                  ))}
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 px-4 font-medium text-gray-700">Tuition</td>
+                  {selectedCollegesData.map(college => (
+                    <td key={college.id} className="py-3 px-4 text-center text-gray-600">
+                      {college.tuition}
+                    </td>
+                  ))}
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 px-4 font-medium text-gray-700">Acceptance Rate</td>
+                  {selectedCollegesData.map(college => (
+                    <td key={college.id} className="py-3 px-4 text-center text-gray-600">
+                      {college.acceptanceRate}
+                    </td>
+                  ))}
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 px-4 font-medium text-gray-700">Rating</td>
+                  {selectedCollegesData.map(college => (
+                    <td key={college.id} className="py-3 px-4 text-center text-gray-600">
+                      <div className="flex items-center justify-center">
+                        <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
+                        {college.rating}
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 px-4 font-medium text-gray-700">Placement Rate</td>
+                  {selectedCollegesData.map(college => (
+                    <td key={college.id} className="py-3 px-4 text-center text-gray-600">
+                      {college.placementRate}
+                    </td>
+                  ))}
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 px-4 font-medium text-gray-700">Avg Salary</td>
+                  {selectedCollegesData.map(college => (
+                    <td key={college.id} className="py-3 px-4 text-center text-gray-600">
+                      {college.avgSalary}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="py-3 px-4 font-medium text-gray-700">Students</td>
+                  {selectedCollegesData.map(college => (
+                    <td key={college.id} className="py-3 px-4 text-center text-gray-600">
+                      {college.students.toLocaleString()}
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
           </div>
         )}
 
@@ -452,17 +506,17 @@ const CollegeList = () => {
                     </div>
                   </div>
                   <button
-                    onClick={() => toggleFavorite(college.id)}
+                    onClick={() => toggleSelection(college.id)}
                     className={`p-2 rounded-full transition-colors ${
                       selectedColleges.includes(college.id)
-                        ? 'text-red-500 bg-red-50 hover:bg-red-100'
-                        : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
+                        ? 'text-blue-500 bg-blue-50 hover:bg-blue-100'
+                        : 'text-gray-400 hover:text-blue-500 hover:bg-blue-50'
                     }`}
                   >
                     {selectedColleges.includes(college.id) ? (
-                      <Heart className="h-5 w-5 fill-current" />
+                      <CheckCircle className="h-5 w-5 fill-current" />
                     ) : (
-                      <Heart className="h-5 w-5" />
+                      <CheckCircle className="h-5 w-5" />
                     )}
                   </button>
                 </div>
@@ -489,6 +543,22 @@ const CollegeList = () => {
                   <div className="flex items-center space-x-2">
                     <Award className="h-4 w-4 text-orange-500" />
                     <span className="text-sm text-gray-700">Rank #{college.ranking}</span>
+                  </div>
+                </div>
+
+                {/* Additional Stats */}
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="text-center p-2 bg-gray-50 rounded-lg">
+                    <div className="text-sm font-medium text-gray-900">{college.placementRate}</div>
+                    <div className="text-xs text-gray-500">Placement</div>
+                  </div>
+                  <div className="text-center p-2 bg-gray-50 rounded-lg">
+                    <div className="text-sm font-medium text-gray-900">{college.avgSalary}</div>
+                    <div className="text-xs text-gray-500">Avg Salary</div>
+                  </div>
+                  <div className="text-center p-2 bg-gray-50 rounded-lg">
+                    <div className="text-sm font-medium text-gray-900">{college.internationalStudents}</div>
+                    <div className="text-xs text-gray-500">Int'l Students</div>
                   </div>
                 </div>
 
@@ -524,7 +594,7 @@ const CollegeList = () => {
 
                 {/* Action Button */}
                 <button
-                  onClick={() => toggleFavorite(college.id)}
+                  onClick={() => toggleSelection(college.id)}
                   className={`w-full py-3 px-4 rounded-xl font-medium transition-all duration-200 ${
                     selectedColleges.includes(college.id)
                       ? 'bg-blue-600 text-white hover:bg-blue-700'
@@ -538,7 +608,7 @@ const CollegeList = () => {
                     </span>
                   ) : (
                     <span className="flex items-center justify-center">
-                      <Heart className="h-4 w-4 mr-2" />
+                      <CheckCircle className="h-4 w-4 mr-2" />
                       Add to Selection
                     </span>
                   )}
@@ -563,7 +633,7 @@ const CollegeList = () => {
         {selectedColleges.length > 0 && (
           <div className="mt-12 text-center">
             <Link
-              to="/college-selection"
+              to="/aptitude-test"
               className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               Continue with {selectedColleges.length} Selected College{selectedColleges.length !== 1 ? 's' : ''}
@@ -576,4 +646,4 @@ const CollegeList = () => {
   );
 };
 
-export default CollegeList; 
+export default CollegeSelection; 
