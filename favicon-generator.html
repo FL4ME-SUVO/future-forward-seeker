@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favicon Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+        }
+        .favicon-display {
+            display: inline-block;
+            margin: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .size-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .instructions {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .instructions h3 {
+            color: #3B82F6;
+            margin-top: 0;
+        }
+        .instructions ol {
+            text-align: left;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>EduGuide Favicon Generator</h1>
+        
+        <div class="instructions">
+            <h3>Instructions to generate PNG favicon:</h3>
+            <ol>
+                <li>Right-click on any of the favicon displays below</li>
+                <li>Select "Save image as..." or "Copy image"</li>
+                <li>Save as "favicon.png" in your public folder</li>
+                <li>For Apple touch icon, use the 180x180 version</li>
+                <li>Delete this file after generating the favicon</li>
+            </ol>
+        </div>
+
+        <div class="favicon-display">
+            <div class="size-label">32x32 (Standard Favicon)</div>
+            <img src="public/favicon.svg" width="32" height="32" alt="Favicon 32x32">
+        </div>
+
+        <div class="favicon-display">
+            <div class="size-label">192x192 (Android/Chrome)</div>
+            <img src="public/favicon.svg" width="192" height="192" alt="Favicon 192x192">
+        </div>
+
+        <div class="favicon-display">
+            <div class="size-label">180x180 (Apple Touch Icon)</div>
+            <img src="public/favicon.svg" width="180" height="180" alt="Apple Touch Icon">
+        </div>
+
+        <div class="favicon-display">
+            <div class="size-label">512x512 (Large Icon)</div>
+            <img src="public/favicon.svg" width="512" height="512" alt="Favicon 512x512">
+        </div>
+    </div>
+</body>
+</html> 
