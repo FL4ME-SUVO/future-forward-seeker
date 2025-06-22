@@ -63,6 +63,7 @@ import {
   ChevronLeft,
   Database
 } from 'lucide-react';
+import { motion } from "framer-motion";
 
 const Index = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -300,6 +301,55 @@ const Index = () => {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Aptitude Test Section */}
+      <section id="aptitude" className="py-20 bg-gradient-to-br from-blue-50 to-green-50 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-16">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="w-full md:w-1/2 flex justify-center"
+          >
+            <div className="relative">
+              <div className="w-80 h-80 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-2xl">
+                <div className="w-64 h-64 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                  <div className="w-48 h-48 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center">
+                    <Brain className="w-24 h-24 text-white animate-pulse" />
+                  </div>
+                </div>
+              </div>
+              <div className="absolute -top-4 -right-4 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                <CheckCircle className="w-8 h-8 text-white" />
+              </div>
+              <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center shadow-lg animate-ping">
+                <Star className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="w-full md:w-1/2"
+          >
+            <h3 className="text-4xl font-bold text-gray-900 mb-6">
+              Discover Your Strengths
+            </h3>
+            <p className="text-lg text-gray-600 mb-8 max-w-xl">
+              Take our engaging, science-backed aptitude test to uncover your unique talents and career potential. Get instant, personalized recommendations to guide your educational journey.
+            </p>
+            <Link
+              to="/aptitude-test"
+              className="inline-block bg-gradient-to-r from-green-500 to-blue-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 shadow-xl text-lg"
+            >
+              Start Aptitude Test <ArrowRight className="ml-3 h-6 w-6 inline" />
+            </Link>
+          </motion.div>
         </div>
       </section>
 
