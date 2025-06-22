@@ -240,87 +240,89 @@ const CareerSelection = () => {
   const selectedCareersData = careers.filter(career => selectedCareers.includes(career.id));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 overflow-x-hidden">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div className="container-responsive-xl py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg group-hover:scale-110 transition-transform">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   EduGuide
                 </h1>
                 <p className="text-xs text-gray-500 -mt-1">Your College Search Partner</p>
               </div>
             </Link>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <Link 
                 to="/location-selection" 
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-105"
+                className="inline-flex items-center px-3 sm:px-4 py-2 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-105"
               >
-                Continue
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <span className="hidden sm:inline">Continue</span>
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container-responsive-xl py-6 sm:py-8">
         {/* Page Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
             Choose Your Career Path
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-4">
             Explore different career options and select the ones that interest you. 
             We'll help you find the best colleges and programs for your chosen careers.
           </p>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search */}
-            <div className="flex-1">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search careers..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                />
+        <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-100">
+          {/* Search Bar - Full width on mobile */}
+          <div className="mb-4 sm:mb-6">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
               </div>
+              <input
+                type="text"
+                placeholder="Search careers..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="block w-full pl-10 pr-3 py-3 sm:py-4 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-base"
+              />
             </div>
+          </div>
 
+          {/* Filters Row - Responsive layout */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {/* Category Filter */}
-            <div className="flex-shrink-0">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Category</label>
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="block w-full px-3 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                className="block w-full px-3 py-3 sm:py-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-base bg-white"
               >
                 {categories.map(category => (
                   <option key={category.id} value={category.id}>
-                    {category.icon} {category.name}
+                    {category.name}
                   </option>
                 ))}
               </select>
             </div>
 
             {/* Favorites Toggle */}
-            <div className="flex-shrink-0">
+            <div className="flex items-end">
               <button
                 onClick={() => setShowFavorites(!showFavorites)}
-                className={`inline-flex items-center px-4 py-3 border rounded-xl font-medium transition-all duration-200 ${
+                className={`w-full inline-flex items-center justify-center px-4 sm:px-6 py-3 sm:py-4 border rounded-xl font-medium transition-all duration-200 touch-friendly ${
                   showFavorites
                     ? 'border-blue-500 bg-blue-50 text-blue-700'
                     : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
@@ -328,13 +330,15 @@ const CareerSelection = () => {
               >
                 {showFavorites ? (
                   <>
-                    <Heart className="h-4 w-4 mr-2" />
-                    Favorites Only
+                    <Heart className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                    <span className="hidden sm:inline">Favorites Only</span>
+                    <span className="sm:hidden">Favorites Only</span>
                   </>
                 ) : (
                   <>
-                    <HeartOff className="h-4 w-4 mr-2" />
-                    Show All
+                    <HeartOff className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                    <span className="hidden sm:inline">Show All</span>
+                    <span className="sm:hidden">Show All</span>
                   </>
                 )}
               </button>
@@ -344,14 +348,14 @@ const CareerSelection = () => {
 
         {/* Selected Careers Summary */}
         {selectedCareers.length > 0 && (
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 mb-8 border border-blue-200">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 border border-blue-200">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-2 sm:space-y-0">
               <h3 className="text-lg font-semibold text-gray-900">
                 Selected Careers ({selectedCareers.length})
               </h3>
               <button
                 onClick={() => setSelectedCareers([])}
-                className="text-sm text-gray-500 hover:text-gray-700 flex items-center"
+                className="text-sm text-gray-500 hover:text-gray-700 flex items-center self-start sm:self-auto"
               >
                 <X className="h-4 w-4 mr-1" />
                 Clear All
@@ -363,7 +367,8 @@ const CareerSelection = () => {
                   key={career.id}
                   className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
                 >
-                  {career.icon} {career.title}
+                  <span className="hidden sm:inline">{career.title}</span>
+                  <span className="sm:hidden">{career.title.split(' ')[0]}</span>
                   <button
                     onClick={() => toggleFavorite(career.id)}
                     className="ml-2 text-blue-600 hover:text-blue-800"
@@ -377,7 +382,7 @@ const CareerSelection = () => {
         )}
 
         {/* Careers Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filteredCareers.map(career => (
             <div
               key={career.id}
@@ -387,13 +392,13 @@ const CareerSelection = () => {
                   : 'border-gray-100 hover:border-gray-200'
               }`}
             >
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <span className="text-3xl">{career.icon}</span>
+                    <span className="text-2xl sm:text-3xl">{career.icon}</span>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900">
                         {career.title}
                       </h3>
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
@@ -474,12 +479,14 @@ const CareerSelection = () => {
                   {selectedCareers.includes(career.id) ? (
                     <span className="flex items-center justify-center">
                       <CheckCircle className="h-4 w-4 mr-2" />
-                      Selected
+                      <span className="hidden sm:inline">Selected</span>
+                      <span className="sm:hidden">Selected</span>
                     </span>
                   ) : (
                     <span className="flex items-center justify-center">
                       <Heart className="h-4 w-4 mr-2" />
-                      Add to Selection
+                      <span className="hidden sm:inline">Add to Selection</span>
+                      <span className="sm:hidden">Add</span>
                     </span>
                   )}
                 </button>
@@ -493,7 +500,7 @@ const CareerSelection = () => {
           <div className="text-center py-12">
             <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No careers found</h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 px-4">
               Try adjusting your search terms or filters to find more career options.
             </p>
           </div>
@@ -501,12 +508,13 @@ const CareerSelection = () => {
 
         {/* Continue Button */}
         {selectedCareers.length > 0 && (
-          <div className="mt-12 text-center">
+          <div className="mt-8 sm:mt-12 text-center">
             <Link
               to="/location-selection"
-              className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 border border-transparent text-base sm:text-lg font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
-              Continue with {selectedCareers.length} Selected Career{selectedCareers.length !== 1 ? 's' : ''}
+              <span className="hidden sm:inline">Continue with {selectedCareers.length} Selected Career{selectedCareers.length !== 1 ? 's' : ''}</span>
+              <span className="sm:hidden">Continue ({selectedCareers.length})</span>
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </div>

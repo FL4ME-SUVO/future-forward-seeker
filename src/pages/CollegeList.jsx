@@ -324,73 +324,75 @@ const CollegeList = () => {
   const selectedCollegesData = colleges.filter(college => selectedColleges.includes(college.id));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 overflow-x-hidden">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div className="container-responsive-xl py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg group-hover:scale-110 transition-transform">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   EduGuide
                 </h1>
                 <p className="text-xs text-gray-500 -mt-1">Your College Search Partner</p>
               </div>
             </Link>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <Link 
                 to="/college-selection" 
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-105"
+                className="inline-flex items-center px-3 sm:px-4 py-2 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-105"
               >
-                Continue
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <span className="hidden sm:inline">Continue</span>
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container-responsive-xl py-6 sm:py-8">
         {/* Page Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
             Find Your Perfect College
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-4">
             Discover colleges that match your career goals and preferences. 
             Compare programs, costs, and opportunities to make the best choice.
           </p>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-            {/* Search */}
-            <div className="lg:col-span-2">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search colleges..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                />
+        <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-100">
+          {/* Search Bar - Full width on mobile */}
+          <div className="mb-4 sm:mb-6">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
               </div>
+              <input
+                type="text"
+                placeholder="Search colleges..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="block w-full pl-10 pr-3 py-3 sm:py-4 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-base"
+              />
             </div>
+          </div>
 
+          {/* Filters Grid - Responsive layout */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {/* Location Filter */}
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Location</label>
               <select
                 value={selectedLocation}
                 onChange={(e) => setSelectedLocation(e.target.value)}
-                className="block w-full px-3 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                className="block w-full px-3 py-3 sm:py-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-base bg-white"
               >
                 {locations.map(location => (
                   <option key={location.id} value={location.id}>
@@ -402,10 +404,11 @@ const CollegeList = () => {
 
             {/* Program Filter */}
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Program</label>
               <select
                 value={selectedProgram}
                 onChange={(e) => setSelectedProgram(e.target.value)}
-                className="block w-full px-3 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                className="block w-full px-3 py-3 sm:py-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-base bg-white"
               >
                 {programs.map(program => (
                   <option key={program.id} value={program.id}>
@@ -417,10 +420,11 @@ const CollegeList = () => {
 
             {/* Price Range Filter */}
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Price Range</label>
               <select
                 value={priceRange}
                 onChange={(e) => setPriceRange(e.target.value)}
-                className="block w-full px-3 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                className="block w-full px-3 py-3 sm:py-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-base bg-white"
               >
                 <option value="all">All Prices</option>
                 <option value="low">Low ($2K-$5K)</option>
@@ -428,13 +432,28 @@ const CollegeList = () => {
                 <option value="high">High ($50K+)</option>
               </select>
             </div>
+
+            {/* Sort By Filter */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Sort By</label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="block w-full px-3 py-3 sm:py-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-base bg-white"
+              >
+                <option value="name">Name</option>
+                <option value="rating">Rating</option>
+                <option value="fees">Fees</option>
+                <option value="students">Students</option>
+              </select>
+            </div>
           </div>
 
-          {/* Favorites Toggle */}
-          <div className="mt-4 flex justify-center">
+          {/* Favorites Toggle - Centered and mobile-friendly */}
+          <div className="mt-4 sm:mt-6 flex justify-center">
             <button
               onClick={() => setShowFavorites(!showFavorites)}
-              className={`inline-flex items-center px-4 py-2 border rounded-xl font-medium transition-all duration-200 ${
+              className={`inline-flex items-center px-4 sm:px-6 py-3 sm:py-4 border rounded-xl font-medium transition-all duration-200 touch-friendly ${
                 showFavorites
                   ? 'border-blue-500 bg-blue-50 text-blue-700'
                   : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
@@ -442,13 +461,15 @@ const CollegeList = () => {
             >
               {showFavorites ? (
                 <>
-                  <Heart className="h-4 w-4 mr-2" />
-                  Show Favorites Only
+                  <Heart className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                  <span className="hidden sm:inline">Show Favorites Only</span>
+                  <span className="sm:hidden">Favorites Only</span>
                 </>
               ) : (
                 <>
-                  <HeartOff className="h-4 w-4 mr-2" />
-                  Show All Colleges
+                  <HeartOff className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                  <span className="hidden sm:inline">Show All Colleges</span>
+                  <span className="sm:hidden">Show All</span>
                 </>
               )}
             </button>
@@ -457,14 +478,14 @@ const CollegeList = () => {
 
         {/* Selected Colleges Summary */}
         {selectedColleges.length > 0 && (
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 mb-8 border border-blue-200">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 border border-blue-200">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-2 sm:space-y-0">
               <h3 className="text-lg font-semibold text-gray-900">
                 Selected Colleges ({selectedColleges.length})
               </h3>
               <button
                 onClick={() => setSelectedColleges([])}
-                className="text-sm text-gray-500 hover:text-gray-700 flex items-center"
+                className="text-sm text-gray-500 hover:text-gray-700 flex items-center self-start sm:self-auto"
               >
                 <X className="h-4 w-4 mr-1" />
                 Clear All
@@ -476,8 +497,9 @@ const CollegeList = () => {
                   key={college.id}
                   className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
                 >
-                  <img src={college.image} alt={college.name} className="h-8 w-8 rounded-full mr-2" />
-                  {college.name}
+                  <img src={college.image} alt={college.name} className="h-6 w-6 sm:h-8 sm:w-8 rounded-full mr-2" />
+                  <span className="hidden sm:inline">{college.name}</span>
+                  <span className="sm:hidden">{college.name.split(' ')[0]}</span>
                   <button
                     onClick={() => toggleFavorite(college.id)}
                     className="ml-2 text-blue-600 hover:text-blue-800"
@@ -491,13 +513,15 @@ const CollegeList = () => {
         )}
 
         {/* Filter Tabs */}
-        <div className="bg-white rounded-2xl shadow-lg p-4 mb-8">
-          <div className="flex flex-wrap gap-4">
+        <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="space-y-4 sm:space-y-0">
             {/* Type Filters */}
-            <div className="flex items-center space-x-2">
-              <Building className="h-5 w-5 text-gray-400" />
-              <span className="text-gray-600 font-medium">Type:</span>
-              <div className="flex space-x-2">
+            <div className="space-y-3 sm:space-y-0">
+              <div className="flex items-center space-x-2 mb-3 sm:mb-4">
+                <Building className="h-5 w-5 text-gray-400" />
+                <span className="text-gray-600 font-medium text-base sm:text-lg">College Type:</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
                 {types.map((type, index) => {
                   const IconComponent = type.icon;
                   return (
@@ -509,13 +533,16 @@ const CollegeList = () => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setSelectedType(type.id)}
-                      className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${
+                      className={`px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-sm sm:text-base font-medium transition-all duration-200 touch-friendly ${
                         selectedType === type.id
-                          ? 'bg-purple-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          ? 'bg-purple-600 text-white shadow-lg'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-md'
                       }`}
                     >
-                      {type.name}
+                      <div className="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                        <IconComponent className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <span className="text-center">{type.name}</span>
+                      </div>
                     </motion.button>
                   );
                 })}
@@ -539,7 +566,7 @@ const CollegeList = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6"
           >
             {sortedColleges.map((college, index) => (
               <motion.div
@@ -551,7 +578,7 @@ const CollegeList = () => {
                 className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
               >
                 {/* Image */}
-                <div className="relative h-48 bg-gradient-to-br from-blue-500 to-purple-600">
+                <div className="relative h-40 sm:h-48 bg-gradient-to-br from-blue-500 to-purple-600">
                   <img 
                     src={college.image} 
                     alt={college.name}
@@ -574,12 +601,12 @@ const CollegeList = () => {
                 </div>
 
                 {/* Content */}
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{college.name}</h3>
+                <div className="p-4 sm:p-6">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-2">{college.name}</h3>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">{college.description}</p>
 
                   {/* Stats */}
-                  <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
                     <div className="flex items-center space-x-2">
                       <Users className="h-4 w-4 text-blue-600" />
                       <div>
@@ -611,7 +638,7 @@ const CollegeList = () => {
                   </div>
 
                   {/* Top Programs */}
-                  <div className="mb-6">
+                  <div className="mb-4 sm:mb-6">
                     <h4 className="text-sm font-semibold text-gray-900 mb-2">Top Programs</h4>
                     <div className="flex flex-wrap gap-2">
                       {college.topPrograms.slice(0, 3).map((program, index) => (
@@ -636,7 +663,8 @@ const CollegeList = () => {
                       className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-2"
                     >
                       <Eye className="h-4 w-4" />
-                      <span>View Details</span>
+                      <span className="hidden sm:inline">View Details</span>
+                      <span className="sm:hidden">View</span>
                     </motion.button>
                     <motion.button
                       whileHover={{ scale: 1.05 }}
@@ -657,7 +685,7 @@ const CollegeList = () => {
           <div className="text-center py-12">
             <Building2 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No colleges found</h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 px-4">
               Try adjusting your search terms or filters to find more colleges.
             </p>
           </div>
@@ -665,12 +693,13 @@ const CollegeList = () => {
 
         {/* Continue Button */}
         {selectedColleges.length > 0 && (
-          <div className="mt-12 text-center">
+          <div className="mt-8 sm:mt-12 text-center">
             <Link
               to="/college-selection"
-              className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 border border-transparent text-base sm:text-lg font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
-              Continue with {selectedColleges.length} Selected College{selectedColleges.length !== 1 ? 's' : ''}
+              <span className="hidden sm:inline">Continue with {selectedColleges.length} Selected College{selectedColleges.length !== 1 ? 's' : ''}</span>
+              <span className="sm:hidden">Continue ({selectedColleges.length})</span>
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </div>

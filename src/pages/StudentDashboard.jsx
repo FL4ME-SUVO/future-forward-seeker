@@ -97,10 +97,10 @@ const StudentDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 overflow-x-hidden">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div className="container-responsive-xl py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg group-hover:scale-110 transition-transform">
@@ -114,7 +114,7 @@ const StudentDashboard = () => {
               </div>
             </Link>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <button className="p-2 text-gray-400 hover:text-gray-600">
                 <Bell className="h-5 w-5" />
               </button>
@@ -129,17 +129,17 @@ const StudentDashboard = () => {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container-responsive-xl py-6 sm:py-8">
         {/* User Profile Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
-          <div className="flex items-center space-x-4">
-            <div className="text-4xl">{userData.avatar}</div>
+        <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-100">
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <div className="text-3xl sm:text-4xl">{userData.avatar}</div>
             <div className="flex-1">
-              <h2 className="text-2xl font-bold text-gray-900">{userData.name}</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{userData.name}</h2>
               <p className="text-gray-600">{userData.email}</p>
               <p className="text-sm text-blue-600 font-medium">{userData.profile}</p>
             </div>
-            <div className="text-right">
+            <div className="text-center sm:text-right">
               <div className="text-2xl font-bold text-blue-600">{userData.testScore}%</div>
               <div className="text-sm text-gray-600">Overall Score</div>
             </div>
@@ -147,8 +147,8 @@ const StudentDashboard = () => {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="bg-white rounded-2xl shadow-lg p-2 mb-8 border border-gray-100">
-          <div className="flex space-x-2">
+        <div className="bg-white rounded-2xl shadow-lg p-2 mb-6 sm:mb-8 border border-gray-100 overflow-x-auto">
+          <div className="flex space-x-2 min-w-max">
             {[
               { id: 'overview', name: 'Overview', icon: <Target className="h-4 w-4" /> },
               { id: 'tests', name: 'Test Results', icon: <BarChart3 className="h-4 w-4" /> },
@@ -158,14 +158,15 @@ const StudentDashboard = () => {
               <button
                 key={tab.id}
                 onClick={() => setSelectedTab(tab.id)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+                className={`flex items-center space-x-2 px-3 sm:px-4 py-2 rounded-xl font-medium transition-all duration-200 whitespace-nowrap ${
                   selectedTab === tab.id
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                 }`}
               >
                 {tab.icon}
-                <span>{tab.name}</span>
+                <span className="hidden sm:inline">{tab.name}</span>
+                <span className="sm:hidden">{tab.name.split(' ')[0]}</span>
               </button>
             ))}
           </div>
@@ -173,45 +174,45 @@ const StudentDashboard = () => {
 
         {/* Content based on selected tab */}
         {selectedTab === 'overview' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
             {/* Stats Cards */}
-            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-100">
                 <div className="flex items-center justify-between mb-4">
                   <div className="p-2 bg-blue-100 rounded-lg">
-                    <BarChart3 className="h-6 w-6 text-blue-600" />
+                    <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                   </div>
-                  <span className="text-2xl font-bold text-blue-600">{userData.completedTests}</span>
+                  <span className="text-xl sm:text-2xl font-bold text-blue-600">{userData.completedTests}</span>
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">Tests Completed</h3>
-                <p className="text-sm text-gray-600">Aptitude assessments taken</p>
+                <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">Tests Completed</h3>
+                <p className="text-xs sm:text-sm text-gray-600">Aptitude assessments taken</p>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+              <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-100">
                 <div className="flex items-center justify-between mb-4">
                   <div className="p-2 bg-green-100 rounded-lg">
-                    <BookOpen className="h-6 w-6 text-green-600" />
+                    <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
                   </div>
-                  <span className="text-2xl font-bold text-green-600">{userData.savedColleges}</span>
+                  <span className="text-xl sm:text-2xl font-bold text-green-600">{userData.savedColleges}</span>
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">Saved Colleges</h3>
-                <p className="text-sm text-gray-600">Institutions you're interested in</p>
+                <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">Saved Colleges</h3>
+                <p className="text-xs sm:text-sm text-gray-600">Institutions you're interested in</p>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+              <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-100 sm:col-span-2 lg:col-span-1">
                 <div className="flex items-center justify-between mb-4">
                   <div className="p-2 bg-purple-100 rounded-lg">
-                    <Award className="h-6 w-6 text-purple-600" />
+                    <Award className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
                   </div>
-                  <span className="text-2xl font-bold text-purple-600">{userData.applications}</span>
+                  <span className="text-xl sm:text-2xl font-bold text-purple-600">{userData.applications}</span>
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">Applications</h3>
-                <p className="text-sm text-gray-600">Applications submitted</p>
+                <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">Applications</h3>
+                <p className="text-xs sm:text-sm text-gray-600">Applications submitted</p>
               </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-100">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-3">
                 <Link
@@ -220,7 +221,7 @@ const StudentDashboard = () => {
                 >
                   <div className="flex items-center space-x-3">
                     <BarChart3 className="h-5 w-5 text-blue-600" />
-                    <span className="font-medium text-gray-900">Take Aptitude Test</span>
+                    <span className="font-medium text-gray-900 text-sm sm:text-base">Take Aptitude Test</span>
                   </div>
                   <ArrowRight className="h-4 w-4 text-gray-400" />
                 </Link>
@@ -231,7 +232,7 @@ const StudentDashboard = () => {
                 >
                   <div className="flex items-center space-x-3">
                     <Search className="h-5 w-5 text-green-600" />
-                    <span className="font-medium text-gray-900">Browse Colleges</span>
+                    <span className="font-medium text-gray-900 text-sm sm:text-base">Browse Colleges</span>
                   </div>
                   <ArrowRight className="h-4 w-4 text-gray-400" />
                 </Link>
@@ -242,7 +243,7 @@ const StudentDashboard = () => {
                 >
                   <div className="flex items-center space-x-3">
                     <Target className="h-5 w-5 text-purple-600" />
-                    <span className="font-medium text-gray-900">Career Guidance</span>
+                    <span className="font-medium text-gray-900 text-sm sm:text-base">Career Guidance</span>
                   </div>
                   <ArrowRight className="h-4 w-4 text-gray-400" />
                 </Link>
@@ -252,11 +253,11 @@ const StudentDashboard = () => {
         )}
 
         {selectedTab === 'tests' && (
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-100">
             <h3 className="text-xl font-semibold text-gray-900 mb-6">Test Results</h3>
             <div className="space-y-4">
               {recentTests.map(test => (
-                <div key={test.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                <div key={test.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-xl space-y-3 sm:space-y-0">
                   <div className="flex items-center space-x-4">
                     <div className="p-2 bg-blue-100 rounded-lg">
                       <BarChart3 className="h-5 w-5 text-blue-600" />
@@ -266,7 +267,7 @@ const StudentDashboard = () => {
                       <p className="text-sm text-gray-600">Completed on {test.date}</p>
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-center sm:text-right">
                     <div className="text-xl font-bold text-blue-600">{test.score}%</div>
                     <div className="text-sm text-gray-600">Score</div>
                   </div>
@@ -277,9 +278,9 @@ const StudentDashboard = () => {
         )}
 
         {selectedTab === 'colleges' && (
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-100">
             <h3 className="text-xl font-semibold text-gray-900 mb-6">Saved Colleges</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               {savedColleges.map(college => (
                 <div key={college.id} className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between mb-3">
@@ -308,17 +309,17 @@ const StudentDashboard = () => {
         )}
 
         {selectedTab === 'recommendations' && (
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-100">
             <h3 className="text-xl font-semibold text-gray-900 mb-6">Career Recommendations</h3>
             <div className="space-y-6">
               {recommendations.map(rec => (
-                <div key={rec.id} className="border border-gray-200 rounded-xl p-6">
-                  <div className="flex items-start justify-between mb-4">
+                <div key={rec.id} className="border border-gray-200 rounded-xl p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 space-y-3 sm:space-y-0">
                     <div>
                       <h4 className="text-lg font-semibold text-gray-900">{rec.title}</h4>
                       <p className="text-gray-600">{rec.description}</p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-center sm:text-right">
                       <div className="text-2xl font-bold text-green-600">{rec.match}%</div>
                       <div className="text-sm text-gray-600">Match</div>
                     </div>
