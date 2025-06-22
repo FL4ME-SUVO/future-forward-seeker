@@ -224,7 +224,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 overflow-x-hidden">
       {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 navbar-optimized ${
         isScrolled 
@@ -292,17 +292,20 @@ const Index = () => {
                 Get Started
               </Link>
             </nav>
-            <div className="md:hidden">
+            <div className="md:hidden relative z-[150]">
               <button 
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className={`p-2 rounded-lg transition-colors z-[100] relative ${
+                onClick={() => {
+                  console.log('Menu clicked, current state:', isMobileMenuOpen);
+                  setIsMobileMenuOpen(!isMobileMenuOpen);
+                }}
+                className={`p-2 rounded-lg transition-colors bg-white/20 backdrop-blur-sm border border-white/30 ${
                   isScrolled 
                     ? 'hover:bg-gray-100 text-gray-600' 
                     : 'hover:bg-white/20 text-white'
                 }`}
               >
                 {isMobileMenuOpen ? (
-                  <X className="w-6 h-6" />
+                  <X className="w-6 h-6 text-red-500" />
                 ) : (
                   <Menu className="w-6 h-6" />
                 )}
@@ -327,7 +330,7 @@ const Index = () => {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: '-100%', opacity: 0 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="fixed top-0 left-0 right-0 bg-slate-900/90 backdrop-blur-lg shadow-xl p-8 pt-24"
+              className="fixed top-16 left-0 right-0 bottom-0 bg-slate-900/90 backdrop-blur-lg shadow-xl p-8"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex flex-col items-center space-y-6 text-center">
@@ -356,76 +359,97 @@ const Index = () => {
       </AnimatePresence>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-900">
-        <Particles
-          id="tsparticles"
-          init={particlesInit}
-          options={{
-            background: {
-              color: {
-                value: "transparent",
-              },
-            },
-            fpsLimit: 30,
-            interactivity: {
-              events: {
-                onHover: {
-                  enable: true,
-                  mode: "grab",
+      <section className="relative pt-24 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-900 w-full">
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          <Particles
+            id="tsparticles"
+            init={particlesInit}
+            options={{
+              background: {
+                color: {
+                  value: "transparent",
                 },
-                resize: true,
               },
-              modes: {
-                grab: {
-                  distance: 100,
-                  links: {
-                    opacity: 1,
+              fpsLimit: 20,
+              interactivity: {
+                events: {
+                  onHover: {
+                    enable: true,
+                    mode: "grab",
+                  },
+                  resize: true,
+                },
+                modes: {
+                  grab: {
+                    distance: 100,
+                    links: {
+                      opacity: 1,
+                    }
+                  },
+                },
+              },
+              particles: {
+                color: {
+                  value: "#ffffff",
+                },
+                links: {
+                  color: "#ffffff",
+                  distance: 120,
+                  enable: true,
+                  opacity: 0.6,
+                  width: 1,
+                },
+                move: {
+                  direction: "none",
+                  enable: true,
+                  outModes: {
+                    default: "bounce",
+                  },
+                  random: false,
+                  speed: isScrolling ? 0.1 : 0.3,
+                  straight: false,
+                },
+                number: {
+                  density: {
+                    enable: true,
+                    area: 600,
+                  },
+                  value: isScrolling ? 20 : 40,
+                },
+                opacity: {
+                  value: 0.8,
+                },
+                shape: {
+                  type: "circle",
+                },
+                size: {
+                  value: { min: 3, max: 5 },
+                },
+              },
+              detectRetina: false,
+              fullScreen: {
+                enable: false,
+                zIndex: -1
+              },
+              responsive: [
+                {
+                  breakpoint: 768,
+                  options: {
+                    particles: {
+                      number: {
+                        value: 20
+                      },
+                      links: {
+                        distance: 100
+                      }
+                    }
                   }
-                },
-              },
-            },
-            particles: {
-              color: {
-                value: "#ffffff",
-              },
-              links: {
-                color: "#ffffff",
-                distance: 150,
-                enable: true,
-                opacity: 0.2,
-                width: 1,
-              },
-              move: {
-                direction: "none",
-                enable: true,
-                outModes: {
-                  default: "out",
-                },
-                random: false,
-                speed: isScrolling ? 0.2 : 0.5,
-                straight: false,
-              },
-              number: {
-                density: {
-                  enable: true,
-                  area: 800,
-                },
-                value: isScrolling ? 30 : 60,
-              },
-              opacity: {
-                value: 0.2,
-              },
-              shape: {
-                type: "circle",
-              },
-              size: {
-                value: { min: 1, max: 3 },
-              },
-            },
-            detectRetina: false,
-          }}
-          className="absolute inset-0 -z-0 particle-container"
-        />
+                }
+              ]
+            }}
+            className="absolute inset-0 w-full h-full"
+          />
+        </div>
         <div className="absolute inset-0 bg-slate-900/40"></div>
         <div className="relative max-w-6xl mx-auto">
           <div className="text-center">
