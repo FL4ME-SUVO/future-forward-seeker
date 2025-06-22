@@ -292,23 +292,16 @@ const Index = () => {
                 Get Started
               </Link>
             </nav>
-            <div className="md:hidden relative z-[150]">
+            <div className="md:hidden">
               <button 
-                onClick={() => {
-                  console.log('Menu clicked, current state:', isMobileMenuOpen);
-                  setIsMobileMenuOpen(!isMobileMenuOpen);
-                }}
-                className={`p-2 rounded-lg transition-colors bg-white/20 backdrop-blur-sm border border-white/30 ${
+                onClick={() => setIsMobileMenuOpen(true)}
+                className={`p-2 rounded-lg transition-colors ${
                   isScrolled 
                     ? 'hover:bg-gray-100 text-gray-600' 
                     : 'hover:bg-white/20 text-white'
                 }`}
               >
-                {isMobileMenuOpen ? (
-                  <X className="w-6 h-6 text-red-500" />
-                ) : (
-                  <Menu className="w-6 h-6" />
-                )}
+                <Menu className="w-6 h-6" />
               </button>
             </div>
           </div>
@@ -322,38 +315,46 @@ const Index = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[90] bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md"
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            <motion.nav
-              initial={{ y: '-100%', opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: '-100%', opacity: 0 }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="fixed top-16 left-0 right-0 bottom-0 bg-slate-900/90 backdrop-blur-lg shadow-xl p-8"
+            <motion.div
+              initial={{ y: '-100%' }}
+              animate={{ y: '0%' }}
+              exit={{ y: '-100%' }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute top-0 left-0 right-0 bg-slate-900/95 shadow-2xl p-8"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex flex-col items-center space-y-6 text-center">
-                <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-100 hover:text-blue-400 transition-colors">
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="absolute top-5 right-5 p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"
+                aria-label="Close menu"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              <div className="flex flex-col items-center space-y-8 text-center pt-16">
+                <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-semibold text-slate-100 hover:text-blue-400 transition-colors">
                   About
                 </a>
-                <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-100 hover:text-blue-400 transition-colors">
+                <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-semibold text-slate-100 hover:text-blue-400 transition-colors">
                   Features
                 </a>
-                <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-100 hover:text-blue-400 transition-colors">
+                <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-semibold text-slate-100 hover:text-blue-400 transition-colors">
                   Contact
                 </a>
-                <Link to="/student-login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-100 hover:text-blue-400 transition-colors">
+                <div className="w-4/5 h-px bg-slate-700 my-4"></div>
+                <Link to="/student-login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-colors">
                   Student Login
                 </Link>
-                <Link to="/college-signup" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-100 hover:text-blue-400 transition-colors">
+                <Link to="/college-signup" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-colors">
                   College Portal
                 </Link>
-                <Link to="/student-signup" onClick={() => setIsMobileMenuOpen(false)} className="mt-4 w-full max-w-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-medium">
+                <Link to="/student-signup" onClick={() => setIsMobileMenuOpen(false)} className="mt-6 w-full max-w-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-semibold text-lg">
                   Get Started
                 </Link>
               </div>
-            </motion.nav>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
