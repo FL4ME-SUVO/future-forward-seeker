@@ -72,6 +72,7 @@ const Index = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
 
   const particlesInit = useCallback(async (engine) => {
     await loadSlim(engine);
@@ -82,13 +83,35 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
+    let ticking = false;
+    let scrollTimeout;
+    
     const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setIsScrolled(scrollTop > 50);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollTop = window.scrollY;
+          setIsScrolled(scrollTop > 50);
+          setIsScrolling(true);
+          
+          // Clear previous timeout
+          clearTimeout(scrollTimeout);
+          
+          // Set timeout to detect when scrolling stops
+          scrollTimeout = setTimeout(() => {
+            setIsScrolling(false);
+          }, 150);
+          
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimeout);
+    };
   }, []);
 
   useEffect(() => {
@@ -188,7 +211,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 navbar-optimized ${
         isScrolled 
           ? 'bg-white/95 shadow-lg border-b border-gray-200' 
           : 'bg-transparent'
@@ -316,7 +339,7 @@ const Index = () => {
                   default: "out",
                 },
                 random: false,
-                speed: 0.5,
+                speed: isScrolling ? 0.2 : 0.5,
                 straight: false,
               },
               number: {
@@ -324,7 +347,7 @@ const Index = () => {
                   enable: true,
                   area: 800,
                 },
-                value: 60,
+                value: isScrolling ? 30 : 60,
               },
               opacity: {
                 value: 0.2,
@@ -338,7 +361,7 @@ const Index = () => {
             },
             detectRetina: false,
           }}
-          className="absolute inset-0 -z-0"
+          className="absolute inset-0 -z-0 particle-container"
         />
         <div className="absolute inset-0 bg-slate-900/40"></div>
         <div className="relative max-w-6xl mx-auto">

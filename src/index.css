@@ -15,6 +15,22 @@
   backface-visibility: hidden;
 }
 
+/* Performance optimizations */
+.scroll-optimized {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.navbar-optimized {
+  will-change: background-color, backdrop-filter;
+  transform: translateZ(0);
+}
+
+.particle-container {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
 /* Additional custom styles */
 @layer base {
   :root {
