@@ -190,7 +190,7 @@ const Index = () => {
       {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200' 
+          ? 'bg-white/95 shadow-lg border-b border-gray-200' 
           : 'bg-transparent'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -414,7 +414,7 @@ const Index = () => {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl shadow-lg border border-white/20"
+                  className="text-center p-6 bg-white/10 rounded-xl shadow-lg border border-white/20"
                 >
                   <div className="flex items-center justify-center mb-4 text-blue-300">
                     {stat.icon}
@@ -453,17 +453,14 @@ const Index = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                whileHover={{ y: -10, scale: 1.02 }}
-                className="group p-8 rounded-3xl bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-sm hover:from-blue-50/80 hover:to-indigo-50/40 transition-all duration-500 border border-white/50 shadow-xl hover:shadow-2xl"
+                whileHover={{ y: -5 }}
+                className="group p-8 rounded-3xl bg-gradient-to-br from-white/80 to-white/40 hover:from-blue-50/80 hover:to-indigo-50/40 transition-all duration-300 border border-white/50 shadow-xl hover:shadow-2xl"
               >
-                <motion.div 
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300"
-                >
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300">
                   <div className="text-white">
                     {feature.icon}
                   </div>
-                </motion.div>
+                </div>
                 <h4 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h4>
                 <p className="text-gray-600 leading-relaxed">
                   {feature.description}
@@ -486,33 +483,33 @@ const Index = () => {
           >
             <motion.div 
               animate={{ 
-                rotate: [0, 5, -5, 0],
-                scale: [1, 1.05, 1]
+                rotate: [0, 2, -2, 0],
+                scale: [1, 1.02, 1]
               }}
               transition={{ 
-                duration: 4,
+                duration: 6,
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
               className="relative"
             >
               <div className="w-80 h-80 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-2xl">
-                <div className="w-64 h-64 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <div className="w-48 h-48 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center">
-                    <Brain className="w-24 h-24 text-white animate-pulse" />
+                <div className="w-64 h-64 bg-white/20 rounded-full flex items-center justify-center">
+                  <div className="w-48 h-48 bg-white/30 rounded-full flex items-center justify-center">
+                    <Brain className="w-24 h-24 text-white" />
                   </div>
                 </div>
               </div>
               <motion.div 
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
+                animate={{ y: [0, -5, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
                 className="absolute -top-4 -right-4 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg"
               >
                 <CheckCircle className="w-8 h-8 text-white" />
               </motion.div>
               <motion.div 
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
                 className="absolute -bottom-4 -left-4 w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center shadow-lg"
               >
                 <Star className="w-6 h-6 text-white" />
@@ -591,19 +588,18 @@ const Index = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
                 viewport={{ once: true }}
-                whileHover={{ y: -10 }}
+                whileHover={{ y: -5 }}
                 className="text-center group"
               >
                 <div className="relative mb-8">
-                  <motion.div 
-                    whileHover={{ scale: 1.1, rotate: 5 }}
+                  <div 
                     className={`w-24 h-24 bg-gradient-to-r ${step.gradient} rounded-3xl flex items-center justify-center mx-auto shadow-xl group-hover:shadow-2xl transition-all duration-300`}
                   >
                     <span className="text-3xl font-bold text-white">{step.number}</span>
-                  </motion.div>
+                  </div>
                   <motion.div 
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: index * 0.5 }}
+                    animate={{ scale: [1, 1.05, 1] }}
+                    transition={{ duration: 3, repeat: Infinity, delay: index * 0.5 }}
                     className="absolute -top-3 -right-3 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-lg"
                   >
                     <CheckCircle className="w-6 h-6 text-white" />
@@ -644,7 +640,7 @@ const Index = () => {
                 ))}
               </div>
             </div>
-            <div className="bg-gradient-to-br from-white/80 to-blue-50/80 backdrop-blur-sm rounded-3xl p-12 md:p-16 border border-white/50 shadow-2xl">
+            <div className="bg-gradient-to-br from-white/80 to-blue-50/80 rounded-3xl p-12 md:p-16 border border-white/50 shadow-2xl">
               <div className="text-center">
                 <div className="flex justify-center mb-6">
                   <div className="p-4 bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 rounded-2xl shadow-lg border-2 border-white/80">
@@ -664,13 +660,13 @@ const Index = () => {
             <div className="flex justify-center mt-8 space-x-4">
               <button
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-shadow border border-white/50"
+                className="p-3 bg-white/80 rounded-full shadow-lg hover:shadow-xl transition-shadow border border-white/50"
               >
                 {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
               </button>
               <button
                 onClick={() => setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)}
-                className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-shadow border border-white/50"
+                className="p-3 bg-white/80 rounded-full shadow-lg hover:shadow-xl transition-shadow border border-white/50"
               >
                 <RotateCcw className="w-6 h-6" />
               </button>
@@ -723,8 +719,8 @@ const Index = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  whileHover={{ y: -10, scale: 1.02 }}
-                  className="bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-sm rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/50"
+                  whileHover={{ y: -5 }}
+                  className="bg-gradient-to-br from-white/80 to-white/40 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/50"
                 >
                   <div className="flex justify-center mb-6">
                     <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg">
@@ -841,7 +837,7 @@ const Index = () => {
               </div>
             </div>
             
-            <div className="bg-gradient-to-br from-white/80 to-blue-50/80 backdrop-blur-sm rounded-3xl p-10 border border-white/50 shadow-2xl">
+            <div className="bg-gradient-to-br from-white/80 to-blue-50/80 rounded-3xl p-10 border border-white/50 shadow-2xl">
               <h4 className="text-3xl font-bold text-gray-900 mb-8">Send us a Message</h4>
               <form className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -849,7 +845,7 @@ const Index = () => {
                     <label className="block text-sm font-semibold text-gray-700 mb-3">First Name</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm"
+                      className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/80"
                       placeholder="Your first name"
                     />
                   </div>
@@ -857,7 +853,7 @@ const Index = () => {
                     <label className="block text-sm font-semibold text-gray-700 mb-3">Last Name</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm"
+                      className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/80"
                       placeholder="Your last name"
                     />
                   </div>
@@ -866,7 +862,7 @@ const Index = () => {
                   <label className="block text-sm font-semibold text-gray-700 mb-3">Email</label>
                   <input
                     type="email"
-                    className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm"
+                    className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/80"
                     placeholder="your.email@example.com"
                   />
                 </div>
@@ -874,7 +870,7 @@ const Index = () => {
                   <label className="block text-sm font-semibold text-gray-700 mb-3">Message</label>
                   <textarea
                     rows={4}
-                    className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm"
+                    className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/80"
                     placeholder="Tell us how we can help you..."
                   />
                 </div>
