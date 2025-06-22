@@ -280,7 +280,7 @@ const Index = () => {
                 value: "transparent",
               },
             },
-            fpsLimit: 60,
+            fpsLimit: 30,
             interactivity: {
               events: {
                 onHover: {
@@ -291,7 +291,7 @@ const Index = () => {
               },
               modes: {
                 grab: {
-                  distance: 140,
+                  distance: 100,
                   links: {
                     opacity: 1,
                   }
@@ -324,7 +324,7 @@ const Index = () => {
                   enable: true,
                   area: 800,
                 },
-                value: 80,
+                value: 60,
               },
               opacity: {
                 value: 0.2,
@@ -336,7 +336,7 @@ const Index = () => {
                 value: { min: 1, max: 3 },
               },
             },
-            detectRetina: true,
+            detectRetina: false,
           }}
           className="absolute inset-0 -z-0"
         />
