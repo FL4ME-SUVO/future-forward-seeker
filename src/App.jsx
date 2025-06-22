@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import StudentLogin from "./pages/StudentLogin";
 import StudentSignup from "./pages/StudentSignup";
@@ -14,6 +14,13 @@ import StudentDashboard from "./pages/StudentDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import About from "./pages/About";
+import AdminLogin from "./pages/AdminLogin";
+
+// Route guard for admin
+const RequireAdmin = ({ children }) => {
+  const isAdmin = typeof window !== 'undefined' && localStorage.getItem('isAdmin') === 'true';
+  return isAdmin ? children : <Navigate to="/admin-login" replace />;
+};
 
 const App = () => (
   <BrowserRouter>
@@ -29,7 +36,12 @@ const App = () => (
       <Route path="/aptitude-test" element={<AptitudeTest />} />
       <Route path="/test-completion" element={<TestCompletion />} />
       <Route path="/student-dashboard" element={<StudentDashboard />} />
-      <Route path="/admin-dashboard" element={<AdminDashboard />} />
+      <Route path="/admin-login" element={<AdminLogin />} />
+      <Route path="/admin-dashboard" element={
+        <RequireAdmin>
+          <AdminDashboard />
+        </RequireAdmin>
+      } />
       <Route path="/about" element={<About />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

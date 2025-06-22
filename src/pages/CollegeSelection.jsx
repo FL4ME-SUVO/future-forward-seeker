@@ -243,18 +243,8 @@ const CollegeSelection = () => {
 
   const selectedCollegesData = colleges.filter(college => selectedColleges.includes(college.id));
 
-  console.log('CollegeSelection component rendering');
-  console.log('Colleges data:', colleges.length);
-  console.log('Filtered colleges:', filteredColleges?.length);
-  console.log('Selected colleges:', selectedColleges);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Test div to check if component is rendering */}
-      <div className="bg-red-500 text-white p-4 text-center">
-        CollegeSelection Component is Rendering - Debug Test
-      </div>
-      
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
