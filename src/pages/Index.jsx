@@ -61,9 +61,11 @@ import {
   ArrowUpRight,
   ChevronRight,
   ChevronLeft,
-  Database
+  Database,
+  X,
+  Menu
 } from 'lucide-react';
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
 
@@ -73,6 +75,7 @@ const Index = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const particlesInit = useCallback(async (engine) => {
     await loadSlim(engine);
@@ -122,6 +125,18 @@ const Index = () => {
       return () => clearInterval(interval);
     }
   }, [isPlaying]);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
 
   const testimonials = [
     {
@@ -278,19 +293,67 @@ const Index = () => {
               </Link>
             </nav>
             <div className="md:hidden">
-              <button className={`p-2 rounded-lg transition-colors ${
-                isScrolled 
-                  ? 'hover:bg-gray-100 text-gray-600' 
-                  : 'hover:bg-white/20 text-white'
-              }`}>
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
+              <button 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className={`p-2 rounded-lg transition-colors z-[100] relative ${
+                  isScrolled 
+                    ? 'hover:bg-gray-100 text-gray-600' 
+                    : 'hover:bg-white/20 text-white'
+                }`}
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
               </button>
             </div>
           </div>
         </div>
       </header>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[90] bg-black/40 backdrop-blur-sm"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <motion.nav
+              initial={{ y: '-100%', opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: '-100%', opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="fixed top-0 left-0 right-0 bg-slate-900/90 backdrop-blur-lg shadow-xl p-8 pt-24"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex flex-col items-center space-y-6 text-center">
+                <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-100 hover:text-blue-400 transition-colors">
+                  About
+                </a>
+                <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-100 hover:text-blue-400 transition-colors">
+                  Features
+                </a>
+                <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-100 hover:text-blue-400 transition-colors">
+                  Contact
+                </a>
+                <Link to="/student-login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-100 hover:text-blue-400 transition-colors">
+                  Student Login
+                </Link>
+                <Link to="/college-signup" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-100 hover:text-blue-400 transition-colors">
+                  College Portal
+                </Link>
+                <Link to="/student-signup" onClick={() => setIsMobileMenuOpen(false)} className="mt-4 w-full max-w-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-medium">
+                  Get Started
+                </Link>
+              </div>
+            </motion.nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Hero Section */}
       <section className="relative pt-24 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-900">
@@ -379,7 +442,7 @@ const Index = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 sm:mb-8 leading-tight px-4"
             >
               Find Your Perfect
               <span className="block bg-gradient-to-r from-blue-200 to-indigo-100 bg-clip-text text-transparent"> College Path</span>
@@ -388,7 +451,7 @@ const Index = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-lg text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed"
+              className="text-base sm:text-lg text-gray-300 mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed px-4"
             >
               Discover engineering and management universities worldwide. Get personalized recommendations, 
               take aptitude tests, and make informed decisions about your educational future.
@@ -397,28 +460,30 @@ const Index = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="flex flex-col sm:flex-row gap-6 justify-center mb-16"
+              className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-12 sm:mb-16 px-4"
             >
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                className="w-full sm:w-auto"
               >
                 <Link
                   to="/student-signup"
-                  className="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300 shadow-xl flex items-center justify-center text-lg"
+                  className="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300 shadow-xl flex items-center justify-center text-base sm:text-lg w-full"
                 >
-                  Start Your Journey <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
+                  Start Your Journey <ArrowRight className="ml-2 sm:ml-3 h-5 w-5 sm:h-6 sm:w-6 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                className="w-full sm:w-auto"
               >
                 <Link
                   to="/college-list"
-                  className="group border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-2xl font-semibold hover:border-blue-600 hover:text-blue-600 transition-all duration-300 flex items-center justify-center text-lg bg-white"
+                  className="group border-2 border-gray-300 text-gray-700 px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-semibold hover:border-blue-600 hover:text-blue-600 transition-all duration-300 flex items-center justify-center text-base sm:text-lg bg-white w-full"
                 >
-                  <Search className="mr-3 h-6 w-6" />
+                  <Search className="mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6" />
                   Browse Colleges
                 </Link>
               </motion.div>
@@ -429,7 +494,7 @@ const Index = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto"
+              className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 max-w-5xl mx-auto px-4"
             >
               {stats.map((stat, index) => (
                 <motion.div 
@@ -437,13 +502,15 @@ const Index = () => {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="text-center p-6 bg-white/10 rounded-xl shadow-lg border border-white/20"
+                  className="text-center p-4 sm:p-6 bg-white/10 rounded-xl shadow-lg border border-white/20"
                 >
-                  <div className="flex items-center justify-center mb-4 text-blue-300">
-                    {stat.icon}
+                  <div className="flex items-center justify-center mb-3 sm:mb-4 text-blue-300">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6">
+                      {stat.icon}
+                    </div>
                   </div>
-                  <h3 className="text-3xl font-bold text-white mb-2">{stat.number}</h3>
-                  <p className="text-gray-300 font-medium">{stat.label}</p>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">{stat.number}</h3>
+                  <p className="text-sm sm:text-base text-gray-300 font-medium">{stat.label}</p>
                 </motion.div>
               ))}
             </motion.div>
@@ -468,7 +535,7 @@ const Index = () => {
               Comprehensive tools and information to help you make the best decision for your future
             </p>
           </motion.div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {features.map((feature, index) => (
               <motion.div 
                 key={index}
@@ -477,15 +544,15 @@ const Index = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 whileHover={{ y: -5 }}
-                className="group p-8 rounded-3xl bg-gradient-to-br from-white/80 to-white/40 hover:from-blue-50/80 hover:to-indigo-50/40 transition-all duration-300 border border-white/50 shadow-xl hover:shadow-2xl"
+                className="group p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-white/80 to-white/40 hover:from-blue-50/80 hover:to-indigo-50/40 transition-all duration-300 border border-white/50 shadow-xl hover:shadow-2xl"
               >
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300">
-                  <div className="text-white">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300">
+                  <div className="text-white w-6 h-6 sm:w-8 sm:h-8">
                     {feature.icon}
                   </div>
                 </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h4>
-                <p className="text-gray-600 leading-relaxed">
+                <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">{feature.title}</h4>
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                   {feature.description}
                 </p>
               </motion.div>
