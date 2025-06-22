@@ -1,488 +1,393 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  GraduationCap, 
+  ArrowLeft, 
   Clock, 
   CheckCircle, 
-  ArrowLeft, 
-  ArrowRight, 
   Brain, 
-  Calculator,
-  BookOpen,
-  Target,
-  AlertCircle,
-  Play,
-  Pause,
-  RotateCcw
+  Target, 
+  BarChart3,
+  GraduationCap,
+  Timer,
+  ChevronRight,
+  ChevronLeft
 } from 'lucide-react';
 
 const AptitudeTest = () => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes in seconds
-  const [isTestStarted, setIsTestStarted] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes
+  const [isStarted, setIsStarted] = useState(false);
   const [showInstructions, setShowInstructions] = useState(true);
-  const navigate = useNavigate();
 
-  // Sample aptitude test questions
   const questions = [
     {
       id: 1,
-      type: 'numerical',
-      question: 'If a train travels 120 km in 2 hours, what is its speed in km/h?',
-      options: ['40 km/h', '50 km/h', '60 km/h', '70 km/h'],
-      correct: '60 km/h',
-      explanation: 'Speed = Distance ÷ Time = 120 km ÷ 2 hours = 60 km/h'
+      category: "Logical Reasoning",
+      question: "If all roses are flowers and some flowers are red, which of the following must be true?",
+      options: [
+        "All roses are red",
+        "Some roses are red", 
+        "All red things are roses",
+        "None of the above"
+      ],
+      correct: 1
     },
     {
       id: 2,
-      type: 'logical',
-      question: 'Complete the sequence: 2, 4, 8, 16, __',
-      options: ['24', '32', '30', '28'],
-      correct: '32',
-      explanation: 'Each number is multiplied by 2: 2×2=4, 4×2=8, 8×2=16, 16×2=32'
+      category: "Numerical Ability",
+      question: "A train travels 300 km in 4 hours. What is its average speed in km/h?",
+      options: ["60 km/h", "75 km/h", "80 km/h", "90 km/h"],
+      correct: 1
     },
     {
       id: 3,
-      type: 'verbal',
-      question: 'Choose the word that best completes the analogy: Book is to Reading as Fork is to __',
-      options: ['Eating', 'Cooking', 'Kitchen', 'Food'],
-      correct: 'Eating',
-      explanation: 'A book is used for reading, just as a fork is used for eating'
+      category: "Verbal Ability",
+      question: "Choose the word that best completes the analogy: Book is to Reading as Fork is to:",
+      options: ["Eating", "Cooking", "Kitchen", "Food"],
+      correct: 0
     },
     {
       id: 4,
-      type: 'numerical',
-      question: 'If 15% of a number is 45, what is the number?',
-      options: ['200', '250', '300', '350'],
-      correct: '300',
-      explanation: '15% = 45, so 100% = 45 ÷ 0.15 = 300'
+      category: "Spatial Reasoning",
+      question: "If you fold a paper in half twice, how many layers will you have?",
+      options: ["2 layers", "3 layers", "4 layers", "6 layers"],
+      correct: 2
     },
     {
       id: 5,
-      type: 'logical',
-      question: 'If all roses are flowers and some flowers are red, then:',
-      options: [
-        'All roses are red',
-        'Some roses are red',
-        'No roses are red',
-        'Cannot be determined'
-      ],
-      correct: 'Cannot be determined',
-      explanation: 'The given statements don\'t provide enough information to determine the relationship between roses and red color'
-    },
-    {
-      id: 6,
-      type: 'verbal',
-      question: 'Select the word that is most opposite in meaning to "BENEVOLENT":',
-      options: ['Kind', 'Generous', 'Malevolent', 'Charitable'],
-      correct: 'Malevolent',
-      explanation: 'Benevolent means kind and generous, while malevolent means having evil intentions'
-    },
-    {
-      id: 7,
-      type: 'numerical',
-      question: 'A rectangle has a length of 8 cm and width of 6 cm. What is its area?',
-      options: ['14 cm²', '28 cm²', '48 cm²', '56 cm²'],
-      correct: '48 cm²',
-      explanation: 'Area = Length × Width = 8 cm × 6 cm = 48 cm²'
-    },
-    {
-      id: 8,
-      type: 'logical',
-      question: 'Which figure comes next in the pattern: ○, □, △, ○, □, __',
-      options: ['○', '□', '△', '◇'],
-      correct: '△',
-      explanation: 'The pattern repeats: ○, □, △, so the next figure is △'
-    },
-    {
-      id: 9,
-      type: 'verbal',
-      question: 'Choose the correct spelling:',
-      options: ['Accomodate', 'Accommodate', 'Acommodate', 'Accomadate'],
-      correct: 'Accommodate',
-      explanation: "Accommodate has double 'm' and double 'c'"
-    },
-    {
-      id: 10,
-      type: 'numerical',
-      question: 'If 3 workers can complete a task in 12 days, how many days will 4 workers take?',
-      options: ['8 days', '9 days', '10 days', '12 days'],
-      correct: '9 days',
-      explanation: 'More workers = less time. 3×12 = 4×x, so x = 9 days'
+      category: "Problem Solving",
+      question: "A company's profit increased by 20% this year. If last year's profit was $50,000, what is this year's profit?",
+      options: ["$55,000", "$60,000", "$65,000", "$70,000"],
+      correct: 1
     }
   ];
 
   useEffect(() => {
-    let timer;
-    if (isTestStarted && !isPaused && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft((prevTime) => {
-          if (prevTime <= 1) {
-            clearInterval(timer);
-            submitTest();
-            return 0;
-          }
-          return prevTime - 1;
-        });
+    if (isStarted && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
       }, 1000);
+      return () => clearInterval(timer);
     }
-    return () => clearInterval(timer);
-  }, [isTestStarted, isPaused, timeLeft]);
+  }, [isStarted, timeLeft]);
 
-  const handleAnswerSelect = (questionId, answer) => {
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleAnswer = (questionId, answerIndex) => {
     setAnswers(prev => ({
       ...prev,
-      [questionId]: answer
+      [questionId]: answerIndex
     }));
   };
 
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const startTest = () => {
-    setIsTestStarted(true);
-    setShowInstructions(false);
-  };
-
-  const togglePause = () => {
-    setIsPaused(!isPaused);
-  };
-
-  const submitTest = () => {
-    const score = calculateScore();
-    navigate('/test-completion', { 
-      state: { 
-        score, 
-        totalQuestions: questions.length,
-        answers,
-        timeTaken: 1800 - timeLeft
-      } 
-    });
-  };
-
-  const calculateScore = () => {
-    let correct = 0;
-    Object.keys(answers).forEach(questionId => {
-      const question = questions.find(q => q.id === parseInt(questionId));
-      if (question && answers[questionId] === question.correct) {
-        correct++;
-      }
-    });
-    return correct;
-  };
-
   const handleNext = () => {
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(prev => prev + 1);
     }
   };
 
   const handlePrevious = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
+    if (currentQuestion > 0) {
+      setCurrentQuestion(prev => prev - 1);
     }
   };
 
-  const getQuestionTypeIcon = (type) => {
-    switch (type) {
-      case 'numerical': return <Calculator className="h-5 w-5" />;
-      case 'logical': return <Brain className="h-5 w-5" />;
-      case 'verbal': return <BookOpen className="h-5 w-5" />;
-      default: return <Target className="h-5 w-5" />;
-    }
-  };
-
-  const getQuestionTypeColor = (type) => {
-    switch (type) {
-      case 'numerical': return 'text-blue-600 bg-blue-100';
-      case 'logical': return 'text-purple-600 bg-purple-100';
-      case 'verbal': return 'text-green-600 bg-green-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
+  const startTest = () => {
+    setIsStarted(true);
+    setShowInstructions(false);
   };
 
   if (showInstructions) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-        <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="max-w-4xl mx-auto px-4 py-8"
+        >
           {/* Header */}
-          <div className="text-center mb-8">
-            <Link to="/" className="inline-flex items-center space-x-3 mb-6 group">
-              <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg group-hover:scale-110 transition-transform">
-                <GraduationCap className="h-6 w-6 text-white" />
-              </div>
-              <div className="text-left">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  EduGuide
-                </h1>
-                <p className="text-xs text-gray-500 -mt-1">Your College Search Partner</p>
-              </div>
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex items-center space-x-3 mb-8"
+          >
+            <Link to="/" className="p-2 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+              <ArrowLeft className="h-6 w-6 text-gray-600" />
             </Link>
-            
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Aptitude Assessment
-            </h2>
-            <p className="text-xl text-gray-600">
-              Test your skills and discover your strengths
-            </p>
-          </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Aptitude Test</h1>
+              <p className="text-gray-600">Discover your strengths and potential</p>
+            </div>
+          </motion.div>
 
-          {/* Instructions */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          {/* Instructions Card */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="bg-white rounded-3xl shadow-2xl p-8 mb-8"
+          >
             <div className="text-center mb-8">
-              <Brain className="h-16 w-16 text-blue-600 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Test Instructions</h3>
-              <p className="text-gray-600">Please read the instructions carefully before starting</p>
+              <motion.div 
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-6"
+              >
+                <Brain className="h-10 w-10 text-white" />
+              </motion.div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Test Instructions</h2>
+              <p className="text-gray-600 text-lg">Please read the instructions carefully before starting</p>
             </div>
 
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex items-start space-x-3">
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="space-y-4"
+              >
+                <div className="flex items-center space-x-3">
                   <div className="p-2 bg-blue-100 rounded-lg">
                     <Clock className="h-5 w-5 text-blue-600" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Time Limit</h4>
-                    <p className="text-sm text-gray-600">30 minutes for 10 questions</p>
+                    <h3 className="font-semibold text-gray-900">Time Limit</h3>
+                    <p className="text-gray-600">30 minutes for 5 questions</p>
                   </div>
                 </div>
-
-                <div className="flex items-start space-x-3">
+                <div className="flex items-center space-x-3">
                   <div className="p-2 bg-green-100 rounded-lg">
                     <CheckCircle className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Question Types</h4>
-                    <p className="text-sm text-gray-600">Numerical, Logical, and Verbal</p>
+                    <h3 className="font-semibold text-gray-900">Multiple Choice</h3>
+                    <p className="text-gray-600">Select the best answer for each question</p>
                   </div>
                 </div>
+              </motion.div>
 
-                <div className="flex items-start space-x-3">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <ArrowLeft className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Navigation</h4>
-                    <p className="text-sm text-gray-600">You can go back and review answers</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-3">
-                  <div className="p-2 bg-orange-100 rounded-lg">
-                    <AlertCircle className="h-5 w-5 text-orange-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Auto-Submit</h4>
-                    <p className="text-sm text-gray-600">Test submits automatically when time runs out</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
-                <h4 className="font-semibold text-blue-900 mb-3">Important Notes:</h4>
-                <ul className="space-y-2 text-sm text-blue-800">
-                  <li>• Ensure you have a stable internet connection</li>
-                  <li>• Don't refresh the page during the test</li>
-                  <li>• Answer all questions to get accurate results</li>
-                  <li>• You can pause the test if needed</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="mt-8 text-center">
-              <button
-                onClick={startTest}
-                className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                className="space-y-4"
               >
-                <Play className="h-5 w-5 mr-2" />
-                Start Test
-              </button>
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <Target className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Categories</h3>
+                    <p className="text-gray-600">Logical, Numerical, Verbal, Spatial, Problem Solving</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-orange-100 rounded-lg">
+                    <BarChart3 className="h-5 w-5 text-orange-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Results</h3>
+                    <p className="text-gray-600">Get detailed analysis and recommendations</p>
+                  </div>
+                </div>
+              </motion.div>
             </div>
-          </div>
-        </div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.0 }}
+              className="text-center"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={startTest}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300 shadow-xl text-lg"
+              >
+                Start Test <ChevronRight className="ml-2 h-6 w-6 inline" />
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </div>
     );
   }
 
-  const currentQuestion = questions[currentQuestionIndex];
-  const answeredCount = Object.keys(answers).length;
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center space-x-3 group">
-              <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg group-hover:scale-110 transition-transform">
-                <GraduationCap className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  EduGuide
-                </h1>
-                <p className="text-xs text-gray-500 -mt-1">Aptitude Test</p>
-              </div>
-            </Link>
-            
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={togglePause}
-                className={`inline-flex items-center px-4 py-2 border rounded-xl font-medium transition-all duration-200 ${
-                  isPaused
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
-                    : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
-                }`}
-              >
-                {isPaused ? (
-                  <>
-                    <Play className="h-4 w-4 mr-2" />
-                    Resume
-                  </>
-                ) : (
-                  <>
-                    <Pause className="h-4 w-4 mr-2" />
-                    Pause
-                  </>
-                )}
-              </button>
-              
-              <div className="text-center">
-                <div className="text-sm text-gray-600">Time Remaining</div>
-                <div className={`text-xl font-mono font-bold ${timeLeft < 300 ? 'text-red-600' : 'text-gray-900'}`}>
-                  {formatTime(timeLeft)}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Progress Bar */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
-          <div className="flex items-center justify-between mb-4">
+        {/* Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex items-center justify-between mb-8"
+        >
+          <div className="flex items-center space-x-3">
+            <Link to="/" className="p-2 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+              <ArrowLeft className="h-6 w-6 text-gray-600" />
+            </Link>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                Question {currentQuestionIndex + 1} of {questions.length}
-              </h2>
-              <p className="text-sm text-gray-600">
-                {answeredCount} of {questions.length} questions answered
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="text-sm text-gray-600">Progress</div>
-              <div className="text-lg font-semibold text-blue-600">
-                {Math.round(((currentQuestionIndex + 1) / questions.length) * 100)}%
-              </div>
+              <h1 className="text-2xl font-bold text-gray-900">Aptitude Test</h1>
+              <p className="text-gray-600">Question {currentQuestion + 1} of {questions.length}</p>
             </div>
           </div>
           
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div 
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 h-3 rounded-full transition-all duration-300"
-              style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
-            ></div>
-          </div>
-        </div>
-
-        {/* Question */}
-        {currentQuestion && (
-          <div className="bg-white rounded-2xl shadow-lg p-8 mb-6 border border-gray-100">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className={`p-2 rounded-lg ${getQuestionTypeColor(currentQuestion.type)}`}>
-                {getQuestionTypeIcon(currentQuestion.type)}
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-gray-600 uppercase tracking-wide">
-                  {currentQuestion.type} Reasoning
-                </h3>
-              </div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex items-center space-x-4"
+          >
+            <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-xl shadow-lg">
+              <Timer className="h-5 w-5 text-red-500" />
+              <span className="font-mono font-bold text-lg text-gray-900">
+                {formatTime(timeLeft)}
+              </span>
             </div>
-            
-            <h2 className="text-xl font-semibold text-gray-900 mb-6 leading-relaxed">
-              {currentQuestion.question}
-            </h2>
-            
-            <div className="space-y-3">
-              {currentQuestion.options.map((option, index) => (
-                <label 
-                  key={index} 
-                  className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-50 ${
-                    answers[currentQuestion.id] === option
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+          </motion.div>
+        </motion.div>
+
+        {/* Progress Bar */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="bg-white rounded-2xl shadow-lg p-6 mb-8"
+        >
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-sm font-semibold text-gray-700">Progress</span>
+            <span className="text-sm text-gray-600">{currentQuestion + 1} / {questions.length}</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-3">
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+              transition={{ duration: 0.5 }}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 h-3 rounded-full"
+            />
+          </div>
+        </motion.div>
+
+        {/* Question Card */}
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={currentQuestion}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white rounded-3xl shadow-2xl p-8 mb-8"
+          >
+            <div className="mb-6">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-4"
+              >
+                {questions[currentQuestion].category}
+              </motion.div>
+              <motion.h2 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-2xl font-bold text-gray-900 mb-6"
+              >
+                {questions[currentQuestion].question}
+              </motion.h2>
+            </div>
+
+            <div className="space-y-4">
+              {questions[currentQuestion].options.map((option, index) => (
+                <motion.button
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
+                  whileHover={{ scale: 1.02, x: 10 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleAnswer(questions[currentQuestion].id, index)}
+                  className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 ${
+                    answers[questions[currentQuestion].id] === index
+                      ? 'border-blue-600 bg-blue-50 shadow-lg'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  <input
-                    type="radio"
-                    name={`question-${currentQuestion.id}`}
-                    value={option}
-                    checked={answers[currentQuestion.id] === option}
-                    onChange={() => handleAnswerSelect(currentQuestion.id, option)}
-                    className="mr-4 h-4 w-4 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700 font-medium">{option}</span>
-                </label>
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                      answers[questions[currentQuestion].id] === index
+                        ? 'border-blue-600 bg-blue-600'
+                        : 'border-gray-300'
+                    }`}>
+                      {answers[questions[currentQuestion].id] === index && (
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="w-2 h-2 bg-white rounded-full"
+                        />
+                      )}
+                    </div>
+                    <span className="text-gray-900 font-medium">{option}</span>
+                  </div>
+                </motion.button>
               ))}
             </div>
-          </div>
-        )}
+          </motion.div>
+        </AnimatePresence>
 
         {/* Navigation */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-          <div className="flex justify-between items-center">
-            <button
-              onClick={handlePrevious}
-              disabled={currentQuestionIndex === 0}
-              className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Previous
-            </button>
-            
-            <div className="flex space-x-2">
-              {questions.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentQuestionIndex(index)}
-                  className={`w-10 h-10 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    index === currentQuestionIndex
-                      ? 'bg-blue-600 text-white'
-                      : answers[questions[index]?.id]
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                >
-                  {index + 1}
-                </button>
-              ))}
-            </div>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="flex justify-between items-center"
+        >
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handlePrevious}
+            disabled={currentQuestion === 0}
+            className="flex items-center space-x-2 px-6 py-3 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ChevronLeft className="h-5 w-5" />
+            <span>Previous</span>
+          </motion.button>
 
-            {currentQuestionIndex === questions.length - 1 ? (
-              <button
-                onClick={submitTest}
-                className="inline-flex items-center px-8 py-3 border border-transparent rounded-xl font-medium text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 transition-all duration-200 transform hover:scale-105"
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            {currentQuestion === questions.length - 1 ? (
+              <Link
+                to="/test-completion"
+                className="flex items-center space-x-2 px-8 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-xl font-semibold hover:shadow-xl transition-all duration-200"
               >
-                Submit Test
-                <CheckCircle className="h-4 w-4 ml-2" />
-              </button>
+                <span>Finish Test</span>
+                <CheckCircle className="h-5 w-5" />
+              </Link>
             ) : (
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={handleNext}
-                className="inline-flex items-center px-6 py-3 border border-transparent rounded-xl font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200"
+                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-xl transition-all duration-200"
               >
-                Next
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </button>
+                <span>Next</span>
+                <ChevronRight className="h-5 w-5" />
+              </motion.button>
             )}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );

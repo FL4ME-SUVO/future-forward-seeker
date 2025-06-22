@@ -36,7 +36,7 @@ const StudentDashboard = () => {
     name: 'John Doe',
     email: 'john.doe@example.com',
     profile: 'Engineering Student',
-    avatar: '👨‍🎓',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
     testScore: 85,
     completedTests: 3,
     savedColleges: 8,
@@ -67,7 +67,7 @@ const StudentDashboard = () => {
       location: 'Mumbai, India',
       rating: 4.8,
       tuition: '$3,000 - $5,000',
-      image: '🏛️'
+      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=400"
     },
     {
       id: 2,
@@ -75,7 +75,7 @@ const StudentDashboard = () => {
       location: 'San Francisco, USA',
       rating: 4.9,
       tuition: '$55,000 - $60,000',
-      image: '🌉'
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400"
     }
   ];
 

@@ -53,7 +53,7 @@ const LocationSelection = () => {
       language: 'English, Hindi, Marathi',
       topColleges: ['IIT Bombay', 'BITS Pilani', 'NMIMS'],
       favorite: false,
-      image: '🏙️'
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400"
     },
     {
       id: 2,
@@ -68,7 +68,7 @@ const LocationSelection = () => {
       language: 'English, Kannada',
       topColleges: ['IISc Bangalore', 'BMS College', 'RVCE'],
       favorite: false,
-      image: '💻'
+      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400"
     },
     {
       id: 3,
@@ -83,7 +83,7 @@ const LocationSelection = () => {
       language: 'English',
       topColleges: ['NYU', 'Columbia', 'Cornell'],
       favorite: false,
-      image: '🗽'
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400"
     },
     {
       id: 4,
@@ -98,7 +98,7 @@ const LocationSelection = () => {
       language: 'English',
       topColleges: ['Stanford', 'UC Berkeley', 'UCSF'],
       favorite: false,
-      image: '🌉'
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400"
     },
     {
       id: 5,
@@ -113,7 +113,7 @@ const LocationSelection = () => {
       language: 'English',
       topColleges: ['Imperial College', 'UCL', 'LSE'],
       favorite: false,
-      image: '🇬🇧'
+      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400"
     },
     {
       id: 6,
@@ -128,7 +128,7 @@ const LocationSelection = () => {
       language: 'English, French',
       topColleges: ['University of Toronto', 'York University', 'Ryerson'],
       favorite: false,
-      image: '🍁'
+      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400"
     },
     {
       id: 7,
@@ -143,7 +143,7 @@ const LocationSelection = () => {
       language: 'English',
       topColleges: ['University of Melbourne', 'Monash', 'RMIT'],
       favorite: false,
-      image: '🦘'
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400"
     },
     {
       id: 8,
@@ -158,7 +158,7 @@ const LocationSelection = () => {
       language: 'German, English',
       topColleges: ['TU Berlin', 'Humboldt University', 'Free University'],
       favorite: false,
-      image: '🏛️'
+      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=400"
     },
     {
       id: 9,
@@ -173,7 +173,7 @@ const LocationSelection = () => {
       language: 'French, English',
       topColleges: ['Sorbonne', 'École Polytechnique', 'HEC Paris'],
       favorite: false,
-      image: '🗼'
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400"
     },
     {
       id: 10,
@@ -188,7 +188,7 @@ const LocationSelection = () => {
       language: 'English, Mandarin, Malay, Tamil',
       topColleges: ['NUS', 'NTU', 'SMU'],
       favorite: false,
-      image: '🦁'
+      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400"
     },
     {
       id: 11,
@@ -203,7 +203,7 @@ const LocationSelection = () => {
       language: 'Japanese, English',
       topColleges: ['University of Tokyo', 'Waseda', 'Keio'],
       favorite: false,
-      image: '🗾'
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400"
     },
     {
       id: 12,
@@ -218,7 +218,7 @@ const LocationSelection = () => {
       language: 'English, Hindi',
       topColleges: ['IIT Delhi', 'Delhi University', 'JNU'],
       favorite: false,
-      image: '🏛️'
+      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=400"
     }
   ];
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   GraduationCap, 
   Search, 
@@ -17,7 +18,20 @@ import {
   CheckCircle,
   X,
   Heart,
-  HeartOff
+  HeartOff,
+  Zap,
+  Lightbulb,
+  Code,
+  Palette,
+  Microscope,
+  Calculator,
+  Globe,
+  Shield,
+  Camera,
+  Settings,
+  Building2,
+  User,
+  Activity
 } from 'lucide-react';
 
 const CareerSelection = () => {
@@ -27,21 +41,19 @@ const CareerSelection = () => {
   const [showFavorites, setShowFavorites] = useState(false);
 
   const categories = [
-    { id: 'all', name: 'All Careers', icon: '🎯' },
-    { id: 'engineering', name: 'Engineering', icon: '⚙️' },
-    { id: 'technology', name: 'Technology', icon: '💻' },
-    { id: 'healthcare', name: 'Healthcare', icon: '🏥' },
-    { id: 'business', name: 'Business', icon: '💼' },
-    { id: 'arts', name: 'Arts & Design', icon: '🎨' },
-    { id: 'science', name: 'Science', icon: '🔬' },
-    { id: 'education', name: 'Education', icon: '📚' }
+    { id: 'all', name: 'All Careers', icon: Briefcase, color: 'from-blue-500 to-purple-500' },
+    { id: 'tech', name: 'Technology', icon: Code, color: 'from-blue-500 to-cyan-500' },
+    { id: 'creative', name: 'Creative Arts', icon: Palette, color: 'from-purple-500 to-pink-500' },
+    { id: 'science', name: 'Science', icon: Microscope, color: 'from-green-500 to-teal-500' },
+    { id: 'business', name: 'Business', icon: TrendingUp, color: 'from-orange-500 to-red-500' },
+    { id: 'health', name: 'Healthcare', icon: Heart, color: 'from-red-500 to-pink-500' }
   ];
 
   const careers = [
     {
       id: 1,
       title: 'Software Engineer',
-      category: 'technology',
+      category: 'tech',
       description: 'Design, develop, and maintain software applications and systems.',
       salary: '$85,000 - $150,000',
       growth: '22%',
@@ -49,12 +61,13 @@ const CareerSelection = () => {
       duration: '4 years',
       skills: ['Programming', 'Problem Solving', 'Teamwork', 'Communication'],
       favorite: false,
-      icon: '💻'
+      icon: Code,
+      color: 'from-blue-500 to-cyan-500'
     },
     {
       id: 2,
       title: 'Data Scientist',
-      category: 'technology',
+      category: 'tech',
       description: 'Analyze complex data to help organizations make informed decisions.',
       salary: '$95,000 - $160,000',
       growth: '31%',
@@ -62,12 +75,13 @@ const CareerSelection = () => {
       duration: '4-6 years',
       skills: ['Statistics', 'Machine Learning', 'Python', 'SQL'],
       favorite: false,
-      icon: '📊'
+      icon: Activity,
+      color: 'from-purple-500 to-pink-500'
     },
     {
       id: 3,
       title: 'Mechanical Engineer',
-      category: 'engineering',
+      category: 'tech',
       description: 'Design and build mechanical devices, engines, and machines.',
       salary: '$70,000 - $120,000',
       growth: '7%',
@@ -75,12 +89,13 @@ const CareerSelection = () => {
       duration: '4 years',
       skills: ['CAD', 'Physics', 'Mathematics', 'Design'],
       favorite: false,
-      icon: '⚙️'
+      icon: Settings,
+      color: 'from-blue-500 to-cyan-500'
     },
     {
       id: 4,
       title: 'Medical Doctor',
-      category: 'healthcare',
+      category: 'health',
       description: 'Diagnose and treat patients, provide medical care and advice.',
       salary: '$150,000 - $300,000',
       growth: '13%',
@@ -88,7 +103,8 @@ const CareerSelection = () => {
       duration: '8-12 years',
       skills: ['Medicine', 'Patient Care', 'Diagnosis', 'Communication'],
       favorite: false,
-      icon: '👨‍⚕️'
+      icon: Heart,
+      color: 'from-red-500 to-pink-500'
     },
     {
       id: 5,
@@ -101,12 +117,13 @@ const CareerSelection = () => {
       duration: '4 years',
       skills: ['Analysis', 'Communication', 'Problem Solving', 'Business'],
       favorite: false,
-      icon: '📈'
+      icon: TrendingUp,
+      color: 'from-orange-500 to-red-500'
     },
     {
       id: 6,
       title: 'UX/UI Designer',
-      category: 'arts',
+      category: 'creative',
       description: 'Design user-friendly digital interfaces and experiences.',
       salary: '$70,000 - $130,000',
       growth: '18%',
@@ -114,12 +131,13 @@ const CareerSelection = () => {
       duration: '4 years',
       skills: ['Design', 'User Research', 'Prototyping', 'Creativity'],
       favorite: false,
-      icon: '🎨'
+      icon: Palette,
+      color: 'from-pink-500 to-rose-500'
     },
     {
       id: 7,
       title: 'Civil Engineer',
-      category: 'engineering',
+      category: 'tech',
       description: 'Design and oversee construction of infrastructure projects.',
       salary: '$65,000 - $115,000',
       growth: '8%',
@@ -127,12 +145,13 @@ const CareerSelection = () => {
       duration: '4 years',
       skills: ['Design', 'Mathematics', 'Project Management', 'Construction'],
       favorite: false,
-      icon: '🏗️'
+      icon: Building2,
+      color: 'from-blue-500 to-cyan-500'
     },
     {
       id: 8,
       title: 'Nurse Practitioner',
-      category: 'healthcare',
+      category: 'health',
       description: 'Provide advanced nursing care and prescribe medications.',
       salary: '$100,000 - $150,000',
       growth: '45%',
@@ -140,7 +159,8 @@ const CareerSelection = () => {
       duration: '6-8 years',
       skills: ['Patient Care', 'Medicine', 'Communication', 'Assessment'],
       favorite: false,
-      icon: '👩‍⚕️'
+      icon: User,
+      color: 'from-red-500 to-pink-500'
     },
     {
       id: 9,
@@ -153,7 +173,8 @@ const CareerSelection = () => {
       duration: '4 years',
       skills: ['Finance', 'Analysis', 'Excel', 'Economics'],
       favorite: false,
-      icon: '💰'
+      icon: Calculator,
+      color: 'from-green-500 to-emerald-500'
     },
     {
       id: 10,
@@ -166,12 +187,13 @@ const CareerSelection = () => {
       duration: '4-6 years',
       skills: ['Engineering', 'Biology', 'Medicine', 'Design'],
       favorite: false,
-      icon: '🔬'
+      icon: Microscope,
+      color: 'from-teal-500 to-cyan-500'
     },
     {
       id: 11,
       title: 'Teacher',
-      category: 'education',
+      category: 'health',
       description: 'Educate students in various subjects and grade levels.',
       salary: '$45,000 - $80,000',
       growth: '8%',
@@ -179,12 +201,13 @@ const CareerSelection = () => {
       duration: '4-5 years',
       skills: ['Teaching', 'Communication', 'Patience', 'Organization'],
       favorite: false,
-      icon: '👨‍🏫'
+      icon: BookOpen,
+      color: 'from-blue-500 to-purple-500'
     },
     {
       id: 12,
       title: 'Cybersecurity Analyst',
-      category: 'technology',
+      category: 'tech',
       description: 'Protect computer systems and networks from cyber threats.',
       salary: '$80,000 - $140,000',
       growth: '33%',
@@ -192,7 +215,8 @@ const CareerSelection = () => {
       duration: '4 years',
       skills: ['Security', 'Networking', 'Programming', 'Analysis'],
       favorite: false,
-      icon: '🔒'
+      icon: Shield,
+      color: 'from-indigo-500 to-purple-500'
     }
   ];
 

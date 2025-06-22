@@ -26,7 +26,10 @@ import {
   BarChart3,
   Calendar,
   BookOpenCheck,
-  GraduationCap as GraduationCapIcon
+  GraduationCap as GraduationCapIcon,
+  Settings,
+  Palette,
+  Microscope
 } from 'lucide-react';
 
 const CollegeSelection = () => {
@@ -49,13 +52,12 @@ const CollegeSelection = () => {
   ];
 
   const programs = [
-    { id: 'all', name: 'All Programs', icon: '🎯' },
-    { id: 'engineering', name: 'Engineering', icon: '⚙️' },
-    { id: 'technology', name: 'Technology', icon: '💻' },
-    { id: 'business', name: 'Business', icon: '💼' },
-    { id: 'medicine', name: 'Medicine', icon: '🏥' },
-    { id: 'arts', name: 'Arts & Design', icon: '🎨' },
-    { id: 'science', name: 'Science', icon: '🔬' }
+    { id: 'all', name: 'All Programs', icon: BookOpen },
+    { id: 'engineering', name: 'Engineering', icon: Settings },
+    { id: 'business', name: 'Business', icon: TrendingUp },
+    { id: 'medicine', name: 'Medicine', icon: Heart },
+    { id: 'arts', name: 'Arts & Humanities', icon: Palette },
+    { id: 'science', name: 'Science', icon: Microscope }
   ];
 
   const colleges = [
@@ -77,7 +79,7 @@ const CollegeSelection = () => {
       topPrograms: ['Computer Science', 'Mechanical Engineering', 'Electrical Engineering'],
       facilities: ['Research Labs', 'Library', 'Sports Complex', 'Hostels'],
       favorite: false,
-      image: '🏛️',
+      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=400",
       rating: 4.8,
       placementRate: '95%',
       avgSalary: '$85,000',
@@ -102,7 +104,7 @@ const CollegeSelection = () => {
       topPrograms: ['Computer Science', 'Engineering', 'Business', 'Medicine'],
       facilities: ['Research Centers', 'Libraries', 'Sports Facilities', 'Dining'],
       favorite: false,
-      image: '🌉',
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400",
       rating: 4.9,
       placementRate: '98%',
       avgSalary: '$120,000',
@@ -127,7 +129,7 @@ const CollegeSelection = () => {
       topPrograms: ['Engineering', 'Medicine', 'Business', 'Science'],
       facilities: ['Research Labs', 'Library', 'Sports Center', 'Student Union'],
       favorite: false,
-      image: '🇬🇧',
+      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400",
       rating: 4.7,
       placementRate: '96%',
       avgSalary: '$95,000',
@@ -152,7 +154,7 @@ const CollegeSelection = () => {
       topPrograms: ['Computer Science', 'Mechanical', 'Chemical Engineering'],
       facilities: ['Labs', 'Library', 'Sports', 'Hostels'],
       favorite: false,
-      image: '🏛️',
+      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=400",
       rating: 4.6,
       placementRate: '92%',
       avgSalary: '$75,000',
@@ -177,7 +179,7 @@ const CollegeSelection = () => {
       topPrograms: ['Engineering', 'Computer Science', 'Physics', 'Mathematics'],
       facilities: ['Research Labs', 'Libraries', 'Museums', 'Sports'],
       favorite: false,
-      image: '🎓',
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400",
       rating: 4.9,
       placementRate: '99%',
       avgSalary: '$130,000',
@@ -202,7 +204,7 @@ const CollegeSelection = () => {
       topPrograms: ['Engineering', 'Business', 'Medicine', 'Arts & Science'],
       facilities: ['Libraries', 'Research Centers', 'Sports', 'Student Services'],
       favorite: false,
-      image: '🍁',
+      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400",
       rating: 4.5,
       placementRate: '89%',
       avgSalary: '$80,000',

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   GraduationCap, 
   Search, 
@@ -22,7 +23,14 @@ import {
   BookOpen,
   Phone,
   Mail,
-  ExternalLink
+  ExternalLink,
+  Eye,
+  Target,
+  Building,
+  Shield,
+  Settings,
+  Palette,
+  Microscope
 } from 'lucide-react';
 
 const CollegeList = () => {
@@ -30,28 +38,37 @@ const CollegeList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [selectedProgram, setSelectedProgram] = useState('all');
+  const [selectedType, setSelectedType] = useState('all');
   const [priceRange, setPriceRange] = useState('all');
   const [showFavorites, setShowFavorites] = useState(false);
+  const [favorites, setFavorites] = useState([]);
+  const [sortBy, setSortBy] = useState('name');
 
   const locations = [
-    { id: 'all', name: 'All Locations', flag: '🌍' },
-    { id: 'mumbai', name: 'Mumbai, India', flag: '🇮🇳' },
-    { id: 'bangalore', name: 'Bangalore, India', flag: '🇮🇳' },
-    { id: 'delhi', name: 'Delhi, India', flag: '🇮🇳' },
-    { id: 'newyork', name: 'New York, USA', flag: '🇺🇸' },
-    { id: 'sanfrancisco', name: 'San Francisco, USA', flag: '🇺🇸' },
-    { id: 'london', name: 'London, UK', flag: '🇬🇧' },
-    { id: 'toronto', name: 'Toronto, Canada', flag: '🇨🇦' }
+    { id: 'all', name: 'All Locations', flag: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400", icon: Globe },
+    { id: 'mumbai', name: 'Mumbai, India', flag: "https://images.unsplash.com/photo-1562774053-701939374585?w=400", icon: MapPin },
+    { id: 'bangalore', name: 'Bangalore, India', flag: "https://images.unsplash.com/photo-1562774053-701939374585?w=400", icon: MapPin },
+    { id: 'delhi', name: 'Delhi, India', flag: "https://images.unsplash.com/photo-1562774053-701939374585?w=400", icon: MapPin },
+    { id: 'newyork', name: 'New York, USA', flag: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400", icon: MapPin },
+    { id: 'sanfrancisco', name: 'San Francisco, USA', flag: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400", icon: MapPin },
+    { id: 'london', name: 'London, UK', flag: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400", icon: MapPin },
+    { id: 'toronto', name: 'Toronto, Canada', flag: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400", icon: MapPin }
   ];
 
   const programs = [
-    { id: 'all', name: 'All Programs', icon: '🎯' },
-    { id: 'engineering', name: 'Engineering', icon: '⚙️' },
-    { id: 'technology', name: 'Technology', icon: '💻' },
-    { id: 'business', name: 'Business', icon: '💼' },
-    { id: 'medicine', name: 'Medicine', icon: '🏥' },
-    { id: 'arts', name: 'Arts & Design', icon: '🎨' },
-    { id: 'science', name: 'Science', icon: '🔬' }
+    { id: 'all', name: 'All Programs', icon: BookOpen },
+    { id: 'engineering', name: 'Engineering', icon: Settings },
+    { id: 'business', name: 'Business', icon: TrendingUp },
+    { id: 'medicine', name: 'Medicine', icon: Heart },
+    { id: 'arts', name: 'Arts & Humanities', icon: Palette },
+    { id: 'science', name: 'Science', icon: Microscope }
+  ];
+
+  const types = [
+    { id: 'all', name: 'All Types', icon: Building },
+    { id: 'public', name: 'Public', icon: Shield },
+    { id: 'private', name: 'Private', icon: Award },
+    { id: 'deemed', name: 'Deemed', icon: Star }
   ];
 
   const colleges = [
@@ -73,8 +90,12 @@ const CollegeList = () => {
       topPrograms: ['Computer Science', 'Mechanical Engineering', 'Electrical Engineering'],
       facilities: ['Research Labs', 'Library', 'Sports Complex', 'Hostels'],
       favorite: false,
-      image: '🏛️',
-      rating: 4.8
+      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=400",
+      rating: 4.8,
+      type: 'public',
+      fees: '₹2.5L - ₹8L',
+      courses: ['Engineering', 'Technology', 'Management'],
+      placement: '95%'
     },
     {
       id: 2,
@@ -94,8 +115,12 @@ const CollegeList = () => {
       topPrograms: ['Computer Science', 'Engineering', 'Business', 'Medicine'],
       facilities: ['Research Centers', 'Libraries', 'Sports Facilities', 'Dining'],
       favorite: false,
-      image: '🌉',
-      rating: 4.9
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400",
+      rating: 4.9,
+      type: 'public',
+      fees: '₹50K - ₹2L',
+      courses: ['Engineering', 'Technology', 'Business', 'Science'],
+      placement: '85%'
     },
     {
       id: 3,
@@ -115,8 +140,12 @@ const CollegeList = () => {
       topPrograms: ['Engineering', 'Medicine', 'Business', 'Science'],
       facilities: ['Research Labs', 'Library', 'Sports Center', 'Student Union'],
       favorite: false,
-      image: '🇬🇧',
-      rating: 4.7
+      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400",
+      rating: 4.7,
+      type: 'public',
+      fees: '₹35,000 - ₹40,000',
+      courses: ['Engineering', 'Technology', 'Science', 'Medicine'],
+      placement: '85%'
     },
     {
       id: 4,
@@ -136,8 +165,12 @@ const CollegeList = () => {
       topPrograms: ['Computer Science', 'Mechanical', 'Chemical Engineering'],
       facilities: ['Labs', 'Library', 'Sports', 'Hostels'],
       favorite: false,
-      image: '🏛️',
-      rating: 4.6
+      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=400",
+      rating: 4.6,
+      type: 'deemed',
+      fees: '₹4L - ₹12L',
+      courses: ['Engineering', 'Technology', 'Business'],
+      placement: '92%'
     },
     {
       id: 5,
@@ -157,8 +190,12 @@ const CollegeList = () => {
       topPrograms: ['Engineering', 'Computer Science', 'Physics', 'Mathematics'],
       facilities: ['Research Labs', 'Libraries', 'Museums', 'Sports'],
       favorite: false,
-      image: '🎓',
-      rating: 4.9
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400",
+      rating: 4.9,
+      type: 'public',
+      fees: '₹55,000 - ₹60,000',
+      courses: ['Engineering', 'Technology', 'Science'],
+      placement: '88%'
     },
     {
       id: 6,
@@ -178,8 +215,12 @@ const CollegeList = () => {
       topPrograms: ['Engineering', 'Business', 'Medicine', 'Arts & Science'],
       facilities: ['Libraries', 'Research Centers', 'Sports', 'Student Services'],
       favorite: false,
-      image: '🍁',
-      rating: 4.5
+      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400",
+      rating: 4.5,
+      type: 'public',
+      fees: '₹45,000 - ₹50,000',
+      courses: ['Engineering', 'Technology', 'Business', 'Science', 'Arts'],
+      placement: '82%'
     },
     {
       id: 7,
@@ -199,8 +240,12 @@ const CollegeList = () => {
       topPrograms: ['Engineering', 'Physics', 'Chemistry', 'Biology'],
       facilities: ['Research Labs', 'Library', 'Computing', 'Sports'],
       favorite: false,
-      image: '🔬',
-      rating: 4.7
+      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=400",
+      rating: 4.7,
+      type: 'public',
+      fees: '₹2,000 - ₹4,000',
+      courses: ['Engineering', 'Technology', 'Science'],
+      placement: '78%'
     },
     {
       id: 8,
@@ -220,13 +265,22 @@ const CollegeList = () => {
       topPrograms: ['Business', 'Medicine', 'Law', 'Arts & Sciences'],
       facilities: ['Libraries', 'Museums', 'Research Centers', 'Sports'],
       favorite: false,
-      image: '🎓',
-      rating: 4.8
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400",
+      rating: 4.8,
+      type: 'public',
+      fees: '₹55,000 - ₹60,000',
+      courses: ['Business', 'Medicine', 'Law', 'Arts & Sciences'],
+      placement: '78%'
     }
   ];
 
   const toggleFavorite = (collegeId) => {
     setSelectedColleges(prev => 
+      prev.includes(collegeId) 
+        ? prev.filter(id => id !== collegeId)
+        : [...prev, collegeId]
+    );
+    setFavorites(prev => 
       prev.includes(collegeId) 
         ? prev.filter(id => id !== collegeId)
         : [...prev, collegeId]
@@ -239,6 +293,7 @@ const CollegeList = () => {
     const matchesLocation = selectedLocation === 'all' || college.location === selectedLocation;
     const matchesProgram = selectedProgram === 'all' || college.programs.includes(selectedProgram);
     const matchesFavorites = !showFavorites || selectedColleges.includes(college.id);
+    const matchesType = selectedType === 'all' || college.type === selectedType;
     
     // Price range filtering
     let matchesPrice = true;
@@ -250,7 +305,20 @@ const CollegeList = () => {
       matchesPrice = college.tuition.includes('$50,000') || college.tuition.includes('$55,000') || college.tuition.includes('£35,000');
     }
     
-    return matchesSearch && matchesLocation && matchesProgram && matchesFavorites && matchesPrice;
+    return matchesSearch && matchesLocation && matchesProgram && matchesFavorites && matchesPrice && matchesType;
+  });
+
+  const sortedColleges = [...filteredColleges].sort((a, b) => {
+    switch (sortBy) {
+      case 'rating':
+        return b.rating - a.rating;
+      case 'fees':
+        return a.tuition.localeCompare(b.tuition);
+      case 'students':
+        return b.students - a.students;
+      default:
+        return a.name.localeCompare(b.name);
+    }
   });
 
   const selectedCollegesData = colleges.filter(college => selectedColleges.includes(college.id));
@@ -326,7 +394,7 @@ const CollegeList = () => {
               >
                 {locations.map(location => (
                   <option key={location.id} value={location.id}>
-                    {location.flag} {location.name}
+                    {location.name}
                   </option>
                 ))}
               </select>
@@ -341,7 +409,7 @@ const CollegeList = () => {
               >
                 {programs.map(program => (
                   <option key={program.id} value={program.id}>
-                    {program.icon} {program.name}
+                    {program.name}
                   </option>
                 ))}
               </select>
@@ -354,10 +422,10 @@ const CollegeList = () => {
                 onChange={(e) => setPriceRange(e.target.value)}
                 className="block w-full px-3 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
               >
-                <option value="all">💰 All Prices</option>
-                <option value="low">💵 Low ($2K-$5K)</option>
-                <option value="medium">💵💵 Medium ($5K-$10K)</option>
-                <option value="high">💵💵💵 High ($50K+)</option>
+                <option value="all">All Prices</option>
+                <option value="low">Low ($2K-$5K)</option>
+                <option value="medium">Medium ($5K-$10K)</option>
+                <option value="high">High ($50K+)</option>
               </select>
             </div>
           </div>
@@ -408,7 +476,8 @@ const CollegeList = () => {
                   key={college.id}
                   className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
                 >
-                  {college.image} {college.name}
+                  <img src={college.image} alt={college.name} className="h-8 w-8 rounded-full mr-2" />
+                  {college.name}
                   <button
                     onClick={() => toggleFavorite(college.id)}
                     className="ml-2 text-blue-600 hover:text-blue-800"
@@ -421,135 +490,170 @@ const CollegeList = () => {
           </div>
         )}
 
+        {/* Filter Tabs */}
+        <div className="bg-white rounded-2xl shadow-lg p-4 mb-8">
+          <div className="flex flex-wrap gap-4">
+            {/* Type Filters */}
+            <div className="flex items-center space-x-2">
+              <Building className="h-5 w-5 text-gray-400" />
+              <span className="text-gray-600 font-medium">Type:</span>
+              <div className="flex space-x-2">
+                {types.map((type, index) => {
+                  const IconComponent = type.icon;
+                  return (
+                    <motion.button
+                      key={type.id}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setSelectedType(type.id)}
+                      className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${
+                        selectedType === type.id
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {type.name}
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Results Count */}
+        <div className="mb-6">
+          <p className="text-gray-600">
+            Found <span className="font-semibold text-blue-600">{sortedColleges.length}</span> colleges
+          </p>
+        </div>
+
         {/* Colleges Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredColleges.map(college => (
-            <div
-              key={college.id}
-              className={`bg-white rounded-2xl shadow-lg border-2 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
-                selectedColleges.includes(college.id)
-                  ? 'border-blue-500 shadow-blue-100'
-                  : 'border-gray-100 hover:border-gray-200'
-              }`}
-            >
-              <div className="p-6">
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-3xl">{college.image}</span>
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        {college.name}
-                      </h3>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <MapPin className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">{college.locationName}</span>
-                        <span className="flex items-center text-sm text-yellow-600">
-                          <Star className="h-4 w-4 fill-current" />
-                          {college.rating}
-                        </span>
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={`${selectedLocation}-${selectedProgram}-${searchTerm}-${priceRange}-${showFavorites}-${sortBy}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+          >
+            {sortedColleges.map((college, index) => (
+              <motion.div
+                key={college.id}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                whileHover={{ y: -10, scale: 1.02 }}
+                className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
+              >
+                {/* Image */}
+                <div className="relative h-48 bg-gradient-to-br from-blue-500 to-purple-600">
+                  <img 
+                    src={college.image} 
+                    alt={college.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <motion.button
+                    whileHover={{ scale: 1.2 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => toggleFavorite(college.id)}
+                    className="absolute top-4 right-4 p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+                  >
+                    <Heart className={`h-5 w-5 ${favorites.includes(college.id) ? 'fill-current text-red-500' : 'text-white'}`} />
+                  </motion.button>
+                  <div className="absolute bottom-4 left-4 flex items-center space-x-2">
+                    <div className="flex items-center space-x-1 bg-white/90 rounded-full px-2 py-1">
+                      <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                      <span className="text-sm font-semibold text-gray-900">{college.rating}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{college.name}</h3>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">{college.description}</p>
+
+                  {/* Stats */}
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="flex items-center space-x-2">
+                      <Users className="h-4 w-4 text-blue-600" />
+                      <div>
+                        <div className="text-xs text-gray-600">Students</div>
+                        <div className="text-sm font-semibold text-gray-900">{college.students.toLocaleString()}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <DollarSign className="h-4 w-4 text-green-600" />
+                      <div>
+                        <div className="text-xs text-gray-600">Fees</div>
+                        <div className="text-sm font-semibold text-gray-900">{college.tuition}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Target className="h-4 w-4 text-purple-600" />
+                      <div>
+                        <div className="text-xs text-gray-600">Acceptance</div>
+                        <div className="text-sm font-semibold text-gray-900">{college.acceptanceRate}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <TrendingUp className="h-4 w-4 text-orange-600" />
+                      <div>
+                        <div className="text-xs text-gray-600">Placement</div>
+                        <div className="text-sm font-semibold text-gray-900">{college.placement}</div>
                       </div>
                     </div>
                   </div>
-                  <button
-                    onClick={() => toggleFavorite(college.id)}
-                    className={`p-2 rounded-full transition-colors ${
-                      selectedColleges.includes(college.id)
-                        ? 'text-red-500 bg-red-50 hover:bg-red-100'
-                        : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
-                    }`}
-                  >
-                    {selectedColleges.includes(college.id) ? (
-                      <Heart className="h-5 w-5 fill-current" />
-                    ) : (
-                      <Heart className="h-5 w-5" />
-                    )}
-                  </button>
-                </div>
 
-                {/* Description */}
-                <p className="text-gray-600 text-sm mb-4">
-                  {college.description}
-                </p>
+                  {/* Top Programs */}
+                  <div className="mb-6">
+                    <h4 className="text-sm font-semibold text-gray-900 mb-2">Top Programs</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {college.topPrograms.slice(0, 3).map((program, index) => (
+                        <motion.span
+                          key={index}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3, delay: index * 0.1 }}
+                          className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium"
+                        >
+                          {program}
+                        </motion.span>
+                      ))}
+                    </div>
+                  </div>
 
-                {/* Stats Grid */}
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="flex items-center space-x-2">
-                    <DollarSign className="h-4 w-4 text-green-500" />
-                    <span className="text-sm text-gray-700">{college.tuition}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Users className="h-4 w-4 text-blue-500" />
-                    <span className="text-sm text-gray-700">{college.students.toLocaleString()} students</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <TrendingUp className="h-4 w-4 text-purple-500" />
-                    <span className="text-sm text-gray-700">{college.acceptanceRate} acceptance</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Award className="h-4 w-4 text-orange-500" />
-                    <span className="text-sm text-gray-700">Rank #{college.ranking}</span>
+                  {/* Action Buttons */}
+                  <div className="flex space-x-3">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-2"
+                    >
+                      <Eye className="h-4 w-4" />
+                      <span>View Details</span>
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-4 py-3 border border-gray-300 text-gray-700 rounded-xl hover:border-blue-600 hover:text-blue-600 transition-all duration-300"
+                    >
+                      <BookOpen className="h-4 w-4" />
+                    </motion.button>
                   </div>
                 </div>
-
-                {/* Top Programs */}
-                <div className="mb-4">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Top Programs</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {college.topPrograms.map((program, index) => (
-                      <span
-                        key={index}
-                        className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700"
-                      >
-                        {program}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Contact Info */}
-                <div className="mb-4 space-y-2">
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <Globe className="h-4 w-4" />
-                    <a href={college.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center">
-                      Visit Website
-                      <ExternalLink className="h-3 w-3 ml-1" />
-                    </a>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <Phone className="h-4 w-4" />
-                    <span>{college.phone}</span>
-                  </div>
-                </div>
-
-                {/* Action Button */}
-                <button
-                  onClick={() => toggleFavorite(college.id)}
-                  className={`w-full py-3 px-4 rounded-xl font-medium transition-all duration-200 ${
-                    selectedColleges.includes(college.id)
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {selectedColleges.includes(college.id) ? (
-                    <span className="flex items-center justify-center">
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Selected
-                    </span>
-                  ) : (
-                    <span className="flex items-center justify-center">
-                      <Heart className="h-4 w-4 mr-2" />
-                      Add to Selection
-                    </span>
-                  )}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
 
         {/* No Results */}
-        {filteredColleges.length === 0 && (
+        {sortedColleges.length === 0 && (
           <div className="text-center py-12">
             <Building2 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No colleges found</h3>
