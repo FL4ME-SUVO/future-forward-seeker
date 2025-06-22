@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   BookOpen, 
@@ -64,14 +64,31 @@ import {
   Database
 } from 'lucide-react';
 import { motion } from "framer-motion";
+import Particles from "react-tsparticles";
+import { loadSlim } from "tsparticles-slim";
 
 const Index = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const particlesInit = useCallback(async (engine) => {
+    await loadSlim(engine);
+  }, []);
 
   useEffect(() => {
     setIsVisible(true);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
@@ -171,7 +188,11 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Header */}
-      <header className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-gray-200">
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200' 
+          : 'bg-transparent'
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
@@ -179,26 +200,54 @@ const Index = () => {
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                <h1 className={`text-xl font-bold transition-colors duration-300 ${
+                  isScrolled 
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent' 
+                    : 'text-white'
+                }`}>
                   EduGuide
                 </h1>
-                <p className="text-xs text-gray-500 -mt-1">Your College Search Partner</p>
+                <p className={`text-xs transition-colors duration-300 -mt-1 ${
+                  isScrolled ? 'text-gray-500' : 'text-white/80'
+                }`}>
+                  Your College Search Partner
+                </p>
               </div>
             </div>
             <nav className="hidden md:flex space-x-6">
-              <a href="#about" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm px-3 py-2 rounded-lg hover:bg-blue-50">
+              <a href="#about" className={`transition-all duration-300 font-medium text-sm px-3 py-2 rounded-lg ${
+                isScrolled 
+                  ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
+                  : 'text-white hover:bg-white/20'
+              }`}>
                 About
               </a>
-              <a href="#features" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm px-3 py-2 rounded-lg hover:bg-blue-50">
+              <a href="#features" className={`transition-all duration-300 font-medium text-sm px-3 py-2 rounded-lg ${
+                isScrolled 
+                  ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
+                  : 'text-white hover:bg-white/20'
+              }`}>
                 Features
               </a>
-              <a href="#contact" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm px-3 py-2 rounded-lg hover:bg-blue-50">
+              <a href="#contact" className={`transition-all duration-300 font-medium text-sm px-3 py-2 rounded-lg ${
+                isScrolled 
+                  ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
+                  : 'text-white hover:bg-white/20'
+              }`}>
                 Contact
               </a>
-              <Link to="/student-login" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm px-3 py-2 rounded-lg hover:bg-blue-50">
+              <Link to="/student-login" className={`transition-all duration-300 font-medium text-sm px-3 py-2 rounded-lg ${
+                isScrolled 
+                  ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
+                  : 'text-white hover:bg-white/20'
+              }`}>
                 Student Login
               </Link>
-              <Link to="/college-signup" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm px-3 py-2 rounded-lg hover:bg-blue-50">
+              <Link to="/college-signup" className={`transition-all duration-300 font-medium text-sm px-3 py-2 rounded-lg ${
+                isScrolled 
+                  ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
+                  : 'text-white hover:bg-white/20'
+              }`}>
                 College Portal
               </Link>
               <Link to="/student-signup" className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-medium text-sm">
@@ -206,7 +255,11 @@ const Index = () => {
               </Link>
             </nav>
             <div className="md:hidden">
-              <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+              <button className={`p-2 rounded-lg transition-colors ${
+                isScrolled 
+                  ? 'hover:bg-gray-100 text-gray-600' 
+                  : 'hover:bg-white/20 text-white'
+              }`}>
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
@@ -217,15 +270,84 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-16 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-indigo-600/5"></div>
+      <section className="relative pt-24 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-900">
+        <Particles
+          id="tsparticles"
+          init={particlesInit}
+          options={{
+            background: {
+              color: {
+                value: "transparent",
+              },
+            },
+            fpsLimit: 60,
+            interactivity: {
+              events: {
+                onHover: {
+                  enable: true,
+                  mode: "grab",
+                },
+                resize: true,
+              },
+              modes: {
+                grab: {
+                  distance: 140,
+                  links: {
+                    opacity: 1,
+                  }
+                },
+              },
+            },
+            particles: {
+              color: {
+                value: "#ffffff",
+              },
+              links: {
+                color: "#ffffff",
+                distance: 150,
+                enable: true,
+                opacity: 0.2,
+                width: 1,
+              },
+              move: {
+                direction: "none",
+                enable: true,
+                outModes: {
+                  default: "out",
+                },
+                random: false,
+                speed: 0.5,
+                straight: false,
+              },
+              number: {
+                density: {
+                  enable: true,
+                  area: 800,
+                },
+                value: 80,
+              },
+              opacity: {
+                value: 0.2,
+              },
+              shape: {
+                type: "circle",
+              },
+              size: {
+                value: { min: 1, max: 3 },
+              },
+            },
+            detectRetina: true,
+          }}
+          className="absolute inset-0 -z-0"
+        />
+        <div className="absolute inset-0 bg-slate-900/40"></div>
         <div className="relative max-w-6xl mx-auto">
           <div className="text-center">
             <motion.div 
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium mb-8"
+              className="inline-flex items-center px-4 py-2 bg-slate-800 text-blue-400 rounded-full text-sm font-medium mb-8"
             >
               <Star className="w-4 h-4 mr-2" />
               Trusted by 50,000+ students worldwide
@@ -234,16 +356,16 @@ const Index = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-4xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight"
+              className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight"
             >
               Find Your Perfect
-              <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"> College Path</span>
+              <span className="block bg-gradient-to-r from-blue-200 to-indigo-100 bg-clip-text text-transparent"> College Path</span>
             </motion.h2>
             <motion.p 
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed"
+              className="text-lg text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed"
             >
               Discover engineering and management universities worldwide. Get personalized recommendations, 
               take aptitude tests, and make informed decisions about your educational future.
@@ -291,21 +413,14 @@ const Index = () => {
                   key={index} 
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 1 + index * 0.1 }}
-                  className="text-center group"
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="text-center p-6 bg-white/50 rounded-xl shadow-lg border border-gray-100"
                 >
-                  <div className="flex items-center justify-center mb-4">
-                    <motion.div 
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      className="p-3 bg-white rounded-2xl shadow-lg group-hover:shadow-xl transition-shadow"
-                    >
-                      <div className="text-blue-600">
-                        {stat.icon}
-                      </div>
-                    </motion.div>
+                  <div className="flex items-center justify-center mb-4 text-blue-600">
+                    {stat.icon}
                   </div>
-                  <div className="text-3xl font-bold text-gray-900 mb-2">{stat.number}</div>
-                  <div className="text-gray-600 font-medium">{stat.label}</div>
+                  <h3 className="text-3xl font-bold text-gray-900">{stat.number}</h3>
+                  <p className="text-gray-500">{stat.label}</p>
                 </motion.div>
               ))}
             </motion.div>
