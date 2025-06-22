@@ -414,13 +414,13 @@ const Index = () => {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="text-center p-6 bg-white/50 rounded-xl shadow-lg border border-gray-100"
+                  className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl shadow-lg border border-white/20"
                 >
-                  <div className="flex items-center justify-center mb-4 text-blue-600">
+                  <div className="flex items-center justify-center mb-4 text-blue-300">
                     {stat.icon}
                   </div>
-                  <h3 className="text-3xl font-bold text-gray-900">{stat.number}</h3>
-                  <p className="text-gray-500">{stat.label}</p>
+                  <h3 className="text-3xl font-bold text-white mb-2">{stat.number}</h3>
+                  <p className="text-gray-300 font-medium">{stat.label}</p>
                 </motion.div>
               ))}
             </motion.div>
@@ -429,7 +429,7 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-white relative z-10">
+      <section id="features" className="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -438,7 +438,7 @@ const Index = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h3 className="text-4xl font-bold text-gray-900 mb-6">
+            <h3 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent mb-6">
               Everything You Need
             </h3>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -454,11 +454,11 @@ const Index = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 whileHover={{ y: -10, scale: 1.02 }}
-                className="group p-6 rounded-3xl bg-gradient-to-br from-gray-50 to-blue-50 hover:from-blue-50 hover:to-indigo-50 transition-all duration-500 border border-gray-100"
+                className="group p-8 rounded-3xl bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-sm hover:from-blue-50/80 hover:to-indigo-50/40 transition-all duration-500 border border-white/50 shadow-xl hover:shadow-2xl"
               >
                 <motion.div 
                   whileHover={{ scale: 1.1, rotate: 5 }}
-                  className="w-14 h-14 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg"
+                  className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300"
                 >
                   <div className="text-white">
                     {feature.icon}
@@ -475,7 +475,7 @@ const Index = () => {
       </section>
 
       {/* Aptitude Test Section */}
-      <section id="aptitude" className="py-20 bg-gradient-to-br from-blue-50 to-green-50 relative z-10">
+      <section id="aptitude" className="py-20 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-16">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -526,10 +526,10 @@ const Index = () => {
             viewport={{ once: true }}
             className="w-full md:w-1/2"
           >
-            <h3 className="text-4xl font-bold text-gray-900 mb-6">
-              Discover Your Strengths
+            <h3 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Discover Your <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Strengths</span>
             </h3>
-            <p className="text-lg text-gray-600 mb-8 max-w-xl">
+            <p className="text-lg text-gray-300 mb-8 max-w-xl leading-relaxed">
               Take our engaging, science-backed aptitude test to uncover your unique talents and career potential. Get instant, personalized recommendations to guide your educational journey.
             </p>
             <motion.div
@@ -548,7 +548,7 @@ const Index = () => {
       </section>
 
       {/* How It Works */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 relative z-10">
+      <section className="py-20 bg-gradient-to-br from-white via-blue-50 to-indigo-50 relative z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -557,7 +557,7 @@ const Index = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h3 className="text-4xl font-bold text-gray-900 mb-6">
+            <h3 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent mb-6">
               How It Works
             </h3>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -597,19 +597,19 @@ const Index = () => {
                 <div className="relative mb-8">
                   <motion.div 
                     whileHover={{ scale: 1.1, rotate: 5 }}
-                    className={`w-20 h-20 bg-gradient-to-r ${step.gradient} rounded-3xl flex items-center justify-center mx-auto shadow-xl`}
+                    className={`w-24 h-24 bg-gradient-to-r ${step.gradient} rounded-3xl flex items-center justify-center mx-auto shadow-xl group-hover:shadow-2xl transition-all duration-300`}
                   >
-                    <span className="text-2xl font-bold text-white">{step.number}</span>
+                    <span className="text-3xl font-bold text-white">{step.number}</span>
                   </motion.div>
                   <motion.div 
                     animate={{ scale: [1, 1.1, 1] }}
                     transition={{ duration: 2, repeat: Infinity, delay: index * 0.5 }}
-                    className="absolute -top-3 -right-3 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg"
+                    className="absolute -top-3 -right-3 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-lg"
                   >
-                    <CheckCircle className="w-5 h-5 text-white" />
+                    <CheckCircle className="w-6 h-6 text-white" />
                   </motion.div>
                 </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-4">{step.title}</h4>
+                <h4 className="text-2xl font-bold text-gray-900 mb-4">{step.title}</h4>
                 <p className="text-gray-600 leading-relaxed">
                   {step.description}
                 </p>
@@ -620,10 +620,10 @@ const Index = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-white relative z-10">
+      <section className="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h3 className="text-4xl font-bold text-gray-900 mb-6">
+            <h3 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent mb-6">
               What Our Students Say
             </h3>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -644,10 +644,10 @@ const Index = () => {
                 ))}
               </div>
             </div>
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-12 md:p-16 border border-blue-100">
+            <div className="bg-gradient-to-br from-white/80 to-blue-50/80 backdrop-blur-sm rounded-3xl p-12 md:p-16 border border-white/50 shadow-2xl">
               <div className="text-center">
                 <div className="flex justify-center mb-6">
-                  <div className="p-4 bg-white rounded-2xl shadow-lg">
+                  <div className="p-4 bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 rounded-2xl shadow-lg border-2 border-white/80">
                     {testimonials[currentTestimonial].icon}
                   </div>
                 </div>
@@ -664,13 +664,13 @@ const Index = () => {
             <div className="flex justify-center mt-8 space-x-4">
               <button
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="p-3 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow border border-gray-100"
+                className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-shadow border border-white/50"
               >
                 {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
               </button>
               <button
                 onClick={() => setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)}
-                className="p-3 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow border border-gray-100"
+                className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-shadow border border-white/50"
               >
                 <RotateCcw className="w-6 h-6" />
               </button>
@@ -680,10 +680,10 @@ const Index = () => {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 relative z-10">
+      <section id="about" className="py-20 bg-gradient-to-br from-white via-slate-50 to-blue-50 relative z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h3 className="text-4xl font-bold text-gray-900 mb-6">
+            <h3 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent mb-6">
               About EduGuide
             </h3>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -717,16 +717,24 @@ const Index = () => {
             <h4 className="text-3xl font-bold text-gray-900 mb-12">Meet Our Team</h4>
             <div className="grid md:grid-cols-3 gap-12">
               {team.map((member, index) => (
-                <div key={index} className="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-shadow border border-gray-100">
+                <motion.div 
+                  key={index} 
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  className="bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-sm rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/50"
+                >
                   <div className="flex justify-center mb-6">
-                    <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl">
+                    <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg">
                       {member.icon}
                     </div>
                   </div>
                   <h5 className="text-xl font-bold text-gray-900 mb-3">{member.name}</h5>
                   <p className="text-blue-600 font-semibold mb-4">{member.role}</p>
                   <p className="text-gray-600 leading-relaxed">{member.bio}</p>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -734,37 +742,47 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-600 relative z-10">
+      <section className="py-20 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 relative z-10">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h3 className="text-4xl font-bold text-white mb-8">
+          <h3 className="text-4xl md:text-5xl font-bold text-white mb-8">
             Ready to Start Your Journey?
           </h3>
           <p className="text-lg text-blue-100 mb-12">
             Join thousands of students who have found their perfect college with EduGuide
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Link
-              to="/student-signup"
-              className="bg-white text-blue-600 px-8 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 shadow-xl flex items-center justify-center text-lg"
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              Get Started Now <ArrowRight className="ml-3 h-6 w-6" />
-            </Link>
-            <Link
-              to="/college-list"
-              className="border-2 border-white text-white px-8 py-4 rounded-2xl font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105 flex items-center justify-center text-lg"
+              <Link
+                to="/student-signup"
+                className="bg-white text-blue-600 px-8 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 shadow-xl flex items-center justify-center text-lg"
+              >
+                Get Started Now <ArrowRight className="ml-3 h-6 w-6" />
+              </Link>
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <Search className="mr-3 h-6 w-6" />
-              Explore Colleges
-            </Link>
+              <Link
+                to="/college-list"
+                className="border-2 border-white text-white px-8 py-4 rounded-2xl font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105 flex items-center justify-center text-lg"
+              >
+                <Search className="mr-3 h-6 w-6" />
+                Explore Colleges
+              </Link>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 bg-white relative z-10">
+      <section id="contact" className="py-20 bg-gradient-to-br from-white via-slate-50 to-blue-50 relative z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h3 className="text-4xl font-bold text-gray-900 mb-6">
+            <h3 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent mb-6">
               Get in Touch
             </h3>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -776,8 +794,8 @@ const Index = () => {
               <h4 className="text-3xl font-bold text-gray-900 mb-8">Contact Information</h4>
               <div className="space-y-8">
                 <div className="flex items-center space-x-6">
-                  <div className="p-4 bg-blue-50 rounded-2xl">
-                    <Mail className="w-8 h-8 text-blue-600" />
+                  <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
+                    <Mail className="w-8 h-8 text-white" />
                   </div>
                   <div>
                     <h5 className="text-xl font-semibold text-gray-900 mb-2">Email</h5>
@@ -785,8 +803,8 @@ const Index = () => {
                   </div>
                 </div>
                 <div className="flex items-center space-x-6">
-                  <div className="p-4 bg-blue-50 rounded-2xl">
-                    <Phone className="w-8 h-8 text-blue-600" />
+                  <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
+                    <Phone className="w-8 h-8 text-white" />
                   </div>
                   <div>
                     <h5 className="text-xl font-semibold text-gray-900 mb-2">Phone</h5>
@@ -794,8 +812,8 @@ const Index = () => {
                   </div>
                 </div>
                 <div className="flex items-center space-x-6">
-                  <div className="p-4 bg-blue-50 rounded-2xl">
-                    <MapPin className="w-8 h-8 text-blue-600" />
+                  <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
+                    <MapPin className="w-8 h-8 text-white" />
                   </div>
                   <div>
                     <h5 className="text-xl font-semibold text-gray-900 mb-2">Address</h5>
@@ -807,23 +825,23 @@ const Index = () => {
               <div className="mt-12">
                 <h5 className="text-xl font-semibold text-gray-900 mb-6">Follow Us</h5>
                 <div className="flex space-x-4">
-                  <a href="#" className="p-3 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
-                    <Facebook className="w-6 h-6 text-blue-600" />
+                  <a href="#" className="p-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl hover:shadow-lg transition-all duration-300">
+                    <Facebook className="w-6 h-6 text-white" />
                   </a>
-                  <a href="#" className="p-3 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
-                    <Twitter className="w-6 h-6 text-blue-600" />
+                  <a href="#" className="p-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl hover:shadow-lg transition-all duration-300">
+                    <Twitter className="w-6 h-6 text-white" />
                   </a>
-                  <a href="#" className="p-3 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
-                    <Instagram className="w-6 h-6 text-blue-600" />
+                  <a href="#" className="p-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl hover:shadow-lg transition-all duration-300">
+                    <Instagram className="w-6 h-6 text-white" />
                   </a>
-                  <a href="#" className="p-3 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
-                    <Linkedin className="w-6 h-6 text-blue-600" />
+                  <a href="#" className="p-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl hover:shadow-lg transition-all duration-300">
+                    <Linkedin className="w-6 h-6 text-white" />
                   </a>
                 </div>
               </div>
             </div>
             
-            <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-3xl p-10 border border-gray-100">
+            <div className="bg-gradient-to-br from-white/80 to-blue-50/80 backdrop-blur-sm rounded-3xl p-10 border border-white/50 shadow-2xl">
               <h4 className="text-3xl font-bold text-gray-900 mb-8">Send us a Message</h4>
               <form className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -831,7 +849,7 @@ const Index = () => {
                     <label className="block text-sm font-semibold text-gray-700 mb-3">First Name</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
+                      className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm"
                       placeholder="Your first name"
                     />
                   </div>
@@ -839,7 +857,7 @@ const Index = () => {
                     <label className="block text-sm font-semibold text-gray-700 mb-3">Last Name</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
+                      className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm"
                       placeholder="Your last name"
                     />
                   </div>
@@ -848,7 +866,7 @@ const Index = () => {
                   <label className="block text-sm font-semibold text-gray-700 mb-3">Email</label>
                   <input
                     type="email"
-                    className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
+                    className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm"
                     placeholder="your.email@example.com"
                   />
                 </div>
@@ -856,16 +874,18 @@ const Index = () => {
                   <label className="block text-sm font-semibold text-gray-700 mb-3">Message</label>
                   <textarea
                     rows={4}
-                    className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
+                    className="w-full px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm"
                     placeholder="Tell us how we can help you..."
                   />
                 </div>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="submit"
                   className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 px-6 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center text-lg"
                 >
                   Send Message <Send className="ml-3 h-6 w-6" />
-                </button>
+                </motion.button>
               </form>
             </div>
           </div>
