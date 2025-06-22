@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   GraduationCap, 
   Search, 
@@ -41,14 +42,14 @@ const CollegeSelection = () => {
   const [showComparison, setShowComparison] = useState(false);
 
   const locations = [
-    { id: 'all', name: 'All Locations', flag: '🌍' },
-    { id: 'mumbai', name: 'Mumbai, India', flag: '🇮🇳' },
-    { id: 'bangalore', name: 'Bangalore, India', flag: '🇮🇳' },
-    { id: 'delhi', name: 'Delhi, India', flag: '🇮🇳' },
-    { id: 'newyork', name: 'New York, USA', flag: '🇺🇸' },
-    { id: 'sanfrancisco', name: 'San Francisco, USA', flag: '🇺🇸' },
-    { id: 'london', name: 'London, UK', flag: '🇬🇧' },
-    { id: 'toronto', name: 'Toronto, Canada', flag: '🇨🇦' }
+    { id: 'all', name: 'All Locations', flag: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400" },
+    { id: 'mumbai', name: 'Mumbai, India', flag: "https://images.unsplash.com/photo-1562774053-701939374585?w=400" },
+    { id: 'bangalore', name: 'Bangalore, India', flag: "https://images.unsplash.com/photo-1562774053-701939374585?w=400" },
+    { id: 'delhi', name: 'Delhi, India', flag: "https://images.unsplash.com/photo-1562774053-701939374585?w=400" },
+    { id: 'newyork', name: 'New York, USA', flag: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400" },
+    { id: 'sanfrancisco', name: 'San Francisco, USA', flag: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400" },
+    { id: 'london', name: 'London, UK', flag: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400" },
+    { id: 'toronto', name: 'Toronto, Canada', flag: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400" }
   ];
 
   const programs = [
@@ -242,8 +243,18 @@ const CollegeSelection = () => {
 
   const selectedCollegesData = colleges.filter(college => selectedColleges.includes(college.id));
 
+  console.log('CollegeSelection component rendering');
+  console.log('Colleges data:', colleges.length);
+  console.log('Filtered colleges:', filteredColleges?.length);
+  console.log('Selected colleges:', selectedColleges);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      {/* Test div to check if component is rendering */}
+      <div className="bg-red-500 text-white p-4 text-center">
+        CollegeSelection Component is Rendering - Debug Test
+      </div>
+      
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -313,7 +324,7 @@ const CollegeSelection = () => {
               >
                 {locations.map(location => (
                   <option key={location.id} value={location.id}>
-                    {location.flag} {location.name}
+                    {location.name}
                   </option>
                 ))}
               </select>
@@ -328,7 +339,7 @@ const CollegeSelection = () => {
               >
                 {programs.map(program => (
                   <option key={program.id} value={program.id}>
-                    {program.icon} {program.name}
+                    {program.name}
                   </option>
                 ))}
               </select>
@@ -341,10 +352,10 @@ const CollegeSelection = () => {
                 onChange={(e) => setPriceRange(e.target.value)}
                 className="block w-full px-3 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
               >
-                <option value="all">💰 All Prices</option>
-                <option value="low">💵 Low ($3K-$5K)</option>
-                <option value="medium">💵💵 Medium ($6K-$10K)</option>
-                <option value="high">💵💵💵 High ($50K+)</option>
+                <option value="all">All Prices</option>
+                <option value="low">Low ($3K-$5K)</option>
+                <option value="medium">Medium ($6K-$10K)</option>
+                <option value="high">High ($50K+)</option>
               </select>
             </div>
           </div>
@@ -384,7 +395,8 @@ const CollegeSelection = () => {
                   key={college.id}
                   className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
                 >
-                  {college.image} {college.name}
+                  <img src={college.image} alt={college.name} className="w-12 h-12 rounded-lg object-cover" />
+                  {college.name}
                   <button
                     onClick={() => toggleSelection(college.id)}
                     className="ml-2 text-blue-600 hover:text-blue-800"
@@ -478,147 +490,160 @@ const CollegeSelection = () => {
         )}
 
         {/* Colleges Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredColleges.map(college => (
-            <div
-              key={college.id}
-              className={`bg-white rounded-2xl shadow-lg border-2 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
-                selectedColleges.includes(college.id)
-                  ? 'border-blue-500 shadow-blue-100'
-                  : 'border-gray-100 hover:border-gray-200'
-              }`}
-            >
-              <div className="p-6">
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-3xl">{college.image}</span>
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        {college.name}
-                      </h3>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <MapPin className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">{college.locationName}</span>
-                        <span className="flex items-center text-sm text-yellow-600">
-                          <Star className="h-4 w-4 fill-current" />
-                          {college.rating}
-                        </span>
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={`${selectedLocation}-${selectedProgram}-${searchTerm}-${priceRange}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+          >
+            {filteredColleges.map((college, index) => (
+              <motion.div
+                key={college.id}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                whileHover={{ y: -10, scale: 1.02 }}
+                className={`bg-white rounded-2xl shadow-lg border-2 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                  selectedColleges.includes(college.id)
+                    ? 'border-blue-500 shadow-blue-100'
+                    : 'border-gray-100 hover:border-gray-200'
+                }`}
+              >
+                <div className="p-6">
+                  {/* Header */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <img src={college.image} alt={college.name} className="w-12 h-12 rounded-lg object-cover" />
+                      <div>
+                        <h3 className="text-xl font-semibold text-gray-900">
+                          {college.name}
+                        </h3>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <MapPin className="h-4 w-4 text-gray-400" />
+                          <span className="text-sm text-gray-600">{college.locationName}</span>
+                          <span className="flex items-center text-sm text-yellow-600">
+                            <Star className="h-4 w-4 fill-current" />
+                            {college.rating}
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    <button
+                      onClick={() => toggleSelection(college.id)}
+                      className={`p-2 rounded-full transition-colors ${
+                        selectedColleges.includes(college.id)
+                          ? 'text-blue-500 bg-blue-50 hover:bg-blue-100'
+                          : 'text-gray-400 hover:text-blue-500 hover:bg-blue-50'
+                      }`}
+                    >
+                      {selectedColleges.includes(college.id) ? (
+                        <CheckCircle className="h-5 w-5 fill-current" />
+                      ) : (
+                        <CheckCircle className="h-5 w-5" />
+                      )}
+                    </button>
                   </div>
+
+                  {/* Description */}
+                  <p className="text-gray-600 text-sm mb-4">
+                    {college.description}
+                  </p>
+
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="flex items-center space-x-2">
+                      <DollarSign className="h-4 w-4 text-green-500" />
+                      <span className="text-sm text-gray-700">{college.tuition}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Users className="h-4 w-4 text-blue-500" />
+                      <span className="text-sm text-gray-700">{college.students.toLocaleString()} students</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <TrendingUp className="h-4 w-4 text-purple-500" />
+                      <span className="text-sm text-gray-700">{college.acceptanceRate} acceptance</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Award className="h-4 w-4 text-orange-500" />
+                      <span className="text-sm text-gray-700">Rank #{college.ranking}</span>
+                    </div>
+                  </div>
+
+                  {/* Additional Stats */}
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    <div className="text-center p-2 bg-gray-50 rounded-lg">
+                      <div className="text-sm font-medium text-gray-900">{college.placementRate}</div>
+                      <div className="text-xs text-gray-500">Placement</div>
+                    </div>
+                    <div className="text-center p-2 bg-gray-50 rounded-lg">
+                      <div className="text-sm font-medium text-gray-900">{college.avgSalary}</div>
+                      <div className="text-xs text-gray-500">Avg Salary</div>
+                    </div>
+                    <div className="text-center p-2 bg-gray-50 rounded-lg">
+                      <div className="text-sm font-medium text-gray-900">{college.internationalStudents}</div>
+                      <div className="text-xs text-gray-500">Int'l Students</div>
+                    </div>
+                  </div>
+
+                  {/* Top Programs */}
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-900 mb-2">Top Programs</h4>
+                    <div className="flex flex-wrap gap-1">
+                      {college.topPrograms.map((program, index) => (
+                        <span
+                          key={index}
+                          className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700"
+                        >
+                          {program}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Contact Info */}
+                  <div className="mb-4 space-y-2">
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <Globe className="h-4 w-4" />
+                      <a href={college.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center">
+                        Visit Website
+                        <ExternalLink className="h-3 w-3 ml-1" />
+                      </a>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <Phone className="h-4 w-4" />
+                      <span>{college.phone}</span>
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
                   <button
                     onClick={() => toggleSelection(college.id)}
-                    className={`p-2 rounded-full transition-colors ${
+                    className={`w-full py-3 px-4 rounded-xl font-medium transition-all duration-200 ${
                       selectedColleges.includes(college.id)
-                        ? 'text-blue-500 bg-blue-50 hover:bg-blue-100'
-                        : 'text-gray-400 hover:text-blue-500 hover:bg-blue-50'
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
                     {selectedColleges.includes(college.id) ? (
-                      <CheckCircle className="h-5 w-5 fill-current" />
+                      <span className="flex items-center justify-center">
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Selected
+                      </span>
                     ) : (
-                      <CheckCircle className="h-5 w-5" />
+                      <span className="flex items-center justify-center">
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Add to Selection
+                      </span>
                     )}
                   </button>
                 </div>
-
-                {/* Description */}
-                <p className="text-gray-600 text-sm mb-4">
-                  {college.description}
-                </p>
-
-                {/* Stats Grid */}
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="flex items-center space-x-2">
-                    <DollarSign className="h-4 w-4 text-green-500" />
-                    <span className="text-sm text-gray-700">{college.tuition}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Users className="h-4 w-4 text-blue-500" />
-                    <span className="text-sm text-gray-700">{college.students.toLocaleString()} students</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <TrendingUp className="h-4 w-4 text-purple-500" />
-                    <span className="text-sm text-gray-700">{college.acceptanceRate} acceptance</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Award className="h-4 w-4 text-orange-500" />
-                    <span className="text-sm text-gray-700">Rank #{college.ranking}</span>
-                  </div>
-                </div>
-
-                {/* Additional Stats */}
-                <div className="grid grid-cols-3 gap-3 mb-4">
-                  <div className="text-center p-2 bg-gray-50 rounded-lg">
-                    <div className="text-sm font-medium text-gray-900">{college.placementRate}</div>
-                    <div className="text-xs text-gray-500">Placement</div>
-                  </div>
-                  <div className="text-center p-2 bg-gray-50 rounded-lg">
-                    <div className="text-sm font-medium text-gray-900">{college.avgSalary}</div>
-                    <div className="text-xs text-gray-500">Avg Salary</div>
-                  </div>
-                  <div className="text-center p-2 bg-gray-50 rounded-lg">
-                    <div className="text-sm font-medium text-gray-900">{college.internationalStudents}</div>
-                    <div className="text-xs text-gray-500">Int'l Students</div>
-                  </div>
-                </div>
-
-                {/* Top Programs */}
-                <div className="mb-4">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Top Programs</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {college.topPrograms.map((program, index) => (
-                      <span
-                        key={index}
-                        className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700"
-                      >
-                        {program}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Contact Info */}
-                <div className="mb-4 space-y-2">
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <Globe className="h-4 w-4" />
-                    <a href={college.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center">
-                      Visit Website
-                      <ExternalLink className="h-3 w-3 ml-1" />
-                    </a>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <Phone className="h-4 w-4" />
-                    <span>{college.phone}</span>
-                  </div>
-                </div>
-
-                {/* Action Button */}
-                <button
-                  onClick={() => toggleSelection(college.id)}
-                  className={`w-full py-3 px-4 rounded-xl font-medium transition-all duration-200 ${
-                    selectedColleges.includes(college.id)
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {selectedColleges.includes(college.id) ? (
-                    <span className="flex items-center justify-center">
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Selected
-                    </span>
-                  ) : (
-                    <span className="flex items-center justify-center">
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Add to Selection
-                    </span>
-                  )}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
 
         {/* No Results */}
         {filteredColleges.length === 0 && (
