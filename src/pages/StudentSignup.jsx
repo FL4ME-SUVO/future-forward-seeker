@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { 
   UserPlus, 
   GraduationCap, 
@@ -346,11 +347,19 @@ const StudentSignup = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col">
       {/* Header with Logo */}
-      <header className="p-4">
+      <motion.header 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="p-4"
+      >
         <Link to="/" className="inline-flex items-center space-x-3 group">
-          <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl group-hover:scale-110 transition-transform shadow-lg">
+          <motion.div 
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl transition-transform shadow-lg"
+          >
             <GraduationCap className="h-6 w-6 text-white" />
-          </div>
+          </motion.div>
           <div>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               EduGuide
@@ -358,25 +367,43 @@ const StudentSignup = () => {
             <p className="text-xs text-gray-500 -mt-1">Your College Search Partner</p>
           </div>
         </Link>
-      </header>
+      </motion.header>
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 pb-4">
-        <div className="max-w-2xl w-full">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="max-w-2xl w-full"
+        >
           {/* Back Link */}
-          <div className="flex items-center justify-center space-x-2 mb-4">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex items-center justify-center space-x-2 mb-4"
+          >
             <ArrowLeft className="h-4 w-4 text-gray-400" />
             <Link to="/" className="text-sm text-gray-500 hover:text-blue-600 transition-colors font-medium">
               Back to Home
             </Link>
-          </div>
+          </motion.div>
           
           {/* Signup Header */}
-          <div className="text-center mb-6">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-center mb-6"
+          >
             <div className="flex items-center justify-center space-x-2 mb-3">
-              <div className="p-2 bg-blue-100 rounded-xl">
+              <motion.div 
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                className="p-2 bg-blue-100 rounded-xl"
+              >
                 <UserPlus className="h-6 w-6 text-blue-600" />
-              </div>
+              </motion.div>
               <h2 className="text-3xl font-bold text-gray-900">
                 Join EduGuide
               </h2>
@@ -384,7 +411,7 @@ const StudentSignup = () => {
             <p className="text-gray-600 text-lg">
               Create your account and start your college search journey
             </p>
-          </div>
+          </motion.div>
 
           {/* Progress Bar */}
           <div className="mb-4">
@@ -401,7 +428,13 @@ const StudentSignup = () => {
           </div>
 
           {/* Signup Form */}
-          <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-6 border border-white/20">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            whileHover={{ scale: 1.02 }}
+            className="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-6 border border-white/20"
+          >
             <form onSubmit={handleSubmit}>
               {renderCurrentStep()}
               
@@ -437,10 +470,15 @@ const StudentSignup = () => {
                 </button>
               </div>
             </form>
-          </div>
+          </motion.div>
 
           {/* Sign In Link */}
-          <div className="mt-4 text-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.0 }}
+            className="mt-4 text-center"
+          >
             <p className="text-gray-600">
               Already have an account?{' '}
               <Link 
@@ -451,30 +489,44 @@ const StudentSignup = () => {
                 <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </p>
-          </div>
+          </motion.div>
 
           {/* Features Preview */}
-          <div className="mt-6 grid grid-cols-3 gap-4">
-            <div className="text-center p-3 bg-white/50 backdrop-blur-sm rounded-2xl border border-white/20">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.05 }}
+            className="mt-6 grid grid-cols-3 gap-4"
+          >
+            <motion.div 
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="text-center p-3 bg-white/50 backdrop-blur-sm rounded-2xl border border-white/20"
+            >
               <div className="flex justify-center mb-2">
                 <Shield className="h-5 w-5 text-blue-600" />
               </div>
               <p className="text-xs text-gray-600 font-medium">Secure</p>
-            </div>
-            <div className="text-center p-3 bg-white/50 backdrop-blur-sm rounded-2xl border border-white/20">
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="text-center p-3 bg-white/50 backdrop-blur-sm rounded-2xl border border-white/20"
+            >
               <div className="flex justify-center mb-2">
                 <Sparkles className="h-5 w-5 text-purple-600" />
               </div>
               <p className="text-xs text-gray-600 font-medium">Smart</p>
-            </div>
-            <div className="text-center p-3 bg-white/50 backdrop-blur-sm rounded-2xl border border-white/20">
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="text-center p-3 bg-white/50 backdrop-blur-sm rounded-2xl border border-white/20"
+            >
               <div className="flex justify-center mb-2">
                 <CheckCircle className="h-5 w-5 text-green-600" />
               </div>
               <p className="text-xs text-gray-600 font-medium">Reliable</p>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );

@@ -221,50 +221,94 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-indigo-600/5"></div>
         <div className="relative max-w-6xl mx-auto">
           <div className="text-center">
-            <div className={`inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium mb-8"
+            >
               <Star className="w-4 h-4 mr-2" />
               Trusted by 50,000+ students worldwide
-            </div>
-            <h2 className={`text-4xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
+            </motion.div>
+            <motion.h2 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-4xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight"
+            >
               Find Your Perfect
               <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"> College Path</span>
-            </h2>
-            <p className={`text-lg text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed"
+            >
               Discover engineering and management universities worldwide. Get personalized recommendations, 
               take aptitude tests, and make informed decisions about your educational future.
-            </p>
-            <div className={`flex flex-col sm:flex-row gap-6 justify-center mb-16 transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
-              <Link
-                to="/student-signup"
-                className="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 shadow-xl flex items-center justify-center text-lg"
+            </motion.p>
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="flex flex-col sm:flex-row gap-6 justify-center mb-16"
+            >
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Start Your Journey <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                to="/college-list"
-                className="group border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-2xl font-semibold hover:border-blue-600 hover:text-blue-600 transition-all duration-300 transform hover:scale-105 flex items-center justify-center text-lg bg-white"
+                <Link
+                  to="/student-signup"
+                  className="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300 shadow-xl flex items-center justify-center text-lg"
+                >
+                  Start Your Journey <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Search className="mr-3 h-6 w-6" />
-                Browse Colleges
-              </Link>
-            </div>
+                <Link
+                  to="/college-list"
+                  className="group border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-2xl font-semibold hover:border-blue-600 hover:text-blue-600 transition-all duration-300 flex items-center justify-center text-lg bg-white"
+                >
+                  <Search className="mr-3 h-6 w-6" />
+                  Browse Colleges
+                </Link>
+              </motion.div>
+            </motion.div>
             
             {/* Stats */}
-            <div className={`grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto transition-all duration-1000 delay-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto"
+            >
               {stats.map((stat, index) => (
-                <div key={index} className="text-center group">
+                <motion.div 
+                  key={index} 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 1 + index * 0.1 }}
+                  className="text-center group"
+                >
                   <div className="flex items-center justify-center mb-4">
-                    <div className="p-3 bg-white rounded-2xl shadow-lg group-hover:scale-110 transition-transform group-hover:shadow-xl">
+                    <motion.div 
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      className="p-3 bg-white rounded-2xl shadow-lg group-hover:shadow-xl transition-shadow"
+                    >
                       <div className="text-blue-600">
                         {stat.icon}
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
                   <div className="text-3xl font-bold text-gray-900 mb-2">{stat.number}</div>
                   <div className="text-gray-600 font-medium">{stat.label}</div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -272,33 +316,44 @@ const Index = () => {
       {/* Features Section */}
       <section id="features" className="py-20 bg-white relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
             <h3 className="text-4xl font-bold text-gray-900 mb-6">
               Everything You Need
             </h3>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Comprehensive tools and information to help you make the best decision for your future
             </p>
-          </div>
+          </motion.div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <div 
+              <motion.div 
                 key={index}
-                className={`group p-6 rounded-3xl bg-gradient-to-br from-gray-50 to-blue-50 hover:from-blue-50 hover:to-indigo-50 transition-all duration-500 transform hover:-translate-y-2 hover:shadow-2xl border border-gray-100 ${
-                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                }`}
-                style={{ transitionDelay: `${index * 150}ms` }}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -10, scale: 1.02 }}
+                className="group p-6 rounded-3xl bg-gradient-to-br from-gray-50 to-blue-50 hover:from-blue-50 hover:to-indigo-50 transition-all duration-500 border border-gray-100"
               >
-                <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg">
+                <motion.div 
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className="w-14 h-14 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg"
+                >
                   <div className="text-white">
                     {feature.icon}
                   </div>
-                </div>
+                </motion.div>
                 <h4 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h4>
                 <p className="text-gray-600 leading-relaxed">
                   {feature.description}
                 </p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -308,13 +363,24 @@ const Index = () => {
       <section id="aptitude" className="py-20 bg-gradient-to-br from-blue-50 to-green-50 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-16">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
             className="w-full md:w-1/2 flex justify-center"
           >
-            <div className="relative">
+            <motion.div 
+              animate={{ 
+                rotate: [0, 5, -5, 0],
+                scale: [1, 1.05, 1]
+              }}
+              transition={{ 
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="relative"
+            >
               <div className="w-80 h-80 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-2xl">
                 <div className="w-64 h-64 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
                   <div className="w-48 h-48 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center">
@@ -322,16 +388,24 @@ const Index = () => {
                   </div>
                 </div>
               </div>
-              <div className="absolute -top-4 -right-4 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+              <motion.div 
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute -top-4 -right-4 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg"
+              >
                 <CheckCircle className="w-8 h-8 text-white" />
-              </div>
-              <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center shadow-lg animate-ping">
+              </motion.div>
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="absolute -bottom-4 -left-4 w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center shadow-lg"
+              >
                 <Star className="w-6 h-6 text-white" />
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
+            initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
@@ -343,12 +417,17 @@ const Index = () => {
             <p className="text-lg text-gray-600 mb-8 max-w-xl">
               Take our engaging, science-backed aptitude test to uncover your unique talents and career potential. Get instant, personalized recommendations to guide your educational journey.
             </p>
-            <Link
-              to="/aptitude-test"
-              className="inline-block bg-gradient-to-r from-green-500 to-blue-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 shadow-xl text-lg"
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              Start Aptitude Test <ArrowRight className="ml-3 h-6 w-6 inline" />
-            </Link>
+              <Link
+                to="/aptitude-test"
+                className="inline-block bg-gradient-to-r from-green-500 to-blue-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300 shadow-xl text-lg"
+              >
+                Start Aptitude Test <ArrowRight className="ml-3 h-6 w-6 inline" />
+              </Link>
+            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -356,57 +435,71 @@ const Index = () => {
       {/* How It Works */}
       <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 relative z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
             <h3 className="text-4xl font-bold text-gray-900 mb-6">
               How It Works
             </h3>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Simple steps to find your perfect college and start your journey
             </p>
-          </div>
+          </motion.div>
           <div className="grid md:grid-cols-3 gap-12">
-            <div className="text-center group">
-              <div className="relative mb-8">
-                <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-xl">
-                  <span className="text-2xl font-bold text-white">1</span>
+            {[
+              {
+                number: "1",
+                title: "Create Your Profile",
+                description: "Sign up and provide your academic background, entrance exam scores, and career interests.",
+                gradient: "from-blue-600 to-indigo-600"
+              },
+              {
+                number: "2", 
+                title: "Take Aptitude Test",
+                description: "Complete our comprehensive aptitude assessment to understand your strengths and potential.",
+                gradient: "from-green-600 to-emerald-600"
+              },
+              {
+                number: "3",
+                title: "Get Recommendations", 
+                description: "Receive personalized college recommendations based on your profile and test results.",
+                gradient: "from-purple-600 to-pink-600"
+              }
+            ].map((step, index) => (
+              <motion.div 
+                key={index}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -10 }}
+                className="text-center group"
+              >
+                <div className="relative mb-8">
+                  <motion.div 
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className={`w-20 h-20 bg-gradient-to-r ${step.gradient} rounded-3xl flex items-center justify-center mx-auto shadow-xl`}
+                  >
+                    <span className="text-2xl font-bold text-white">{step.number}</span>
+                  </motion.div>
+                  <motion.div 
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: index * 0.5 }}
+                    className="absolute -top-3 -right-3 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg"
+                  >
+                    <CheckCircle className="w-5 h-5 text-white" />
+                  </motion.div>
                 </div>
-                <div className="absolute -top-3 -right-3 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
-                  <CheckCircle className="w-5 h-5 text-white" />
-                </div>
-              </div>
-              <h4 className="text-xl font-bold text-gray-900 mb-4">Create Your Profile</h4>
-              <p className="text-gray-600 leading-relaxed">
-                Sign up and provide your academic background, entrance exam scores, and career interests.
-              </p>
-            </div>
-            <div className="text-center group">
-              <div className="relative mb-8">
-                <div className="w-20 h-20 bg-gradient-to-r from-green-600 to-emerald-600 rounded-3xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-xl">
-                  <span className="text-2xl font-bold text-white">2</span>
-                </div>
-                <div className="absolute -top-3 -right-3 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
-                  <CheckCircle className="w-5 h-5 text-white" />
-                </div>
-              </div>
-              <h4 className="text-xl font-bold text-gray-900 mb-4">Take Aptitude Test</h4>
-              <p className="text-gray-600 leading-relaxed">
-                Complete our comprehensive aptitude assessment to understand your strengths and potential.
-              </p>
-            </div>
-            <div className="text-center group">
-              <div className="relative mb-8">
-                <div className="w-20 h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-xl">
-                  <span className="text-2xl font-bold text-white">3</span>
-                </div>
-                <div className="absolute -top-3 -right-3 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
-                  <CheckCircle className="w-5 h-5 text-white" />
-                </div>
-              </div>
-              <h4 className="text-xl font-bold text-gray-900 mb-4">Get Recommendations</h4>
-              <p className="text-gray-600 leading-relaxed">
-                Receive personalized college recommendations based on your profile and test results.
-              </p>
-            </div>
+                <h4 className="text-xl font-bold text-gray-900 mb-4">{step.title}</h4>
+                <p className="text-gray-600 leading-relaxed">
+                  {step.description}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>

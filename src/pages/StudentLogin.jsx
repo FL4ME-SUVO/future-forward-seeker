@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { 
   LogIn, 
   GraduationCap, 
@@ -46,11 +47,19 @@ const StudentLogin = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col">
       {/* Header with Logo */}
-      <header className="p-4">
+      <motion.header 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="p-4"
+      >
         <Link to="/" className="inline-flex items-center space-x-3 group">
-          <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl group-hover:scale-110 transition-transform shadow-lg">
+          <motion.div 
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl transition-transform shadow-lg"
+          >
             <GraduationCap className="h-6 w-6 text-white" />
-          </div>
+          </motion.div>
           <div>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               EduGuide
@@ -58,25 +67,43 @@ const StudentLogin = () => {
             <p className="text-xs text-gray-500 -mt-1">Your College Search Partner</p>
           </div>
         </Link>
-      </header>
+      </motion.header>
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 pb-4">
-        <div className="max-w-md w-full">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="max-w-md w-full"
+        >
           {/* Back Link */}
-          <div className="flex items-center justify-center space-x-2 mb-4">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex items-center justify-center space-x-2 mb-4"
+          >
             <ArrowLeft className="h-4 w-4 text-gray-400" />
             <Link to="/" className="text-sm text-gray-500 hover:text-blue-600 transition-colors font-medium">
               Back to Home
             </Link>
-          </div>
+          </motion.div>
           
           {/* Login Header */}
-          <div className="text-center mb-6">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-center mb-6"
+          >
             <div className="flex items-center justify-center space-x-2 mb-3">
-              <div className="p-2 bg-blue-100 rounded-xl">
+              <motion.div 
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                className="p-2 bg-blue-100 rounded-xl"
+              >
                 <User className="h-6 w-6 text-blue-600" />
-              </div>
+              </motion.div>
               <h2 className="text-3xl font-bold text-gray-900">
                 Welcome Back
               </h2>
@@ -84,13 +111,24 @@ const StudentLogin = () => {
             <p className="text-gray-600 text-lg">
               Sign in to continue your college search journey
             </p>
-          </div>
+          </motion.div>
 
           {/* Login Form */}
-          <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-6 border border-white/20">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            whileHover={{ scale: 1.02 }}
+            className="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-6 border border-white/20"
+          >
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Email Field */}
-              <div>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                whileHover={{ x: 5 }}
+              >
                 <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
                   Email Address
                 </label>
@@ -109,10 +147,15 @@ const StudentLogin = () => {
                     onChange={handleChange}
                   />
                 </div>
-              </div>
+              </motion.div>
 
               {/* Password Field */}
-              <div>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                whileHover={{ x: 5 }}
+              >
                 <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
                   Password
                 </label>
@@ -130,7 +173,9 @@ const StudentLogin = () => {
                     value={formData.password}
                     onChange={handleChange}
                   />
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                     type="button"
                     className="absolute inset-y-0 right-0 pr-4 flex items-center"
                     onClick={() => setShowPassword(!showPassword)}
@@ -140,12 +185,17 @@ const StudentLogin = () => {
                     ) : (
                       <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors" />
                     )}
-                  </button>
+                  </motion.button>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Remember Me & Forgot Password */}
-              <div className="flex items-center justify-between">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                className="flex items-center justify-between"
+              >
                 <div className="flex items-center">
                   <input
                     id="remember-me"
@@ -165,14 +215,20 @@ const StudentLogin = () => {
                     Forgot password?
                   </a>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Submit Button */}
-              <div>
-                <button
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.9 }}
+              >
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={isLoading}
-                  className="group relative w-full flex justify-center py-3 px-6 border border-transparent text-lg font-semibold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
+                  className="group relative w-full flex justify-center py-3 px-6 border border-transparent text-lg font-semibold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
                 >
                   {isLoading ? (
                     <div className="flex items-center">
@@ -185,12 +241,17 @@ const StudentLogin = () => {
                       Sign In
                     </div>
                   )}
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
             </form>
 
             {/* Divider */}
-            <div className="mt-6">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 1.0 }}
+              className="mt-6"
+            >
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-200" />
@@ -199,7 +260,7 @@ const StudentLogin = () => {
                   <span className="px-4 bg-white/80 text-gray-500 font-medium">Or continue with</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Social Login Buttons */}
             <div className="mt-6 grid grid-cols-2 gap-4">
@@ -219,7 +280,7 @@ const StudentLogin = () => {
                 Twitter
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Sign Up Link */}
           <div className="mt-4 text-center">
@@ -256,7 +317,7 @@ const StudentLogin = () => {
               <p className="text-xs text-gray-600 font-medium">Reliable</p>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
