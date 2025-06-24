@@ -282,7 +282,7 @@ const Index = () => {
               }`}>
                 Student Login
               </Link>
-              <Link to="/college-signup" className={`transition-all duration-200 ease-out font-medium text-sm px-3 py-2 rounded-lg transform hover:scale-105 navbar-item ${
+              <Link to="/college-login" className={`transition-all duration-200 ease-out font-medium text-sm px-3 py-2 rounded-lg transform hover:scale-105 navbar-item ${
                 isScrolled 
                   ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
                   : 'text-white hover:bg-white/20'
@@ -334,7 +334,7 @@ const Index = () => {
               <Link to="/student-login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
                 Student Login
               </Link>
-              <Link to="/college-signup" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
+              <Link to="/college-login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
                 College Portal
               </Link>
               <Link to="/student-signup" onClick={() => setIsMobileMenuOpen(false)} className="mt-6 w-full max-w-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all duration-300 ease-out transform hover:scale-105 font-semibold text-lg navbar-item">

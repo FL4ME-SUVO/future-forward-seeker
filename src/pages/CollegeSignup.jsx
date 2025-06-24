@@ -786,7 +786,7 @@ const CollegeSignup = () => {
           >
             <p className="text-blue-200">
               Already have an account?{' '}
-              <Link to="/student-login" className="font-semibold text-blue-400 hover:text-white transition-colors">
+              <Link to="/college-login" className="font-semibold text-blue-400 hover:text-white transition-colors">
                 Sign in here
               </Link>
             </p>

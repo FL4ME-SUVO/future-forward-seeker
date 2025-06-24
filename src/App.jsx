@@ -15,6 +15,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import AdminLogin from "./pages/AdminLogin";
+import CollegeLogin from "./pages/CollegeLogin";
+import CollegeDashboard from "./pages/CollegeDashboard";
 
 // Route guard for admin
 const RequireAdmin = ({ children }) => {
@@ -43,6 +45,8 @@ const App = () => (
         </RequireAdmin>
       } />
       <Route path="/about" element={<About />} />
+      <Route path="/college-login" element={<CollegeLogin />} />
+      <Route path="/college-dashboard" element={<CollegeDashboard />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   </BrowserRouter>
