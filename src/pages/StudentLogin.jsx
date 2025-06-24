@@ -39,21 +39,31 @@ const StudentLogin = () => {
   const [signupError, setSignupError] = useState('');
   const [signupSuccess, setSignupSuccess] = useState('');
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    setTimeout(() => {
-      if (email && password) {
-        window.location.href = '/student-dashboard';
+    try {
+      const res = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Login failed');
       } else {
-        setError('Please fill in all fields');
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.href = '/student-dashboard';
       }
-      setIsLoading(false);
-    }, 1500);
+    } catch (err) {
+      setError('Network error');
+    }
+    setIsLoading(false);
   };
 
-  const handleSignupSubmit = (e) => {
+  const handleSignupSubmit = async (e) => {
     e.preventDefault();
     setSignupLoading(true);
     setSignupError('');
@@ -68,13 +78,30 @@ const StudentLogin = () => {
       setSignupLoading(false);
       return;
     }
-    setTimeout(() => {
-      setSignupSuccess('Account created successfully! Redirecting...');
-      setTimeout(() => {
-        window.location.href = '/student-dashboard';
-      }, 1500);
-      setSignupLoading(false);
-    }, 2000);
+    try {
+      const res = await fetch('/api/users/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: signupData.firstName + ' ' + signupData.lastName,
+          email: signupData.email,
+          password: signupData.password
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setSignupError(data.error || 'Signup failed');
+      } else {
+        localStorage.setItem('user', JSON.stringify(data));
+        setSignupSuccess('Account created successfully! Redirecting...');
+        setTimeout(() => {
+          window.location.href = '/student-dashboard';
+        }, 1500);
+      }
+    } catch (err) {
+      setSignupError('Network error');
+    }
+    setSignupLoading(false);
   };
 
   const handleSignupChange = (e) => {

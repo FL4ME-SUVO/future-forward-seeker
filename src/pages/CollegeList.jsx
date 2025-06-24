@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -44,6 +44,7 @@ const CollegeList = () => {
   const [favorites, setFavorites] = useState([]);
   const [sortBy, setSortBy] = useState('name');
   const [selectedCountry, setSelectedCountry] = useState('all');
+  const [colleges, setColleges] = useState([]);
 
   const locations = [
     { id: 'all', name: 'All Locations', flag: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400", icon: Globe },
@@ -72,208 +73,12 @@ const CollegeList = () => {
     { id: 'deemed', name: 'Deemed', icon: Star }
   ];
 
-  const colleges = [
-    {
-      id: 1,
-      name: 'IIT Bombay',
-      location: 'mumbai',
-      locationName: 'Mumbai, India',
-      description: 'Premier engineering institute with world-class facilities and research opportunities.',
-      programs: ['engineering', 'technology', 'science'],
-      tuition: '$3,000 - $5,000',
-      acceptanceRate: '2%',
-      ranking: 1,
-      students: 12000,
-      established: 1958,
-      website: 'https://www.iitb.ac.in',
-      phone: '+91-22-2572-2545',
-      email: 'info@iitb.ac.in',
-      topPrograms: ['Computer Science', 'Mechanical Engineering', 'Electrical Engineering'],
-      facilities: ['Research Labs', 'Library', 'Sports Complex', 'Hostels'],
-      favorite: false,
-      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=400",
-      rating: 4.8,
-      type: 'public',
-      fees: '₹2.5L - ₹8L',
-      courses: ['Engineering', 'Technology', 'Management'],
-      placement: '95%'
-    },
-    {
-      id: 2,
-      name: 'Stanford University',
-      location: 'sanfrancisco',
-      locationName: 'San Francisco, USA',
-      description: 'World-renowned university known for innovation and entrepreneurship.',
-      programs: ['engineering', 'technology', 'business', 'science'],
-      tuition: '$55,000 - $60,000',
-      acceptanceRate: '4%',
-      ranking: 2,
-      students: 17000,
-      established: 1885,
-      website: 'https://www.stanford.edu',
-      phone: '+1-650-723-2300',
-      email: 'admission@stanford.edu',
-      topPrograms: ['Computer Science', 'Engineering', 'Business', 'Medicine'],
-      facilities: ['Research Centers', 'Libraries', 'Sports Facilities', 'Dining'],
-      favorite: false,
-      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400",
-      rating: 4.9,
-      type: 'public',
-      fees: '₹50K - ₹2L',
-      courses: ['Engineering', 'Technology', 'Business', 'Science'],
-      placement: '85%'
-    },
-    {
-      id: 3,
-      name: 'Imperial College London',
-      location: 'london',
-      locationName: 'London, UK',
-      description: 'Leading science and engineering university in the heart of London.',
-      programs: ['engineering', 'technology', 'science', 'medicine'],
-      tuition: '£35,000 - £40,000',
-      acceptanceRate: '14%',
-      ranking: 3,
-      students: 19000,
-      established: 1907,
-      website: 'https://www.imperial.ac.uk',
-      phone: '+44-20-7589-5111',
-      email: 'admissions@imperial.ac.uk',
-      topPrograms: ['Engineering', 'Medicine', 'Business', 'Science'],
-      facilities: ['Research Labs', 'Library', 'Sports Center', 'Student Union'],
-      favorite: false,
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400",
-      rating: 4.7,
-      type: 'public',
-      fees: '₹35,000 - ₹40,000',
-      courses: ['Engineering', 'Technology', 'Science', 'Medicine'],
-      placement: '85%'
-    },
-    {
-      id: 4,
-      name: 'BITS Pilani',
-      location: 'mumbai',
-      locationName: 'Mumbai, India',
-      description: 'Private engineering institute with excellent industry connections.',
-      programs: ['engineering', 'technology', 'business'],
-      tuition: '$4,000 - $6,000',
-      acceptanceRate: '8%',
-      ranking: 4,
-      students: 15000,
-      established: 1964,
-      website: 'https://www.bits-pilani.ac.in',
-      phone: '+91-1596-242210',
-      email: 'admission@bits-pilani.ac.in',
-      topPrograms: ['Computer Science', 'Mechanical', 'Chemical Engineering'],
-      facilities: ['Labs', 'Library', 'Sports', 'Hostels'],
-      favorite: false,
-      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=400",
-      rating: 4.6,
-      type: 'deemed',
-      fees: '₹4L - ₹12L',
-      courses: ['Engineering', 'Technology', 'Business'],
-      placement: '92%'
-    },
-    {
-      id: 5,
-      name: 'MIT',
-      location: 'newyork',
-      locationName: 'New York, USA',
-      description: 'Massachusetts Institute of Technology - global leader in technology and innovation.',
-      programs: ['engineering', 'technology', 'science'],
-      tuition: '$55,000 - $60,000',
-      acceptanceRate: '7%',
-      ranking: 5,
-      students: 11500,
-      established: 1861,
-      website: 'https://www.mit.edu',
-      phone: '+1-617-253-1000',
-      email: 'admissions@mit.edu',
-      topPrograms: ['Engineering', 'Computer Science', 'Physics', 'Mathematics'],
-      facilities: ['Research Labs', 'Libraries', 'Museums', 'Sports'],
-      favorite: false,
-      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400",
-      rating: 4.9,
-      type: 'public',
-      fees: '₹55,000 - ₹60,000',
-      courses: ['Engineering', 'Technology', 'Science'],
-      placement: '88%'
-    },
-    {
-      id: 6,
-      name: 'University of Toronto',
-      location: 'toronto',
-      locationName: 'Toronto, Canada',
-      description: 'Canada\'s leading university with diverse programs and research opportunities.',
-      programs: ['engineering', 'technology', 'business', 'science', 'arts'],
-      tuition: 'C$45,000 - C$50,000',
-      acceptanceRate: '43%',
-      ranking: 6,
-      students: 95000,
-      established: 1827,
-      website: 'https://www.utoronto.ca',
-      phone: '+1-416-978-2011',
-      email: 'admissions@utoronto.ca',
-      topPrograms: ['Engineering', 'Business', 'Medicine', 'Arts & Science'],
-      facilities: ['Libraries', 'Research Centers', 'Sports', 'Student Services'],
-      favorite: false,
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400",
-      rating: 4.5,
-      type: 'public',
-      fees: '₹45,000 - ₹50,000',
-      courses: ['Engineering', 'Technology', 'Business', 'Science', 'Arts'],
-      placement: '82%'
-    },
-    {
-      id: 7,
-      name: 'IISc Bangalore',
-      location: 'bangalore',
-      locationName: 'Bangalore, India',
-      description: 'Premier research institution focused on science and engineering.',
-      programs: ['engineering', 'technology', 'science'],
-      tuition: '$2,000 - $4,000',
-      acceptanceRate: '3%',
-      ranking: 7,
-      students: 4000,
-      established: 1909,
-      website: 'https://www.iisc.ac.in',
-      phone: '+91-80-2360-1001',
-      email: 'registrar@iisc.ac.in',
-      topPrograms: ['Engineering', 'Physics', 'Chemistry', 'Biology'],
-      facilities: ['Research Labs', 'Library', 'Computing', 'Sports'],
-      favorite: false,
-      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=400",
-      rating: 4.7,
-      type: 'public',
-      fees: '₹2,000 - ₹4,000',
-      courses: ['Engineering', 'Technology', 'Science'],
-      placement: '78%'
-    },
-    {
-      id: 8,
-      name: 'Harvard University',
-      location: 'newyork',
-      locationName: 'New York, USA',
-      description: 'Ivy League university with world-class education and research.',
-      programs: ['business', 'science', 'arts', 'medicine'],
-      tuition: '$55,000 - $60,000',
-      acceptanceRate: '5%',
-      ranking: 8,
-      students: 31000,
-      established: 1636,
-      website: 'https://www.harvard.edu',
-      phone: '+1-617-495-1000',
-      email: 'admissions@harvard.edu',
-      topPrograms: ['Business', 'Medicine', 'Law', 'Arts & Sciences'],
-      facilities: ['Libraries', 'Museums', 'Research Centers', 'Sports'],
-      favorite: false,
-      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400",
-      rating: 4.8,
-      type: 'public',
-      fees: '₹55,000 - ₹60,000',
-      courses: ['Business', 'Medicine', 'Law', 'Arts & Sciences'],
-      placement: '78%'
-    }
-  ];
+  useEffect(() => {
+    fetch('/api/colleges')
+      .then(res => res.json())
+      .then(data => setColleges(data))
+      .catch(err => console.error('Failed to fetch colleges:', err));
+  }, []);
 
   const toggleFavorite = (collegeId) => {
     setSelectedColleges(prev => 

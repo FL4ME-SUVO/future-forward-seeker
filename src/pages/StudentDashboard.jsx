@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   GraduationCap, 
   User, 
@@ -31,16 +31,38 @@ import {
 
 const StudentDashboard = () => {
   const [selectedTab, setSelectedTab] = useState('overview');
+  const [userData, setUserData] = useState(null);
+  const navigate = useNavigate();
 
-  const userData = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    profile: 'Engineering Student',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-    testScore: 85,
-    completedTests: 3,
-    savedColleges: 8,
-    applications: 2
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('/api/users/me', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data && !data.error) setUserData(data);
+          else {
+            setUserData(null);
+            navigate('/student-login');
+          }
+        })
+        .catch(() => {
+          setUserData(null);
+          navigate('/student-login');
+        });
+    } else {
+      const user = localStorage.getItem('user');
+      if (user) setUserData(JSON.parse(user));
+      else navigate('/student-login');
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/student-login');
   };
 
   const recentTests = [
@@ -121,9 +143,9 @@ const StudentDashboard = () => {
               <button className="p-2 text-gray-400 hover:text-gray-600">
                 <Settings className="h-5 w-5" />
               </button>
-              <Link to="/" className="p-2 text-gray-400 hover:text-gray-600">
+              <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-gray-600">
                 <LogOut className="h-5 w-5" />
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -133,14 +155,14 @@ const StudentDashboard = () => {
         {/* User Profile Section */}
         <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-100">
           <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <div className="text-3xl sm:text-4xl">{userData.avatar}</div>
+            <div className="text-3xl sm:text-4xl">{userData?.avatar}</div>
             <div className="flex-1">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{userData.name}</h2>
-              <p className="text-gray-600">{userData.email}</p>
-              <p className="text-sm text-blue-600 font-medium">{userData.profile}</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{userData?.name}</h2>
+              <p className="text-gray-600">{userData?.email}</p>
+              <p className="text-sm text-blue-600 font-medium">{userData?.profile}</p>
             </div>
             <div className="text-center sm:text-right">
-              <div className="text-2xl font-bold text-blue-600">{userData.testScore}%</div>
+              <div className="text-2xl font-bold text-blue-600">{userData?.testScore}%</div>
               <div className="text-sm text-gray-600">Overall Score</div>
             </div>
           </div>
@@ -182,7 +204,7 @@ const StudentDashboard = () => {
                   <div className="p-2 bg-blue-100 rounded-lg">
                     <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                   </div>
-                  <span className="text-xl sm:text-2xl font-bold text-blue-600">{userData.completedTests}</span>
+                  <span className="text-xl sm:text-2xl font-bold text-blue-600">{userData?.completedTests}</span>
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">Tests Completed</h3>
                 <p className="text-xs sm:text-sm text-gray-600">Aptitude assessments taken</p>
@@ -193,7 +215,7 @@ const StudentDashboard = () => {
                   <div className="p-2 bg-green-100 rounded-lg">
                     <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
                   </div>
-                  <span className="text-xl sm:text-2xl font-bold text-green-600">{userData.savedColleges}</span>
+                  <span className="text-xl sm:text-2xl font-bold text-green-600">{userData?.savedColleges}</span>
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">Saved Colleges</h3>
                 <p className="text-xs sm:text-sm text-gray-600">Institutions you're interested in</p>
@@ -204,7 +226,7 @@ const StudentDashboard = () => {
                   <div className="p-2 bg-purple-100 rounded-lg">
                     <Award className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
                   </div>
-                  <span className="text-xl sm:text-2xl font-bold text-purple-600">{userData.applications}</span>
+                  <span className="text-xl sm:text-2xl font-bold text-purple-600">{userData?.applications}</span>
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">Applications</h3>
                 <p className="text-xs sm:text-sm text-gray-600">Applications submitted</p>

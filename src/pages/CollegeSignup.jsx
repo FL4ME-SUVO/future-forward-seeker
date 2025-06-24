@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { loadFull } from "tsparticles";
 import Particles from "react-tsparticles";
@@ -74,16 +74,46 @@ const CollegeSignup = () => {
     }));
   };
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      console.log('College signup data:', formData);
-      setIsLoading(false);
-      // Handle signup logic here
-    }, 2000);
+    try {
+      const res = await fetch('/api/colleges/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.collegeName,
+          email: formData.email,
+          password: formData.password,
+          country: formData.country,
+          description: formData.address // or combine address fields as needed
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || 'Signup failed');
+      } else {
+        // Optionally, auto-login after signup
+        const loginRes = await fetch('/api/colleges/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email, password: formData.password })
+        });
+        const loginData = await loginRes.json();
+        if (loginRes.ok) {
+          localStorage.setItem('collegeToken', loginData.token);
+          localStorage.setItem('college', JSON.stringify(loginData.college));
+          navigate('/college-dashboard');
+        } else {
+          alert(loginData.error || 'Login after signup failed');
+        }
+      }
+    } catch (err) {
+      alert('Network error');
+    }
+    setIsLoading(false);
   };
 
   const nextStep = () => {
