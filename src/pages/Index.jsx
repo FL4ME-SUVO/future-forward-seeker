@@ -63,7 +63,8 @@ import {
   ChevronLeft,
   Database,
   X,
-  Menu
+  Menu,
+  ChevronDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import Particles from "react-tsparticles";
@@ -76,6 +77,9 @@ const Index = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [college, setCollege] = useState(null);
 
   const particlesInit = useCallback(async (engine) => {
     await loadSlim(engine);
@@ -138,6 +142,17 @@ const Index = () => {
       document.body.style.overflow = 'unset';
     };
   }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    // Check for logged-in user on mount
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) setUser(JSON.parse(storedUser));
+    else setUser(null);
+    // Check for logged-in college
+    const storedCollege = localStorage.getItem('college');
+    if (storedCollege) setCollege(JSON.parse(storedCollege));
+    else setCollege(null);
+  }, []);
 
   const testimonials = [
     {
@@ -289,9 +304,47 @@ const Index = () => {
               }`}>
                 College Portal
               </Link>
-              <Link to="/student-signup" className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-200 ease-out transform hover:scale-105 font-medium text-sm navbar-item">
-                Get Started
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/student-dashboard" className="bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-medium hover:bg-blue-200 transition mr-2">
+                    Dashboard
+                  </Link>
+                  <div className="relative">
+                    <button onClick={() => setShowUserMenu(v => !v)} className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition">
+                      <User className="h-5 w-5" />
+                      <span>{user.name.split(' ')[0]}</span>
+                      <ChevronDown className="h-4 w-4" />
+                    </button>
+                    {showUserMenu && (
+                      <div className="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg z-50">
+                        <button onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('user'); setUser(null); window.location.reload(); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : college ? (
+                <>
+                  <Link to="/college-dashboard" className="bg-green-100 text-green-700 px-4 py-2 rounded-xl font-medium hover:bg-green-200 transition mr-2">
+                    Dashboard
+                  </Link>
+                  <div className="relative">
+                    <button onClick={() => setShowUserMenu(v => !v)} className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition">
+                      <Building2 className="h-5 w-5" />
+                      <span>{college.name.split(' ')[0]}</span>
+                      <ChevronDown className="h-4 w-4" />
+                    </button>
+                    {showUserMenu && (
+                      <div className="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg z-50">
+                        <button onClick={() => { localStorage.removeItem('collegeToken'); localStorage.removeItem('college'); setCollege(null); window.location.reload(); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <Link to="/student-signup" className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-200 ease-out transform hover:scale-105 font-medium text-sm navbar-item">
+                  Get Started
+                </Link>
+              )}
             </nav>
             <div className="md:hidden">
               <button 
@@ -337,9 +390,33 @@ const Index = () => {
               <Link to="/college-login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
                 College Portal
               </Link>
-              <Link to="/student-signup" onClick={() => setIsMobileMenuOpen(false)} className="mt-6 w-full max-w-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all duration-300 ease-out transform hover:scale-105 font-semibold text-lg navbar-item">
-                Get Started
-              </Link>
+              {user ? (
+                <div className="w-full flex flex-col items-center space-y-2">
+                  <Link to="/student-dashboard" className="w-full bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-medium hover:bg-blue-200 transition mb-2 text-center">
+                    Dashboard
+                  </Link>
+                  <div className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-xl font-medium">
+                    <User className="h-5 w-5" />
+                    <span>{user.name.split(' ')[0]}</span>
+                  </div>
+                  <button onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('user'); setUser(null); window.location.reload(); }} className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 bg-white rounded mt-2">Logout</button>
+                </div>
+              ) : college ? (
+                <div className="w-full flex flex-col items-center space-y-2">
+                  <Link to="/college-dashboard" className="w-full bg-green-100 text-green-700 px-4 py-2 rounded-xl font-medium hover:bg-green-200 transition mb-2 text-center">
+                    Dashboard
+                  </Link>
+                  <div className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-xl font-medium">
+                    <Building2 className="h-5 w-5" />
+                    <span>{college.name.split(' ')[0]}</span>
+                  </div>
+                  <button onClick={() => { localStorage.removeItem('collegeToken'); localStorage.removeItem('college'); setCollege(null); window.location.reload(); }} className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 bg-white rounded mt-2">Logout</button>
+                </div>
+              ) : (
+                <Link to="/student-signup" onClick={() => setIsMobileMenuOpen(false)} className="mt-6 w-full max-w-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all duration-300 ease-out transform hover:scale-105 font-semibold text-lg navbar-item">
+                  Get Started
+                </Link>
+              )}
             </div>
           </div>
         </div>

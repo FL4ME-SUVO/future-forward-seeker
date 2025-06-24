@@ -26,7 +26,8 @@ import {
   Award,
   BarChart3,
   Smile,
-  Trophy
+  Trophy,
+  ArrowLeft
 } from 'lucide-react';
 
 const StudentDashboard = () => {
@@ -124,17 +125,24 @@ const StudentDashboard = () => {
       <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="container-responsive-xl py-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center space-x-3 group">
-              <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg group-hover:scale-110 transition-transform">
-                <GraduationCap className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  EduGuide
-                </h1>
-                <p className="text-xs text-gray-500 -mt-1">Student Dashboard</p>
-              </div>
-            </Link>
+            <div className="flex items-center space-x-4">
+              <Link to="/" className="flex items-center space-x-3 group">
+                <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg group-hover:scale-110 transition-transform">
+                  <GraduationCap className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    EduGuide
+                  </h1>
+                  <p className="text-xs text-gray-500 -mt-1">Student Dashboard</p>
+                </div>
+              </Link>
+              {/* Back to Home link */}
+              <Link to="/" className="flex items-center text-blue-500 hover:text-blue-700 text-sm font-medium ml-4">
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Back to Home
+              </Link>
+            </div>
             
             <div className="flex items-center space-x-2 sm:space-x-4">
               <button className="p-2 text-gray-400 hover:text-gray-600">

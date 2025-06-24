@@ -15,6 +15,33 @@ router.get('/', async (req, res) => {
   }
 });
 
+// JWT auth middleware for colleges
+function collegeAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+    req.college = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+}
+
+// Get current college profile
+router.get('/me', collegeAuth, async (req, res) => {
+  try {
+    const college = await College.findById(req.college.collegeId).select('-password');
+    if (!college) return res.status(404).json({ error: 'College not found' });
+    res.json(college);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Get a single college by ID
 router.get('/:id', async (req, res) => {
   try {
@@ -106,33 +133,6 @@ router.post('/login', async (req, res) => {
     const collegeObj = college.toObject();
     delete collegeObj.password;
     res.json({ token, college: collegeObj });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// JWT auth middleware for colleges
-function collegeAuth(req, res, next) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
-  const token = authHeader.split(' ')[1];
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
-    req.college = decoded;
-    next();
-  } catch (err) {
-    return res.status(401).json({ error: 'Invalid token' });
-  }
-}
-
-// Get current college profile
-router.get('/me', collegeAuth, async (req, res) => {
-  try {
-    const college = await College.findById(req.college.collegeId).select('-password');
-    if (!college) return res.status(404).json({ error: 'College not found' });
-    res.json(college);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

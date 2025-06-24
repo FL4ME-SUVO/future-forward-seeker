@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 const CollegeLogin = () => {
   const [email, setEmail] = useState('');
@@ -35,6 +36,12 @@ const CollegeLogin = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
       <div className="bg-white/90 rounded-xl shadow-lg p-8 w-full max-w-md">
+        <div className="mb-6 flex items-center">
+          <ArrowLeft className="h-4 w-4 text-blue-400 mr-2" />
+          <Link to="/" className="text-sm text-blue-400 hover:text-blue-700 transition-colors font-medium">
+            Back to Home
+          </Link>
+        </div>
         <h2 className="text-2xl font-bold mb-6 text-center text-blue-700">College Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
