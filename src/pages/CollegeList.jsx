@@ -43,6 +43,7 @@ const CollegeList = () => {
   const [showFavorites, setShowFavorites] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [sortBy, setSortBy] = useState('name');
+  const [selectedCountry, setSelectedCountry] = useState('all');
 
   const locations = [
     { id: 'all', name: 'All Locations', flag: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400", icon: Globe },
@@ -287,26 +288,25 @@ const CollegeList = () => {
     );
   };
 
+  // Helper to determine if a college is in India or International
+  const getCountry = (location) => {
+    const indiaLocations = ['mumbai', 'bangalore', 'delhi'];
+    if (indiaLocations.includes(location)) return 'india';
+    return 'international';
+  };
+
+  // Filter colleges based on selected country
   const filteredColleges = colleges.filter(college => {
-    const matchesSearch = college.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         college.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesLocation = selectedLocation === 'all' || college.location === selectedLocation;
-    const matchesProgram = selectedProgram === 'all' || college.programs.includes(selectedProgram);
-    const matchesFavorites = !showFavorites || selectedColleges.includes(college.id);
-    const matchesType = selectedType === 'all' || college.type === selectedType;
-    
-    // Price range filtering
-    let matchesPrice = true;
-    if (priceRange === 'low') {
-      matchesPrice = college.tuition.includes('$2,000') || college.tuition.includes('$3,000') || college.tuition.includes('$4,000');
-    } else if (priceRange === 'medium') {
-      matchesPrice = college.tuition.includes('$5,000') || college.tuition.includes('$6,000') || college.tuition.includes('$7,000');
-    } else if (priceRange === 'high') {
-      matchesPrice = college.tuition.includes('$50,000') || college.tuition.includes('$55,000') || college.tuition.includes('£35,000');
-    }
-    
-    return matchesSearch && matchesLocation && matchesProgram && matchesFavorites && matchesPrice && matchesType;
-  });
+    if (selectedCountry === 'all') return true;
+    return getCountry(college.location) === selectedCountry;
+  })
+  .filter(college =>
+    (selectedLocation === 'all' || college.location === selectedLocation) &&
+    (selectedProgram === 'all' || college.programs.includes(selectedProgram)) &&
+    (selectedType === 'all' || college.type === selectedType) &&
+    (college.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      college.locationName.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   const sortedColleges = [...filteredColleges].sort((a, b) => {
     switch (sortBy) {
@@ -364,6 +364,21 @@ const CollegeList = () => {
             Discover colleges that match your career goals and preferences. 
             Compare programs, costs, and opportunities to make the best choice.
           </p>
+        </div>
+
+        {/* Country Selector */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-2 flex flex-col sm:flex-row items-center gap-4">
+          <label htmlFor="country-select" className="font-medium text-gray-700">Search Colleges in:</label>
+          <select
+            id="country-select"
+            value={selectedCountry}
+            onChange={e => setSelectedCountry(e.target.value)}
+            className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700"
+          >
+            <option value="all">All</option>
+            <option value="india">India</option>
+            <option value="international">International</option>
+          </select>
         </div>
 
         {/* Search and Filters */}

@@ -22,8 +22,9 @@
 }
 
 .navbar-optimized {
-  will-change: background-color, backdrop-filter;
+  will-change: background-color, backdrop-filter, transform;
   transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .particle-container {
@@ -140,7 +141,7 @@
   }
 
   .animate-fade-in {
-    animation: fadeIn 1s ease-out;
+    animation: fadeIn 0.3s ease-out;
   }
 
   .animate-scale-in {
@@ -155,8 +156,25 @@
     animation: pulseSlow 3s ease-in-out infinite;
   }
 
-  .animate-rotate-slow {
-    animation: rotateSlow 20s linear infinite;
+  /* New optimized navbar animations */
+  .animate-slide-down {
+    animation: slideDown 0.4s ease-out;
+  }
+
+  .animate-navbar-fade {
+    animation: navbarFade 0.5s ease-out;
+  }
+
+  .animate-navbar-scale {
+    animation: navbarScale 0.3s ease-out;
+  }
+
+  .animate-mobile-menu {
+    animation: mobileMenu 0.4s ease-out;
+  }
+
+  .animate-backdrop-blur {
+    animation: backdropBlur 0.3s ease-out;
   }
 
   /* Mobile-first responsive containers */
@@ -673,6 +691,60 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* New optimized navbar keyframes */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes navbarFade {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes navbarScale {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes mobileMenu {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes backdropBlur {
+  from {
+    backdrop-filter: blur(0px);
+    background-color: rgba(0, 0, 0, 0);
+  }
+  to {
+    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.6);
   }
 }
 

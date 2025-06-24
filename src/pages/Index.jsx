@@ -93,7 +93,8 @@ const Index = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
           const scrollTop = window.scrollY;
-          setIsScrolled(scrollTop > 50);
+          // Use 15px threshold for immediate response
+          setIsScrolled(scrollTop > 15);
           setIsScrolling(true);
           
           // Clear previous timeout
@@ -226,26 +227,26 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 overflow-x-hidden">
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 navbar-optimized ${
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,backdrop-filter,box-shadow,border-color] duration-100 ease-out navbar-optimized navbar-transition ${
         isScrolled 
-          ? 'bg-white/95 shadow-lg border-b border-gray-200' 
+          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200' 
           : 'bg-transparent'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg">
+              <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg transform transition-transform duration-300 hover:scale-110 navbar-item">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className={`text-xl font-bold transition-colors duration-300 ${
+                <h1 className={`text-xl font-bold transition-[color,background] duration-100 ease-out navbar-item ${
                   isScrolled 
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent' 
                     : 'text-white'
                 }`}>
                   EduGuide
                 </h1>
-                <p className={`text-xs transition-colors duration-300 -mt-1 ${
+                <p className={`text-xs transition-[color] duration-100 ease-out -mt-1 navbar-item ${
                   isScrolled ? 'text-gray-500' : 'text-white/80'
                 }`}>
                   Your College Search Partner
@@ -253,49 +254,49 @@ const Index = () => {
               </div>
             </div>
             <nav className="hidden md:flex space-x-6">
-              <a href="#about" className={`transition-all duration-300 font-medium text-sm px-3 py-2 rounded-lg ${
+              <a href="#about" className={`transition-all duration-200 ease-out font-medium text-sm px-3 py-2 rounded-lg transform hover:scale-105 navbar-item ${
                 isScrolled 
                   ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
                   : 'text-white hover:bg-white/20'
               }`}>
                 About
               </a>
-              <a href="#features" className={`transition-all duration-300 font-medium text-sm px-3 py-2 rounded-lg ${
+              <a href="#features" className={`transition-all duration-200 ease-out font-medium text-sm px-3 py-2 rounded-lg transform hover:scale-105 navbar-item ${
                 isScrolled 
                   ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
                   : 'text-white hover:bg-white/20'
               }`}>
                 Features
               </a>
-              <a href="#contact" className={`transition-all duration-300 font-medium text-sm px-3 py-2 rounded-lg ${
+              <a href="#contact" className={`transition-all duration-200 ease-out font-medium text-sm px-3 py-2 rounded-lg transform hover:scale-105 navbar-item ${
                 isScrolled 
                   ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
                   : 'text-white hover:bg-white/20'
               }`}>
                 Contact
               </a>
-              <Link to="/student-login" className={`transition-all duration-300 font-medium text-sm px-3 py-2 rounded-lg ${
+              <Link to="/student-login" className={`transition-all duration-200 ease-out font-medium text-sm px-3 py-2 rounded-lg transform hover:scale-105 navbar-item ${
                 isScrolled 
                   ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
                   : 'text-white hover:bg-white/20'
               }`}>
                 Student Login
               </Link>
-              <Link to="/college-signup" className={`transition-all duration-300 font-medium text-sm px-3 py-2 rounded-lg ${
+              <Link to="/college-signup" className={`transition-all duration-200 ease-out font-medium text-sm px-3 py-2 rounded-lg transform hover:scale-105 navbar-item ${
                 isScrolled 
                   ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
                   : 'text-white hover:bg-white/20'
               }`}>
                 College Portal
               </Link>
-              <Link to="/student-signup" className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-medium text-sm">
+              <Link to="/student-signup" className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-200 ease-out transform hover:scale-105 font-medium text-sm navbar-item">
                 Get Started
               </Link>
             </nav>
             <div className="md:hidden">
               <button 
                 onClick={() => setIsMobileMenuOpen(true)}
-                className={`p-2 rounded-lg transition-colors ${
+                className={`p-2 rounded-lg transition-all duration-200 ease-out transform hover:scale-110 navbar-item ${
                   isScrolled 
                     ? 'hover:bg-gray-100 text-gray-600' 
                     : 'hover:bg-white/20 text-white'
@@ -309,55 +310,40 @@ const Index = () => {
       </header>
 
       {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <motion.div
-              initial={{ y: '-100%' }}
-              animate={{ y: '0%' }}
-              exit={{ y: '-100%' }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute top-0 left-0 right-0 bg-slate-900/95 shadow-2xl p-8"
-              onClick={(e) => e.stopPropagation()}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md animate-fade-in mobile-menu-optimized">
+          <div className="absolute top-0 left-0 right-0 bg-slate-900/95 shadow-2xl p-8 animate-slide-down mobile-menu-optimized">
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-all duration-300 ease-out transform hover:scale-110 navbar-item"
+              aria-label="Close menu"
             >
-              <button
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="absolute top-5 right-5 p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"
-                aria-label="Close menu"
-              >
-                <X className="w-6 h-6" />
-              </button>
-              <div className="flex flex-col items-center space-y-8 text-center pt-16">
-                <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-semibold text-slate-100 hover:text-blue-400 transition-colors">
-                  About
-                </a>
-                <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-semibold text-slate-100 hover:text-blue-400 transition-colors">
-                  Features
-                </a>
-                <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-semibold text-slate-100 hover:text-blue-400 transition-colors">
-                  Contact
-                </a>
-                <div className="w-4/5 h-px bg-slate-700 my-4"></div>
-                <Link to="/student-login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-colors">
-                  Student Login
-                </Link>
-                <Link to="/college-signup" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-colors">
-                  College Portal
-                </Link>
-                <Link to="/student-signup" onClick={() => setIsMobileMenuOpen(false)} className="mt-6 w-full max-w-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-semibold text-lg">
-                  Get Started
-                </Link>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <X className="w-6 h-6" />
+            </button>
+            <div className="flex flex-col items-center space-y-8 text-center pt-16">
+              <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-semibold text-slate-100 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
+                About
+              </a>
+              <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-semibold text-slate-100 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
+                Features
+              </a>
+              <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-semibold text-slate-100 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
+                Contact
+              </a>
+              <div className="w-4/5 h-px bg-slate-700 my-4"></div>
+              <Link to="/student-login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
+                Student Login
+              </Link>
+              <Link to="/college-signup" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
+                College Portal
+              </Link>
+              <Link to="/student-signup" onClick={() => setIsMobileMenuOpen(false)} className="mt-6 w-full max-w-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all duration-300 ease-out transform hover:scale-105 font-semibold text-lg navbar-item">
+                Get Started
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hero Section */}
       <section className="relative pt-24 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-900 w-full">
