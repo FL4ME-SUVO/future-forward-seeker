@@ -100,6 +100,7 @@ const StudentLogin = () => {
         }, 1500);
       }
     } catch (err) {
+      console.error('Signup error:', err);
       setSignupError('Network error');
     }
     setSignupLoading(false);
