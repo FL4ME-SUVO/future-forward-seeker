@@ -34,6 +34,7 @@ import {
   Activity
 } from 'lucide-react';
 import supabase from '../lib/supabaseClient'
+import API_URL from '../lib/api';
 
 // Icon mapping for dynamic rendering
 const iconMap = {
@@ -132,7 +133,7 @@ const CareerSelection = () => {
     const token = localStorage.getItem('token');
     try {
       // 1. Save as a test result
-      await fetch('http://localhost:5000/api/users/test-results', {
+      await fetch(`${API_URL}/api/users/test-results`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +145,7 @@ const CareerSelection = () => {
         })
       });
       // 2. Save recommendations
-      await fetch('http://localhost:5000/api/users/recommendations', {
+      await fetch(`${API_URL}/api/users/recommendations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import API_URL from '../lib/api';
 
 const CollegeLogin = () => {
   const [email, setEmail] = useState('');
@@ -14,7 +15,7 @@ const CollegeLogin = () => {
     setIsLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/colleges/login', {
+      const res = await fetch(`${API_URL}/api/colleges/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })

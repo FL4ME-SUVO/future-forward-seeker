@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { Badge } from '../components/ui/badge';
 import { Building, Mail, Globe, Star, Trophy, Users, LogOut, Settings, Bell, GraduationCap, ArrowLeft, Camera, Phone, Globe as GlobeIcon, Facebook, Instagram, Twitter, MapPin, Image as ImageIcon, Quote, Trash2 } from 'lucide-react';
 import supabase from '../lib/supabaseClient'
+import API_URL from '../lib/api';
 
 const statsMock = [
   { label: 'Ranking', value: '12', icon: Trophy, color: 'bg-yellow-100 text-yellow-800' },
@@ -95,7 +96,7 @@ const CollegeDashboard = () => {
       navigate('/college-login');
       return;
     }
-    fetch('http://localhost:5000/api/colleges/me', {
+    fetch(`${API_URL}/api/colleges/me`, {
       headers: { 'Authorization': 'Bearer ' + token }
     })
       .then(res => res.json())
@@ -103,13 +104,13 @@ const CollegeDashboard = () => {
         if (data && !data.error) {
           setCollege(data);
           if (data.profileImage) {
-            setCollegeImage('http://localhost:5000' + data.profileImage);
+            setCollegeImage(API_URL + data.profileImage);
           }
           if (data.bannerImage) {
-            setBannerImage('http://localhost:5000' + data.bannerImage);
+            setBannerImage(API_URL + data.bannerImage);
           }
           if (data.galleryImages) {
-            setGalleryImages(data.galleryImages.map(url => 'http://localhost:5000' + url));
+            setGalleryImages(data.galleryImages.map(url => API_URL + url));
           }
         } else {
           setError(data.error || 'Failed to load college data');
@@ -166,7 +167,7 @@ const CollegeDashboard = () => {
     if (!window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) return;
     const token = localStorage.getItem('collegeToken');
     try {
-      const res = await fetch('http://localhost:5000/api/colleges/me', {
+      const res = await fetch(`${API_URL}/api/colleges/me`, {
         method: 'DELETE',
         headers: { 'Authorization': 'Bearer ' + token }
       });
@@ -189,7 +190,7 @@ const CollegeDashboard = () => {
     formData.append('image', file);
     try {
       const token = localStorage.getItem('collegeToken');
-      const res = await fetch('http://localhost:5000/api/colleges/upload-image', {
+      const res = await fetch(`${API_URL}/api/colleges/upload-image`, {
         method: 'POST',
         headers: {
           Authorization: 'Bearer ' + token
@@ -198,7 +199,7 @@ const CollegeDashboard = () => {
       });
       const data = await res.json();
       if (data.imageUrl) {
-        setCollegeImage('http://localhost:5000' + data.imageUrl);
+        setCollegeImage(API_URL + data.imageUrl);
       }
     } catch (err) {
       alert('Image upload failed');
@@ -212,14 +213,14 @@ const CollegeDashboard = () => {
     formData.append('banner', file);
     try {
       const token = localStorage.getItem('collegeToken');
-      const res = await fetch('http://localhost:5000/api/colleges/upload-banner', {
+      const res = await fetch(`${API_URL}/api/colleges/upload-banner`, {
         method: 'POST',
         headers: { Authorization: 'Bearer ' + token },
         body: formData
       });
       const data = await res.json();
       if (data.imageUrl) {
-        setBannerImage('http://localhost:5000' + data.imageUrl);
+        setBannerImage(API_URL + data.imageUrl);
       }
     } catch (err) {
       alert('Banner upload failed');
@@ -233,14 +234,14 @@ const CollegeDashboard = () => {
     files.forEach(file => formData.append('images', file));
     try {
       const token = localStorage.getItem('collegeToken');
-      const res = await fetch('http://localhost:5000/api/colleges/upload-gallery', {
+      const res = await fetch(`${API_URL}/api/colleges/upload-gallery`, {
         method: 'POST',
         headers: { Authorization: 'Bearer ' + token },
         body: formData
       });
       const data = await res.json();
       if (data.imageUrls) {
-        setGalleryImages(prev => [...prev, ...data.imageUrls.map(url => 'http://localhost:5000' + url)]);
+        setGalleryImages(prev => [...prev, ...data.imageUrls.map(url => API_URL + url)]);
       }
     } catch (err) {
       alert('Gallery upload failed');
@@ -267,7 +268,7 @@ const CollegeDashboard = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('collegeToken');
-      const res = await fetch(`http://localhost:5000/api/colleges/${college._id}`, {
+      const res = await fetch(`${API_URL}/api/colleges/${college._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -292,7 +293,7 @@ const CollegeDashboard = () => {
     if (!window.confirm('Delete this image?')) return;
     try {
       const token = localStorage.getItem('collegeToken');
-      const res = await fetch('http://localhost:5000/api/colleges/delete-gallery-image', {
+      const res = await fetch(`${API_URL}/api/colleges/delete-gallery-image`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -328,7 +329,7 @@ const CollegeDashboard = () => {
     }
     try {
       const token = localStorage.getItem('collegeToken');
-      const res = await fetch(`http://localhost:5000/api/colleges/${college._id}`, {
+      const res = await fetch(`${API_URL}/api/colleges/${college._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -359,7 +360,7 @@ const CollegeDashboard = () => {
     const updatedTestimonials = testimonials.filter((_, i) => i !== idx);
     try {
       const token = localStorage.getItem('collegeToken');
-      const res = await fetch(`http://localhost:5000/api/colleges/${college._id}`, {
+      const res = await fetch(`${API_URL}/api/colleges/${college._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -387,7 +388,7 @@ const CollegeDashboard = () => {
     );
     try {
       const token = localStorage.getItem('collegeToken');
-      const res = await fetch(`http://localhost:5000/api/colleges/${college._id}`, {
+      const res = await fetch(`${API_URL}/api/colleges/${college._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -413,7 +414,7 @@ const CollegeDashboard = () => {
     );
     try {
       const token = localStorage.getItem('collegeToken');
-      const res = await fetch(`http://localhost:5000/api/colleges/${college._id}`, {
+      const res = await fetch(`${API_URL}/api/colleges/${college._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -439,7 +440,7 @@ const CollegeDashboard = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('collegeToken');
-      const res = await fetch(`http://localhost:5000/api/colleges/${college._id}`, {
+      const res = await fetch(`${API_URL}/api/colleges/${college._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -474,7 +475,7 @@ const CollegeDashboard = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('collegeToken');
-      const res = await fetch(`http://localhost:5000/api/colleges/${college._id}`, {
+      const res = await fetch(`${API_URL}/api/colleges/${college._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -503,7 +504,7 @@ const CollegeDashboard = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('collegeToken');
-      const res = await fetch(`http://localhost:5000/api/colleges/${college._id}`, {
+      const res = await fetch(`${API_URL}/api/colleges/${college._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -653,7 +654,7 @@ const CollegeDashboard = () => {
                       if (!type) return;
                       try {
                         const token = localStorage.getItem('collegeToken');
-                        const res = await fetch(`http://localhost:5000/api/colleges/${college._id}`, {
+                        const res = await fetch(`${API_URL}/api/colleges/${college._id}`, {
                           method: 'PUT',
                           headers: {
                             'Content-Type': 'application/json',

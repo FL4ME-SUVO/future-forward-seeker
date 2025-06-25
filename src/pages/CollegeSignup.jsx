@@ -24,6 +24,7 @@ import {
   Zap,
   Star
 } from 'lucide-react';
+import API_URL from '../lib/api';
 
 const CollegeSignup = () => {
   const [formData, setFormData] = useState({
@@ -80,7 +81,7 @@ const CollegeSignup = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await fetch('/api/colleges/signup', {
+      const res = await fetch(`${API_URL}/api/colleges/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -103,7 +104,7 @@ const CollegeSignup = () => {
         alert(data.error || 'Signup failed');
       } else {
         // Optionally, auto-login after signup
-        const loginRes = await fetch('/api/colleges/login', {
+        const loginRes = await fetch(`${API_URL}/api/colleges/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: formData.email, password: formData.password })

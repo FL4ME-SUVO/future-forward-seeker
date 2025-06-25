@@ -14,6 +14,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 import supabase from '../lib/supabaseClient'
+import API_URL from '../lib/api';
 
 const StudentLogin = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -79,7 +80,7 @@ const StudentLogin = () => {
       return;
     }
     try {
-      const res = await fetch('/api/users/signup', {
+      const res = await fetch(`${API_URL}/api/users/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

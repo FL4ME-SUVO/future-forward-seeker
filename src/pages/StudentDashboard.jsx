@@ -31,6 +31,7 @@ import {
   Building
 } from 'lucide-react';
 import supabase from '../lib/supabaseClient'
+import API_URL from '../lib/api';
 
 const StudentDashboard = () => {
   const [selectedTab, setSelectedTab] = useState('overview');
@@ -45,7 +46,7 @@ const StudentDashboard = () => {
     const token = localStorage.getItem('token');
     if (token) {
       // Fetch user data
-      fetch('http://localhost:5000/api/users/me', {
+      fetch(`${API_URL}/api/users/me`, {
         headers: { 'Authorization': 'Bearer ' + token }
       })
         .then(res => res.json())
@@ -113,7 +114,7 @@ const StudentDashboard = () => {
   const removeSavedCollege = async (collegeId) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/users/saved-colleges/${collegeId}`, {
+      const res = await fetch(`${API_URL}/api/users/saved-colleges/${collegeId}`, {
         method: 'DELETE',
         headers: { 'Authorization': 'Bearer ' + token }
       });

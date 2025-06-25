@@ -33,6 +33,7 @@ import {
   Microscope
 } from 'lucide-react';
 import supabase from '../lib/supabaseClient'
+import API_URL from '../lib/api';
 
 const CollegeList = () => {
   const [selectedColleges, setSelectedColleges] = useState([]);
@@ -94,7 +95,7 @@ const CollegeList = () => {
 
     const token = localStorage.getItem('token');
     if (token) {
-      fetch('http://localhost:5000/api/users/saved-colleges', {
+      fetch(`${API_URL}/api/users/saved-colleges`, {
         headers: { 'Authorization': 'Bearer ' + token }
       })
         .then(res => res.json())
@@ -108,13 +109,13 @@ const CollegeList = () => {
     const token = localStorage.getItem('token');
     try {
       if (isSaved) {
-        await fetch(`http://localhost:5000/api/users/saved-colleges/${collegeId}`, {
+        await fetch(`${API_URL}/api/users/saved-colleges/${collegeId}`, {
           method: 'DELETE',
           headers: { 'Authorization': 'Bearer ' + token }
         });
         setFavorites(prev => prev.filter(id => id !== collegeId));
       } else {
-        await fetch(`http://localhost:5000/api/users/saved-colleges/${collegeId}`, {
+        await fetch(`${API_URL}/api/users/saved-colleges/${collegeId}`, {
           method: 'POST',
           headers: { 'Authorization': 'Bearer ' + token }
         });
