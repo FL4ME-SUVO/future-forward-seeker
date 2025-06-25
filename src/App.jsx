@@ -18,6 +18,7 @@ import About from "./pages/About";
 import AdminLogin from "./pages/AdminLogin";
 import CollegeLogin from "./pages/CollegeLogin";
 import CollegeDashboard from "./pages/CollegeDashboard";
+import CollegeDetails from './pages/CollegeDetails';
 
 // Route guard for admin
 const RequireAdmin = ({ children }) => {
@@ -49,6 +50,7 @@ const App = () => (
       <Route path="/about" element={<About />} />
       <Route path="/college-login" element={<CollegeLogin />} />
       <Route path="/college-dashboard" element={<CollegeDashboard />} />
+      <Route path="/college/:id" element={<CollegeDetails />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   </BrowserRouter>

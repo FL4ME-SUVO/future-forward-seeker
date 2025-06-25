@@ -1,5 +1,6 @@
 import express from 'express';
 import User from '../models/User.js';
+import College from '../models/College.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -76,6 +77,69 @@ router.get('/me', auth, async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+// Save a college
+router.post('/saved-colleges/:collegeId', auth, async (req, res) => {
+  const user = await User.findById(req.user.userId);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  if (!user.savedColleges.includes(req.params.collegeId)) {
+    user.savedColleges.push(req.params.collegeId);
+    await user.save();
+  }
+  res.json({ savedColleges: user.savedColleges });
+});
+
+// Remove a saved college
+router.delete('/saved-colleges/:collegeId', auth, async (req, res) => {
+  const user = await User.findById(req.user.userId);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  user.savedColleges = user.savedColleges.filter(
+    id => id.toString() !== req.params.collegeId
+  );
+  await user.save();
+  res.json({ savedColleges: user.savedColleges });
+});
+
+// Get saved colleges (populated)
+router.get('/saved-colleges', auth, async (req, res) => {
+  const user = await User.findById(req.user.userId).populate('savedColleges');
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json(user.savedColleges);
+});
+
+// Add a test result
+router.post('/test-results', auth, async (req, res) => {
+  const { testName, score } = req.body;
+  const user = await User.findById(req.user.userId);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  user.testResults.push({ testName, score, completedAt: new Date() });
+  await user.save();
+  res.json(user.testResults);
+});
+
+// Get test results
+router.get('/test-results', auth, async (req, res) => {
+  const user = await User.findById(req.user.userId);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json(user.testResults);
+});
+
+// Add a recommendation
+router.post('/recommendations', auth, async (req, res) => {
+  const { career, reason, score, recommendedColleges } = req.body;
+  const user = await User.findById(req.user.userId);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  user.recommendations.push({ career, reason, score, recommendedColleges });
+  await user.save();
+  res.json(user.recommendations);
+});
+
+// Get recommendations
+router.get('/recommendations', auth, async (req, res) => {
+  const user = await User.findById(req.user.userId);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json(user.recommendations);
 });
 
 export default router; 

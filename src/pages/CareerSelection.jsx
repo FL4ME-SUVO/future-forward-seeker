@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   GraduationCap, 
@@ -39,6 +39,8 @@ const CareerSelection = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showFavorites, setShowFavorites] = useState(false);
+  const navigate = useNavigate();
+  const [submitting, setSubmitting] = useState(false);
 
   const categories = [
     { id: 'all', name: 'All Careers', icon: Briefcase, color: 'from-blue-500 to-purple-500' },
@@ -238,6 +240,46 @@ const CareerSelection = () => {
   });
 
   const selectedCareersData = careers.filter(career => selectedCareers.includes(career.id));
+
+  const handleContinue = async () => {
+    if (selectedCareersData.length === 0) return;
+    setSubmitting(true);
+    const token = localStorage.getItem('token');
+    try {
+      // 1. Save as a test result
+      await fetch('http://localhost:5000/api/users/test-results', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({
+          testName: 'Career Selection',
+          score: selectedCareersData.length * 10 // or any logic
+        })
+      });
+      // 2. Save recommendations
+      await fetch('http://localhost:5000/api/users/recommendations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({
+          career: selectedCareersData.map(c => c.title).join(', '),
+          reason: 'Based on your selected careers',
+          score: 100,
+          recommendedColleges: []
+        })
+      });
+      // 3. Navigate to next page
+      navigate('/location-selection');
+    } catch (err) {
+      alert('Failed to submit your selection. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 overflow-x-hidden">
@@ -509,14 +551,23 @@ const CareerSelection = () => {
         {/* Continue Button */}
         {selectedCareers.length > 0 && (
           <div className="mt-8 sm:mt-12 text-center">
-            <Link
-              to="/location-selection"
-              className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 border border-transparent text-base sm:text-lg font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            <button
+              onClick={handleContinue}
+              disabled={submitting}
+              className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 border border-transparent text-base sm:text-lg font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <span className="hidden sm:inline">Continue with {selectedCareers.length} Selected Career{selectedCareers.length !== 1 ? 's' : ''}</span>
-              <span className="sm:hidden">Continue ({selectedCareers.length})</span>
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
+              {submitting ? (
+                <>
+                  <span className="mr-2">Submitting...</span>
+                </>
+              ) : (
+                <>
+                  <span className="hidden sm:inline">Continue with {selectedCareers.length} Selected Career{selectedCareers.length !== 1 ? 's' : ''}</span>
+                  <span className="sm:hidden">Continue ({selectedCareers.length})</span>
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </>
+              )}
+            </button>
           </div>
         )}
       </div>

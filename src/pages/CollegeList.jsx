@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   GraduationCap, 
@@ -45,6 +45,7 @@ const CollegeList = () => {
   const [sortBy, setSortBy] = useState('name');
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [colleges, setColleges] = useState([]);
+  const [saving, setSaving] = useState({});
 
   const locations = [
     { id: 'all', name: 'All Locations', flag: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400", icon: Globe },
@@ -73,30 +74,54 @@ const CollegeList = () => {
     { id: 'deemed', name: 'Deemed', icon: Star }
   ];
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     fetch('/api/colleges')
       .then(res => res.json())
       .then(data => setColleges(data))
       .catch(err => console.error('Failed to fetch colleges:', err));
+
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('http://localhost:5000/api/users/saved-colleges', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      })
+        .then(res => res.json())
+        .then(data => setFavorites(data.map(college => college._id)))
+        .catch(() => {});
+    }
   }, []);
 
-  const toggleFavorite = (collegeId) => {
-    setSelectedColleges(prev => 
-      prev.includes(collegeId) 
-        ? prev.filter(id => id !== collegeId)
-        : [...prev, collegeId]
-    );
-    setFavorites(prev => 
-      prev.includes(collegeId) 
-        ? prev.filter(id => id !== collegeId)
-        : [...prev, collegeId]
-    );
+  const handleSaveCollege = async (collegeId, isSaved) => {
+    setSaving(prev => ({ ...prev, [collegeId]: true }));
+    const token = localStorage.getItem('token');
+    try {
+      if (isSaved) {
+        await fetch(`http://localhost:5000/api/users/saved-colleges/${collegeId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        setFavorites(prev => prev.filter(id => id !== collegeId));
+      } else {
+        await fetch(`http://localhost:5000/api/users/saved-colleges/${collegeId}`, {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        setFavorites(prev => [...prev, collegeId]);
+      }
+    } catch (err) {
+      alert('Failed to update favorites. Please log in.');
+    } finally {
+      setSaving(prev => ({ ...prev, [collegeId]: false }));
+    }
   };
 
   // Helper to determine if a college is in India or International
   const getCountry = (location) => {
     const indiaLocations = ['mumbai', 'bangalore', 'delhi'];
-    if (indiaLocations.includes(location)) return 'india';
+    if (!location) return 'international';
+    if (indiaLocations.includes(location.toLowerCase())) return 'india';
     return 'international';
   };
 
@@ -106,27 +131,27 @@ const CollegeList = () => {
     return getCountry(college.location) === selectedCountry;
   })
   .filter(college =>
-    (selectedLocation === 'all' || college.location === selectedLocation) &&
-    (selectedProgram === 'all' || college.programs.includes(selectedProgram)) &&
-    (selectedType === 'all' || college.type === selectedType) &&
+    (selectedLocation === 'all' || (college.location && college.location.toLowerCase() === selectedLocation)) &&
+    (selectedProgram === 'all' || (college.topPrograms && college.topPrograms.includes(selectedProgram))) &&
+    (selectedType === 'all' || (college.type && college.type.toLowerCase() === selectedType)) &&
     (college.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      college.locationName.toLowerCase().includes(searchTerm.toLowerCase()))
+      (college.location && college.location.toLowerCase().includes(searchTerm.toLowerCase())))
   );
 
   const sortedColleges = [...filteredColleges].sort((a, b) => {
     switch (sortBy) {
       case 'rating':
-        return b.rating - a.rating;
+        return (b.rating || 0) - (a.rating || 0);
       case 'fees':
-        return a.tuition.localeCompare(b.tuition);
+        return (a.tuition || '').localeCompare(b.tuition || '');
       case 'students':
-        return b.students - a.students;
+        return (b.students || 0) - (a.students || 0);
       default:
         return a.name.localeCompare(b.name);
     }
   });
 
-  const selectedCollegesData = colleges.filter(college => selectedColleges.includes(college.id));
+  const selectedCollegesData = colleges.filter(college => selectedColleges.includes(college._id));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 overflow-x-hidden">
@@ -314,14 +339,15 @@ const CollegeList = () => {
             <div className="flex flex-wrap gap-2">
               {selectedCollegesData.map(college => (
                 <span
-                  key={college.id}
+                  key={college._id}
                   className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
                 >
-                  <img src={college.image} alt={college.name} className="h-6 w-6 sm:h-8 sm:w-8 rounded-full mr-2" />
+                  <img src={college.profileImage ? (college.profileImage.startsWith('http') ? college.profileImage : 'http://localhost:5000' + college.profileImage) : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400'} alt={college.name} className="h-6 w-6 sm:h-8 sm:w-8 rounded-full mr-2" />
                   <span className="hidden sm:inline">{college.name}</span>
                   <span className="sm:hidden">{college.name.split(' ')[0]}</span>
                   <button
-                    onClick={() => toggleFavorite(college.id)}
+                    onClick={() => handleSaveCollege(college._id, favorites.includes(college._id))}
+                    disabled={saving[college._id]}
                     className="ml-2 text-blue-600 hover:text-blue-800"
                   >
                     <X className="h-3 w-3" />
@@ -390,7 +416,7 @@ const CollegeList = () => {
           >
             {sortedColleges.map((college, index) => (
               <motion.div
-                key={college.id}
+                key={college._id}
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -400,17 +426,18 @@ const CollegeList = () => {
                 {/* Image */}
                 <div className="relative h-40 sm:h-48 bg-gradient-to-br from-blue-500 to-purple-600">
                   <img 
-                    src={college.bannerImage ? (college.bannerImage.startsWith('http') ? college.bannerImage : 'http://localhost:5000' + college.bannerImage) : (college.image || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400')} 
+                    src={college.bannerImage ? (college.bannerImage.startsWith('http') ? college.bannerImage : 'http://localhost:5000' + college.bannerImage) : (college.profileImage ? (college.profileImage.startsWith('http') ? college.profileImage : 'http://localhost:5000' + college.profileImage) : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400')} 
                     alt={college.name}
                     className="w-full h-full object-cover"
                   />
                   <motion.button
                     whileHover={{ scale: 1.2 }}
                     whileTap={{ scale: 0.9 }}
-                    onClick={() => toggleFavorite(college.id)}
-                    className="absolute top-4 right-4 p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+                    onClick={() => handleSaveCollege(college._id, favorites.includes(college._id))}
+                    disabled={saving[college._id]}
+                    className="absolute top-4 right-4 p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    <Heart className={`h-5 w-5 ${favorites.includes(college.id) ? 'fill-current text-red-500' : 'text-white'}`} />
+                    <Heart className={`h-5 w-5 ${favorites.includes(college._id) ? 'fill-current text-red-500' : 'text-white'}`} />
                   </motion.button>
                   <div className="absolute bottom-4 left-4 flex items-center space-x-2">
                     <div className="flex items-center space-x-1 bg-white/90 rounded-full px-2 py-1">
@@ -475,7 +502,7 @@ const CollegeList = () => {
                     <div className="flex flex-wrap gap-2">
                       {(college.topPrograms ? college.topPrograms.slice(0, 3) : []).map((program, index) => (
                         <motion.span
-                          key={`${college.id}-program-${program}`}
+                          key={`${college._id}-program-${program}`}
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ duration: 0.3, delay: index * 0.1 }}
@@ -493,6 +520,7 @@ const CollegeList = () => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-2"
+                      onClick={() => navigate(`/college/${college._id}`)}
                     >
                       <Eye className="h-4 w-4" />
                       <span className="hidden sm:inline">View Details</span>
