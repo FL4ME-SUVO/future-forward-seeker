@@ -27,24 +27,33 @@ import {
   BarChart3,
   Smile,
   Trophy,
-  ArrowLeft
+  ArrowLeft,
+  Building
 } from 'lucide-react';
 
 const StudentDashboard = () => {
   const [selectedTab, setSelectedTab] = useState('overview');
   const [userData, setUserData] = useState(null);
+  const [recentTests, setRecentTests] = useState([]);
+  const [savedColleges, setSavedColleges] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      fetch('/api/users/me', {
+      // Fetch user data
+      fetch('http://localhost:5000/api/users/me', {
         headers: { 'Authorization': 'Bearer ' + token }
       })
         .then(res => res.json())
         .then(data => {
-          if (data && !data.error) setUserData(data);
-          else {
+          if (data && !data.error) {
+            setUserData(data);
+            // Fetch additional data
+            fetchUserData(token);
+          } else {
             setUserData(null);
             navigate('/student-login');
           }
@@ -55,10 +64,50 @@ const StudentDashboard = () => {
         });
     } else {
       const user = localStorage.getItem('user');
-      if (user) setUserData(JSON.parse(user));
-      else navigate('/student-login');
+      if (user) {
+        setUserData(JSON.parse(user));
+        // Try to fetch additional data without token (fallback)
+        fetchUserData();
+      } else {
+        navigate('/student-login');
+      }
     }
   }, [navigate]);
+
+  const fetchUserData = async (token) => {
+    try {
+      // Fetch test results
+      const testsRes = await fetch('http://localhost:5000/api/users/test-results', {
+        headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+      });
+      if (testsRes.ok) {
+        const testsData = await testsRes.json();
+        setRecentTests(testsData);
+      }
+
+      // Fetch saved colleges
+      const collegesRes = await fetch('http://localhost:5000/api/users/saved-colleges', {
+        headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+      });
+      if (collegesRes.ok) {
+        const collegesData = await collegesRes.json();
+        setSavedColleges(collegesData);
+      }
+
+      // Fetch recommendations
+      const recsRes = await fetch('http://localhost:5000/api/users/recommendations', {
+        headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+      });
+      if (recsRes.ok) {
+        const recsData = await recsRes.json();
+        setRecommendations(recsData);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -66,58 +115,38 @@ const StudentDashboard = () => {
     navigate('/student-login');
   };
 
-  const recentTests = [
-    {
-      id: 1,
-      name: 'Aptitude Assessment',
-      score: 85,
-      date: '2024-01-15',
-      status: 'completed'
-    },
-    {
-      id: 2,
-      name: 'Career Interest Test',
-      score: 92,
-      date: '2024-01-10',
-      status: 'completed'
+  const removeSavedCollege = async (collegeId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`http://localhost:5000/api/users/saved-colleges/${collegeId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      if (res.ok) {
+        setSavedColleges(prev => prev.filter(college => college._id !== collegeId));
+      }
+    } catch (error) {
+      console.error('Error removing saved college:', error);
     }
-  ];
+  };
 
-  const savedColleges = [
-    {
-      id: 1,
-      name: 'IIT Bombay',
-      location: 'Mumbai, India',
-      rating: 4.8,
-      tuition: '$3,000 - $5,000',
-      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=400"
-    },
-    {
-      id: 2,
-      name: 'Stanford University',
-      location: 'San Francisco, USA',
-      rating: 4.9,
-      tuition: '$55,000 - $60,000',
-      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400"
-    }
-  ];
+  // Calculate stats from actual data
+  const stats = {
+    completedTests: recentTests.length,
+    savedColleges: savedColleges.length,
+    applications: userData?.applications || 0
+  };
 
-  const recommendations = [
-    {
-      id: 1,
-      title: 'Computer Science Engineering',
-      description: 'Based on your aptitude test results',
-      match: 95,
-      colleges: ['IIT Bombay', 'BITS Pilani', 'MIT']
-    },
-    {
-      id: 2,
-      title: 'Data Science',
-      description: 'Strong analytical skills detected',
-      match: 88,
-      colleges: ['Stanford', 'CMU', 'UC Berkeley']
-    }
-  ];
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 overflow-x-hidden">
@@ -163,14 +192,14 @@ const StudentDashboard = () => {
         {/* User Profile Section */}
         <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-100">
           <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <div className="text-3xl sm:text-4xl">{userData?.avatar}</div>
+            <div className="text-3xl sm:text-4xl">{userData?.avatar || '👤'}</div>
             <div className="flex-1">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{userData?.name}</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{userData?.name || 'Student'}</h2>
               <p className="text-gray-600">{userData?.email}</p>
-              <p className="text-sm text-blue-600 font-medium">{userData?.profile}</p>
+              <p className="text-sm text-blue-600 font-medium">{userData?.profile || 'Student'}</p>
             </div>
             <div className="text-center sm:text-right">
-              <div className="text-2xl font-bold text-blue-600">{userData?.testScore}%</div>
+              <div className="text-2xl font-bold text-blue-600">{userData?.testScore || 0}%</div>
               <div className="text-sm text-gray-600">Overall Score</div>
             </div>
           </div>
@@ -212,7 +241,7 @@ const StudentDashboard = () => {
                   <div className="p-2 bg-blue-100 rounded-lg">
                     <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                   </div>
-                  <span className="text-xl sm:text-2xl font-bold text-blue-600">{userData?.completedTests}</span>
+                  <span className="text-xl sm:text-2xl font-bold text-blue-600">{stats.completedTests}</span>
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">Tests Completed</h3>
                 <p className="text-xs sm:text-sm text-gray-600">Aptitude assessments taken</p>
@@ -223,7 +252,7 @@ const StudentDashboard = () => {
                   <div className="p-2 bg-green-100 rounded-lg">
                     <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
                   </div>
-                  <span className="text-xl sm:text-2xl font-bold text-green-600">{userData?.savedColleges}</span>
+                  <span className="text-xl sm:text-2xl font-bold text-green-600">{stats.savedColleges}</span>
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">Saved Colleges</h3>
                 <p className="text-xs sm:text-sm text-gray-600">Institutions you're interested in</p>
@@ -234,7 +263,7 @@ const StudentDashboard = () => {
                   <div className="p-2 bg-purple-100 rounded-lg">
                     <Award className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
                   </div>
-                  <span className="text-xl sm:text-2xl font-bold text-purple-600">{userData?.applications}</span>
+                  <span className="text-xl sm:text-2xl font-bold text-purple-600">{stats.applications}</span>
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">Applications</h3>
                 <p className="text-xs sm:text-sm text-gray-600">Applications submitted</p>
@@ -285,94 +314,141 @@ const StudentDashboard = () => {
         {selectedTab === 'tests' && (
           <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-100">
             <h3 className="text-xl font-semibold text-gray-900 mb-6">Test Results</h3>
-            <div className="space-y-4">
-              {recentTests.map(test => (
-                <div key={test.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-xl space-y-3 sm:space-y-0">
-                  <div className="flex items-center space-x-4">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                      <BarChart3 className="h-5 w-5 text-blue-600" />
+            {recentTests.length === 0 ? (
+              <div className="text-center py-8">
+                <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 mb-4">No test results yet</p>
+                <Link
+                  to="/aptitude-test"
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                >
+                  Take Your First Test
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {recentTests.map(test => (
+                  <div key={test._id || test.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-xl space-y-3 sm:space-y-0">
+                    <div className="flex items-center space-x-4">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <BarChart3 className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">{test.name || test.testName}</h4>
+                        <p className="text-sm text-gray-600">Completed on {new Date(test.date || test.completedAt).toLocaleDateString()}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">{test.name}</h4>
-                      <p className="text-sm text-gray-600">Completed on {test.date}</p>
+                    <div className="text-center sm:text-right">
+                      <div className="text-xl font-bold text-blue-600">{test.score || test.result}%</div>
+                      <div className="text-sm text-gray-600">Score</div>
                     </div>
                   </div>
-                  <div className="text-center sm:text-right">
-                    <div className="text-xl font-bold text-blue-600">{test.score}%</div>
-                    <div className="text-sm text-gray-600">Score</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
         {selectedTab === 'colleges' && (
           <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-100">
             <h3 className="text-xl font-semibold text-gray-900 mb-6">Saved Colleges</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-              {savedColleges.map(college => (
-                <div key={college.id} className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center space-x-3">
-                      <span className="text-2xl">{college.image}</span>
-                      <div>
-                        <h4 className="font-semibold text-gray-900">{college.name}</h4>
-                        <p className="text-sm text-gray-600">{college.location}</p>
+            {savedColleges.length === 0 ? (
+              <div className="text-center py-8">
+                <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 mb-4">No saved colleges yet</p>
+                <Link
+                  to="/college-list"
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                >
+                  Browse Colleges
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                {savedColleges.map(college => (
+                  <div key={college._id || college.id} className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <Building className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-gray-900">{college.name}</h4>
+                          <p className="text-sm text-gray-600">{college.location}</p>
+                        </div>
                       </div>
+                      <button 
+                        onClick={() => removeSavedCollege(college._id || college.id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Heart className="h-5 w-5 fill-current" />
+                      </button>
                     </div>
-                    <button className="text-red-500 hover:text-red-700">
-                      <Heart className="h-5 w-5 fill-current" />
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center space-x-1">
-                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                      <span className="text-gray-700">{college.rating}</span>
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center space-x-1">
+                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                        <span className="text-gray-700">{college.rating || 'N/A'}</span>
+                      </div>
+                      <span className="text-gray-600">{college.tuition || 'N/A'}</span>
                     </div>
-                    <span className="text-gray-600">{college.tuition}</span>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
         {selectedTab === 'recommendations' && (
           <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-100">
             <h3 className="text-xl font-semibold text-gray-900 mb-6">Career Recommendations</h3>
-            <div className="space-y-6">
-              {recommendations.map(rec => (
-                <div key={rec.id} className="border border-gray-200 rounded-xl p-4 sm:p-6">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 space-y-3 sm:space-y-0">
-                    <div>
-                      <h4 className="text-lg font-semibold text-gray-900">{rec.title}</h4>
-                      <p className="text-gray-600">{rec.description}</p>
+            {recommendations.length === 0 ? (
+              <div className="text-center py-8">
+                <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 mb-4">No recommendations yet. Complete an aptitude test to get personalized recommendations.</p>
+                <Link
+                  to="/aptitude-test"
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                >
+                  Take Aptitude Test
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {recommendations.map(rec => (
+                  <div key={rec._id || rec.id} className="border border-gray-200 rounded-xl p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 space-y-3 sm:space-y-0">
+                      <div>
+                        <h4 className="text-lg font-semibold text-gray-900">{rec.title || rec.career}</h4>
+                        <p className="text-gray-600">{rec.description || rec.reason}</p>
+                      </div>
+                      <div className="text-center sm:text-right">
+                        <div className="text-2xl font-bold text-green-600">{rec.match || rec.score}%</div>
+                        <div className="text-sm text-gray-600">Match</div>
+                      </div>
                     </div>
-                    <div className="text-center sm:text-right">
-                      <div className="text-2xl font-bold text-green-600">{rec.match}%</div>
-                      <div className="text-sm text-gray-600">Match</div>
+                    <div className="mb-4">
+                      <h5 className="font-medium text-gray-900 mb-2">Recommended Colleges:</h5>
+                      <div className="flex flex-wrap gap-2">
+                        {(rec.colleges || rec.recommendedColleges || []).map((college, index) => (
+                          <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                            {college}
+                          </span>
+                        ))}
+                      </div>
                     </div>
+                    <Link
+                      to="/college-list"
+                      className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      View Colleges <ArrowRight className="h-4 w-4 ml-1" />
+                    </Link>
                   </div>
-                  <div className="mb-4">
-                    <h5 className="font-medium text-gray-900 mb-2">Recommended Colleges:</h5>
-                    <div className="flex flex-wrap gap-2">
-                      {rec.colleges.map((college, index) => (
-                        <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                          {college}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <Link
-                    to="/college-list"
-                    className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    View Colleges <ArrowRight className="h-4 w-4 ml-1" />
-                  </Link>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
