@@ -1,17 +1,19 @@
 import express from 'express';
-import College from '../models/College.js';
+import { Pool } from 'pg';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 const router = express.Router();
+const pool = new Pool({ connectionString: process.env.SUPABASE_DB_URL });
 
 // Get all colleges
 router.get('/', async (req, res) => {
   try {
-    const colleges = await College.find();
-    res.json(colleges);
+    const result = await pool.query('SELECT * FROM colleges');
+    res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch colleges' });
   }
 });
 
@@ -34,22 +36,26 @@ function collegeAuth(req, res, next) {
 // Get current college profile
 router.get('/me', collegeAuth, async (req, res) => {
   try {
-    const college = await College.findById(req.college.collegeId).select('-password');
-    if (!college) return res.status(404).json({ error: 'College not found' });
+    const result = await pool.query('SELECT * FROM colleges WHERE id = $1', [req.college.collegeId]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'College not found' });
+    const college = result.rows[0];
     res.json(college);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch college profile' });
   }
 });
 
 // Get a single college by ID
 router.get('/:id', async (req, res) => {
   try {
-    const college = await College.findById(req.params.id);
-    if (!college) return res.status(404).json({ error: 'Not found' });
+    const result = await pool.query('SELECT * FROM colleges WHERE id = $1', [req.params.id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
+    const college = result.rows[0];
     res.json(college);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch college' });
   }
 });
 
@@ -57,10 +63,10 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { name, country, description } = req.body;
-    const college = new College({ name, country, description });
-    await college.save();
-    res.status(201).json(college);
+    const result = await pool.query('INSERT INTO colleges (name, country, description) VALUES ($1, $2, $3) RETURNING *', [name, country, description]);
+    res.status(201).json(result.rows[0]);
   } catch (err) {
+    console.error(err);
     res.status(400).json({ error: err.message });
   }
 });
@@ -68,23 +74,12 @@ router.post('/', async (req, res) => {
 // Update a college
 router.put('/:id', async (req, res) => {
   try {
-    const updateFields = {};
-    const allowedFields = [
-      'name', 'country', 'description', 'students', 'location', 'type', 'tuition', 'acceptanceRate', 'established', 'website', 'phone', 'topPrograms', 'testimonials'
-    ];
-    for (const field of allowedFields) {
-      if (req.body[field] !== undefined) {
-        updateFields[field] = req.body[field];
-      }
-    }
-    const college = await College.findByIdAndUpdate(
-      req.params.id,
-      updateFields,
-      { new: true, runValidators: true }
-    );
-    if (!college) return res.status(404).json({ error: 'Not found' });
-    res.json(college);
+    const { name, country, description, students, location, type, tuition, acceptanceRate, established, website, phone, topPrograms, testimonials } = req.body;
+    const result = await pool.query('UPDATE colleges SET name = $1, country = $2, description = $3, students = $4, location = $5, type = $6, tuition = $7, acceptanceRate = $8, established = $9, website = $10, phone = $11, topPrograms = $12, testimonials = $13 WHERE id = $14 RETURNING *', [name, country, description, students, location, type, tuition, acceptanceRate, established, website, phone, topPrograms, testimonials, req.params.id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
+    res.json(result.rows[0]);
   } catch (err) {
+    console.error(err);
     res.status(400).json({ error: err.message });
   }
 });
@@ -92,11 +87,12 @@ router.put('/:id', async (req, res) => {
 // Delete a college
 router.delete('/:id', async (req, res) => {
   try {
-    const college = await College.findByIdAndDelete(req.params.id);
-    if (!college) return res.status(404).json({ error: 'Not found' });
+    const result = await pool.query('DELETE FROM colleges WHERE id = $1 RETURNING *', [req.params.id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'College deleted' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete college' });
   }
 });
 
@@ -107,17 +103,15 @@ router.post('/signup', async (req, res) => {
     if (!name || !email || !password || !country) {
       return res.status(400).json({ error: 'All required fields must be filled' });
     }
-    const existing = await College.findOne({ email });
-    if (existing) {
+    const result = await pool.query('SELECT * FROM colleges WHERE email = $1', [email]);
+    if (result.rows.length > 0) {
       return res.status(409).json({ error: 'Email already in use' });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const college = new College({ name, email, password: hashedPassword, country, description, students, location, type, tuition, acceptanceRate, established, website, phone, topPrograms });
-    await college.save();
-    const collegeObj = college.toObject();
-    delete collegeObj.password;
-    res.status(201).json(collegeObj);
+    const result2 = await pool.query('INSERT INTO colleges (name, email, password, country, description, students, location, type, tuition, acceptanceRate, established, website, phone, topPrograms) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *', [name, email, hashedPassword, country, description, students, location, type, tuition, acceptanceRate, established, website, phone, topPrograms]);
+    res.status(201).json(result2.rows[0]);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -129,31 +123,32 @@ router.post('/login', async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
-    const college = await College.findOne({ email });
-    if (!college) {
+    const result = await pool.query('SELECT * FROM colleges WHERE email = $1', [email]);
+    if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
+    const college = result.rows[0];
     const isMatch = await bcrypt.compare(password, college.password);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    const token = jwt.sign({ collegeId: college._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
-    const collegeObj = college.toObject();
-    delete collegeObj.password;
-    res.json({ token, college: collegeObj });
+    const token = jwt.sign({ collegeId: college.id }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
+    res.json({ token, college });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Failed to login' });
   }
 });
 
 // Delete current college account
 router.delete('/me', collegeAuth, async (req, res) => {
   try {
-    const college = await College.findByIdAndDelete(req.college.collegeId);
-    if (!college) return res.status(404).json({ error: 'Not found' });
+    const result = await pool.query('DELETE FROM colleges WHERE id = $1 RETURNING *', [req.college.collegeId]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Account deleted' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete account' });
   }
 });
 
