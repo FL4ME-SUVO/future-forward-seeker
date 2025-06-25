@@ -23,6 +23,7 @@ router.post('/signup', async (req, res) => {
     const result = await pool.query('INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email, isAdmin, createdAt', [name, email, hashedPassword]);
     res.status(201).json(result.rows[0]);
   } catch (err) {
+    console.error('Signup error:', err);
     res.status(500).json({ error: err.message });
   }
 });
