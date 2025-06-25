@@ -8,6 +8,7 @@ import CareerSelection from "./pages/CareerSelection";
 import LocationSelection from "./pages/LocationSelection";
 import CollegeList from "./pages/CollegeList";
 import CollegeSelection from "./pages/CollegeSelection";
+import CollegeComparisonPage from "./pages/CollegeComparisonPage";
 import AptitudeTest from "./pages/AptitudeTest";
 import TestCompletion from "./pages/TestCompletion";
 import StudentDashboard from "./pages/StudentDashboard";
@@ -35,6 +36,7 @@ const App = () => (
       <Route path="/location-selection" element={<LocationSelection />} />
       <Route path="/college-list" element={<CollegeList />} />
       <Route path="/college-selection" element={<CollegeSelection />} />
+      <Route path="/college-comparison" element={<CollegeComparisonPage />} />
       <Route path="/aptitude-test" element={<AptitudeTest />} />
       <Route path="/test-completion" element={<TestCompletion />} />
       <Route path="/student-dashboard" element={<StudentDashboard />} />

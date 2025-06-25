@@ -5,6 +5,11 @@ import dotenv from 'dotenv';
 import sampleRouter from './routes/sample.js';
 import collegesRouter from './routes/colleges.js';
 import usersRouter from './routes/users.js';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import College from './models/College.js';
+import jwt from 'jsonwebtoken';
 
 dotenv.config();
 
@@ -33,6 +38,88 @@ mongoose.connect(MONGO_URI, {
 })
 .catch((err) => {
   console.error('MongoDB connection error:', err);
+});
+
+// Ensure uploads directory exists
+const uploadDir = 'uploads';
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
+// Multer storage config
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
+    cb(null, req.college.collegeId + '-' + Date.now() + ext);
+  }
+});
+const upload = multer({ storage });
+
+// Serve uploads statically
+app.use('/uploads', express.static(uploadDir));
+
+// College auth middleware (duplicate from colleges.js for use here)
+function collegeAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+    req.college = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+}
+
+// Image upload endpoint
+app.post('/api/colleges/upload-image', collegeAuth, upload.single('image'), async (req, res) => {
+  try {
+    const imageUrl = `/uploads/${req.file.filename}`;
+    const college = await College.findByIdAndUpdate(
+      req.college.collegeId,
+      { profileImage: imageUrl },
+      { new: true }
+    );
+    res.json({ imageUrl });
+  } catch (err) {
+    res.status(500).json({ error: 'Image upload failed' });
+  }
+});
+
+// Gallery upload endpoint (multiple images)
+app.post('/api/colleges/upload-gallery', collegeAuth, upload.array('images', 10), async (req, res) => {
+  try {
+    const imageUrls = req.files.map(file => `/uploads/${file.filename}`);
+    const college = await College.findByIdAndUpdate(
+      req.college.collegeId,
+      { $push: { galleryImages: { $each: imageUrls } } },
+      { new: true }
+    );
+    res.json({ imageUrls });
+  } catch (err) {
+    res.status(500).json({ error: 'Gallery upload failed' });
+  }
+});
+
+// Banner image upload endpoint
+app.post('/api/colleges/upload-banner', collegeAuth, upload.single('banner'), async (req, res) => {
+  try {
+    const imageUrl = `/uploads/${req.file.filename}`;
+    const college = await College.findByIdAndUpdate(
+      req.college.collegeId,
+      { bannerImage: imageUrl },
+      { new: true }
+    );
+    res.json({ imageUrl });
+  } catch (err) {
+    res.status(500).json({ error: 'Banner upload failed' });
+  }
 });
 
 app.use('/api/sample', sampleRouter);

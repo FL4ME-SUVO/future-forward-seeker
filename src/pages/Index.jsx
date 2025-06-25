@@ -290,20 +290,6 @@ const Index = () => {
               }`}>
                 Contact
               </a>
-              <Link to="/student-login" className={`transition-all duration-200 ease-out font-medium text-sm px-3 py-2 rounded-lg transform hover:scale-105 navbar-item ${
-                isScrolled 
-                  ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
-                  : 'text-white hover:bg-white/20'
-              }`}>
-                Student Login
-              </Link>
-              <Link to="/college-login" className={`transition-all duration-200 ease-out font-medium text-sm px-3 py-2 rounded-lg transform hover:scale-105 navbar-item ${
-                isScrolled 
-                  ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
-                  : 'text-white hover:bg-white/20'
-              }`}>
-                College Portal
-              </Link>
               {user ? (
                 <>
                   <Link to="/student-dashboard" className="bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-medium hover:bg-blue-200 transition mr-2">
@@ -341,9 +327,25 @@ const Index = () => {
                   </div>
                 </>
               ) : (
-                <Link to="/student-signup" className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-200 ease-out transform hover:scale-105 font-medium text-sm navbar-item">
-                  Get Started
-                </Link>
+                <>
+                  <Link to="/student-login" className={`transition-all duration-200 ease-out font-medium text-sm px-3 py-2 rounded-lg transform hover:scale-105 navbar-item ${
+                    isScrolled 
+                      ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
+                      : 'text-white hover:bg-white/20'
+                  }`}>
+                    Student Login
+                  </Link>
+                  <Link to="/college-login" className={`transition-all duration-200 ease-out font-medium text-sm px-3 py-2 rounded-lg transform hover:scale-105 navbar-item ${
+                    isScrolled 
+                      ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
+                      : 'text-white hover:bg-white/20'
+                  }`}>
+                    College Portal
+                  </Link>
+                  <Link to="/student-signup" className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-200 ease-out transform hover:scale-105 font-medium text-sm navbar-item">
+                    Get Started
+                  </Link>
+                </>
               )}
             </nav>
             <div className="md:hidden">
@@ -384,12 +386,6 @@ const Index = () => {
                 Contact
               </a>
               <div className="w-4/5 h-px bg-slate-700 my-4"></div>
-              <Link to="/student-login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
-                Student Login
-              </Link>
-              <Link to="/college-login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
-                College Portal
-              </Link>
               {user ? (
                 <div className="w-full flex flex-col items-center space-y-2">
                   <Link to="/student-dashboard" className="w-full bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-medium hover:bg-blue-200 transition mb-2 text-center">
@@ -413,9 +409,17 @@ const Index = () => {
                   <button onClick={() => { localStorage.removeItem('collegeToken'); localStorage.removeItem('college'); setCollege(null); window.location.reload(); }} className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 bg-white rounded mt-2">Logout</button>
                 </div>
               ) : (
-                <Link to="/student-signup" onClick={() => setIsMobileMenuOpen(false)} className="mt-6 w-full max-w-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all duration-300 ease-out transform hover:scale-105 font-semibold text-lg navbar-item">
-                  Get Started
-                </Link>
+                <>
+                  <Link to="/student-login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
+                    Student Login
+                  </Link>
+                  <Link to="/college-login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
+                    College Portal
+                  </Link>
+                  <Link to="/student-signup" onClick={() => setIsMobileMenuOpen(false)} className="mt-6 w-full max-w-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all duration-300 ease-out transform hover:scale-105 font-semibold text-lg navbar-item">
+                    Get Started
+                  </Link>
+                </>
               )}
             </div>
           </div>

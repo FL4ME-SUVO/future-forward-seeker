@@ -88,7 +88,14 @@ const CollegeSignup = () => {
           email: formData.email,
           password: formData.password,
           country: formData.country,
-          description: formData.address // or combine address fields as needed
+          description: formData.address,
+          students: formData.totalStudents,
+          location: `${formData.city}, ${formData.state}`,
+          type: formData.accreditation,
+          website: formData.website,
+          established: formData.establishedYear,
+          phone: formData.phone,
+          topPrograms: formData.programs
         })
       });
       const data = await res.json();

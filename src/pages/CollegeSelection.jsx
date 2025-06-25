@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   GraduationCap, 
@@ -35,6 +35,7 @@ import {
 import CollegeComparison from '../components/CollegeComparison';
 
 const CollegeSelection = () => {
+  const navigate = useNavigate();
   const [selectedColleges, setSelectedColleges] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [showComparison, setShowComparison] = useState(false);
@@ -251,6 +252,15 @@ const CollegeSelection = () => {
   // At the point where you render CollegeComparison:
   const selectedCollegesData = colleges.filter(college => selectedColleges.includes(college.id));
 
+  const handleCompareColleges = () => {
+    // Store selected colleges in localStorage for the comparison page
+    localStorage.setItem('selectedColleges', JSON.stringify(selectedColleges));
+    // Navigate to the dedicated comparison page
+    navigate('/college-comparison', { 
+      state: { selectedColleges } 
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Header */}
@@ -270,6 +280,13 @@ const CollegeSelection = () => {
             </Link>
             
             <div className="flex items-center space-x-4">
+              <button
+                onClick={() => navigate(-1)}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl text-blue-700 bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 transition-all duration-200 transform hover:scale-105 mr-2"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+              </button>
               <Link 
                 to="/aptitude-test" 
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-105"
@@ -379,7 +396,7 @@ const CollegeSelection = () => {
             {/* Compare Button */}
             <div className="flex items-end">
               <button
-                onClick={() => setShowComparison(true)}
+                onClick={handleCompareColleges}
                 className="w-full inline-flex items-center justify-center px-4 sm:px-6 py-3 sm:py-4 border rounded-xl font-medium transition-all duration-200 touch-friendly bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700"
               >
                 <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
@@ -399,7 +416,7 @@ const CollegeSelection = () => {
               </h3>
               <div className="flex items-center space-x-4">
                 <button
-                  onClick={() => setShowComparison(true)}
+                  onClick={handleCompareColleges}
                   className="inline-flex items-center px-4 py-2 border rounded-xl font-medium transition-all duration-200 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700"
                 >
                   <BarChart3 className="h-4 w-4 mr-2" />
@@ -445,7 +462,16 @@ const CollegeSelection = () => {
               <div className="bg-white rounded-2xl shadow-2xl border max-w-full w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[90vh] flex flex-col overflow-y-auto p-0 relative">
                 {/* Modal Header: Only title, no close button here */}
                 <div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b rounded-t-2xl px-4 sm:px-8 pt-6 pb-2 flex items-center justify-between">
-                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">College Comparison</h2>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setShowComparison(false)}
+                      className="inline-flex items-center justify-center w-10 h-10 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      aria-label="Back to college list"
+                    >
+                      <ArrowLeft className="h-5 w-5" />
+                    </button>
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">College Comparison</h2>
+                  </div>
                 </div>
                 <div className="flex-1 min-h-0 px-2 sm:px-6 py-4 overflow-x-auto">
                   <CollegeComparison

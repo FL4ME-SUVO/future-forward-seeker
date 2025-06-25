@@ -68,10 +68,18 @@ router.post('/', async (req, res) => {
 // Update a college
 router.put('/:id', async (req, res) => {
   try {
-    const { name, country, description } = req.body;
+    const updateFields = {};
+    const allowedFields = [
+      'name', 'country', 'description', 'students', 'location', 'type', 'tuition', 'acceptanceRate', 'established', 'website', 'phone', 'topPrograms', 'testimonials'
+    ];
+    for (const field of allowedFields) {
+      if (req.body[field] !== undefined) {
+        updateFields[field] = req.body[field];
+      }
+    }
     const college = await College.findByIdAndUpdate(
       req.params.id,
-      { name, country, description },
+      updateFields,
       { new: true, runValidators: true }
     );
     if (!college) return res.status(404).json({ error: 'Not found' });
@@ -95,7 +103,7 @@ router.delete('/:id', async (req, res) => {
 // College signup
 router.post('/signup', async (req, res) => {
   try {
-    const { name, email, password, country, description } = req.body;
+    const { name, email, password, country, description, students, location, type, tuition, acceptanceRate, established, website, phone, topPrograms } = req.body;
     if (!name || !email || !password || !country) {
       return res.status(400).json({ error: 'All required fields must be filled' });
     }
@@ -104,7 +112,7 @@ router.post('/signup', async (req, res) => {
       return res.status(409).json({ error: 'Email already in use' });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const college = new College({ name, email, password: hashedPassword, country, description });
+    const college = new College({ name, email, password: hashedPassword, country, description, students, location, type, tuition, acceptanceRate, established, website, phone, topPrograms });
     await college.save();
     const collegeObj = college.toObject();
     delete collegeObj.password;
@@ -133,6 +141,17 @@ router.post('/login', async (req, res) => {
     const collegeObj = college.toObject();
     delete collegeObj.password;
     res.json({ token, college: collegeObj });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete current college account
+router.delete('/me', collegeAuth, async (req, res) => {
+  try {
+    const college = await College.findByIdAndDelete(req.college.collegeId);
+    if (!college) return res.status(404).json({ error: 'Not found' });
+    res.json({ message: 'Account deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

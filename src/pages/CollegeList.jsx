@@ -400,7 +400,7 @@ const CollegeList = () => {
                 {/* Image */}
                 <div className="relative h-40 sm:h-48 bg-gradient-to-br from-blue-500 to-purple-600">
                   <img 
-                    src={college.image} 
+                    src={college.bannerImage ? (college.bannerImage.startsWith('http') ? college.bannerImage : 'http://localhost:5000' + college.bannerImage) : (college.image || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400')} 
                     alt={college.name}
                     className="w-full h-full object-cover"
                   />
@@ -424,6 +424,18 @@ const CollegeList = () => {
                 <div className="p-4 sm:p-6">
                   <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-2">{college.name}</h3>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">{college.description}</p>
+                  {college.country && (
+                    <div className="text-xs text-gray-500 mb-1">Country: {college.country}</div>
+                  )}
+                  {college.location && (
+                    <div className="text-xs text-gray-500 mb-1">Location: {college.location}</div>
+                  )}
+                  {college.type && (
+                    <div className="text-xs text-gray-500 mb-1">Type: {college.type}</div>
+                  )}
+                  {college.email && (
+                    <div className="text-xs text-gray-500 mb-1">Email: {college.email}</div>
+                  )}
 
                   {/* Stats */}
                   <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -431,7 +443,7 @@ const CollegeList = () => {
                       <Users className="h-4 w-4 text-blue-600" />
                       <div>
                         <div className="text-xs text-gray-600">Students</div>
-                        <div className="text-sm font-semibold text-gray-900">{college.students.toLocaleString()}</div>
+                        <div className="text-sm font-semibold text-gray-900">{college.students ? college.students.toLocaleString() : 'N/A'}</div>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -461,9 +473,9 @@ const CollegeList = () => {
                   <div className="mb-4 sm:mb-6">
                     <h4 className="text-sm font-semibold text-gray-900 mb-2">Top Programs</h4>
                     <div className="flex flex-wrap gap-2">
-                      {college.topPrograms.slice(0, 3).map((program, index) => (
+                      {(college.topPrograms ? college.topPrograms.slice(0, 3) : []).map((program, index) => (
                         <motion.span
-                          key={index}
+                          key={`${college.id}-program-${program}`}
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ duration: 0.3, delay: index * 0.1 }}
