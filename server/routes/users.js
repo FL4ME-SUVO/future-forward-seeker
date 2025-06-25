@@ -1,10 +1,12 @@
 import express from 'express';
-import User from '../models/User.js';
-import College from '../models/College.js';
+// import User from '../models/User.js'; // REMOVE
+// import College from '../models/College.js'; // REMOVE
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { Pool } from 'pg'; // ADD
 
 const router = express.Router();
+const pool = new Pool({ connectionString: process.env.SUPABASE_DB_URL }); // ADD
 
 // User signup
 router.post('/signup', async (req, res) => {
@@ -13,16 +15,13 @@ router.post('/signup', async (req, res) => {
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    const existingUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (existingUser.rows.length > 0) {
       return res.status(409).json({ error: 'Email already in use' });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword });
-    await user.save();
-    const userObj = user.toObject();
-    delete userObj.password;
-    res.status(201).json(userObj);
+    const result = await pool.query('INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email, isAdmin, createdAt', [name, email, hashedPassword]);
+    res.status(201).json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -35,17 +34,17 @@ router.post('/login', async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
-    const user = await User.findOne({ email });
-    if (!user) {
+    const userRes = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (userRes.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
+    const user = userRes.rows[0];
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
-    const userObj = user.toObject();
-    delete userObj.password;
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
+    const { password: _, ...userObj } = user;
     res.json({ token, user: userObj });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -59,17 +58,17 @@ router.post('/admin/login', async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
-    const user = await User.findOne({ email });
-    if (!user || !user.isAdmin) {
+    const userRes = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (userRes.rows.length === 0 || !userRes.rows[0].isadmin) {
       return res.status(401).json({ error: 'Not an admin or invalid credentials' });
     }
+    const user = userRes.rows[0];
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    const token = jwt.sign({ userId: user._id, isAdmin: true }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
-    const userObj = user.toObject();
-    delete userObj.password;
+    const token = jwt.sign({ userId: user.id, isAdmin: true }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
+    const { password: _, ...userObj } = user;
     res.json({ token, user: userObj });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -95,9 +94,9 @@ function auth(req, res, next) {
 // Get current user
 router.get('/me', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select('-password');
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    res.json(user);
+    const userRes = await pool.query('SELECT id, name, email, isAdmin, createdAt FROM users WHERE id = $1', [req.user.userId]);
+    if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+    res.json(userRes.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -105,65 +104,82 @@ router.get('/me', auth, async (req, res) => {
 
 // Save a college
 router.post('/saved-colleges/:collegeId', auth, async (req, res) => {
-  const user = await User.findById(req.user.userId);
-  if (!user) return res.status(404).json({ error: 'User not found' });
-  if (!user.savedColleges.includes(req.params.collegeId)) {
-    user.savedColleges.push(req.params.collegeId);
-    await user.save();
+  try {
+    // Prevent duplicates
+    const exists = await pool.query('SELECT * FROM saved_colleges WHERE user_id = $1 AND college_id = $2', [req.user.userId, req.params.collegeId]);
+    if (exists.rows.length === 0) {
+      await pool.query('INSERT INTO saved_colleges (user_id, college_id) VALUES ($1, $2)', [req.user.userId, req.params.collegeId]);
+    }
+    const saved = await pool.query('SELECT college_id FROM saved_colleges WHERE user_id = $1', [req.user.userId]);
+    res.json({ savedColleges: saved.rows.map(r => r.college_id) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  res.json({ savedColleges: user.savedColleges });
 });
 
 // Remove a saved college
 router.delete('/saved-colleges/:collegeId', auth, async (req, res) => {
-  const user = await User.findById(req.user.userId);
-  if (!user) return res.status(404).json({ error: 'User not found' });
-  user.savedColleges = user.savedColleges.filter(
-    id => id.toString() !== req.params.collegeId
-  );
-  await user.save();
-  res.json({ savedColleges: user.savedColleges });
+  try {
+    await pool.query('DELETE FROM saved_colleges WHERE user_id = $1 AND college_id = $2', [req.user.userId, req.params.collegeId]);
+    const saved = await pool.query('SELECT college_id FROM saved_colleges WHERE user_id = $1', [req.user.userId]);
+    res.json({ savedColleges: saved.rows.map(r => r.college_id) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get saved colleges (populated)
 router.get('/saved-colleges', auth, async (req, res) => {
-  const user = await User.findById(req.user.userId).populate('savedColleges');
-  if (!user) return res.status(404).json({ error: 'User not found' });
-  res.json(user.savedColleges);
+  try {
+    const saved = await pool.query('SELECT c.* FROM saved_colleges sc JOIN colleges c ON sc.college_id = c.id WHERE sc.user_id = $1', [req.user.userId]);
+    res.json(saved.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Add a test result
 router.post('/test-results', auth, async (req, res) => {
-  const { testName, score } = req.body;
-  const user = await User.findById(req.user.userId);
-  if (!user) return res.status(404).json({ error: 'User not found' });
-  user.testResults.push({ testName, score, completedAt: new Date() });
-  await user.save();
-  res.json(user.testResults);
+  try {
+    const { testName, score } = req.body;
+    await pool.query('INSERT INTO test_results (user_id, test_name, score, completed_at) VALUES ($1, $2, $3, NOW())', [req.user.userId, testName, score]);
+    const results = await pool.query('SELECT * FROM test_results WHERE user_id = $1', [req.user.userId]);
+    res.json(results.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get test results
 router.get('/test-results', auth, async (req, res) => {
-  const user = await User.findById(req.user.userId);
-  if (!user) return res.status(404).json({ error: 'User not found' });
-  res.json(user.testResults);
+  try {
+    const results = await pool.query('SELECT * FROM test_results WHERE user_id = $1', [req.user.userId]);
+    res.json(results.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Add a recommendation
 router.post('/recommendations', auth, async (req, res) => {
-  const { career, reason, score, recommendedColleges } = req.body;
-  const user = await User.findById(req.user.userId);
-  if (!user) return res.status(404).json({ error: 'User not found' });
-  user.recommendations.push({ career, reason, score, recommendedColleges });
-  await user.save();
-  res.json(user.recommendations);
+  try {
+    const { career, reason, score, recommendedColleges } = req.body;
+    await pool.query('INSERT INTO recommendations (user_id, career, reason, score, recommended_colleges) VALUES ($1, $2, $3, $4, $5)', [req.user.userId, career, reason, score, recommendedColleges]);
+    const recs = await pool.query('SELECT * FROM recommendations WHERE user_id = $1', [req.user.userId]);
+    res.json(recs.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get recommendations
 router.get('/recommendations', auth, async (req, res) => {
-  const user = await User.findById(req.user.userId);
-  if (!user) return res.status(404).json({ error: 'User not found' });
-  res.json(user.recommendations);
+  try {
+    const recs = await pool.query('SELECT * FROM recommendations WHERE user_id = $1', [req.user.userId]);
+    res.json(recs.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Admin-only middleware

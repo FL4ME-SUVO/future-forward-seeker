@@ -1,5 +1,4 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import sampleRouter from './routes/sample.js';
@@ -9,14 +8,14 @@ import careersRouter from './routes/careers.js';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import College from './models/College.js';
 import jwt from 'jsonwebtoken';
+import { Pool } from 'pg';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://Shubhajit2002:3zr0IEahufsGm6gm@cluster0.wc61rsz.mongodb.net/EduGuide?retryWrites=true&w=majority&appName=Cluster0';
+const pool = new Pool({ connectionString: process.env.SUPABASE_DB_URL });
 
 app.use(cors());
 app.use(express.json());
@@ -24,21 +23,6 @@ app.use(express.json());
 // Health check route
 app.get('/', (req, res) => {
   res.send('API is running');
-});
-
-// Connect to MongoDB
-mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('Connected to MongoDB');
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-})
-.catch((err) => {
-  console.error('MongoDB connection error:', err);
 });
 
 // Ensure uploads directory exists
@@ -78,15 +62,16 @@ function collegeAuth(req, res, next) {
   }
 }
 
-// Image upload endpoint
+// Image upload endpoint (profile image)
 app.post('/api/colleges/upload-image', collegeAuth, upload.single('image'), async (req, res) => {
   try {
     const imageUrl = `/uploads/${req.file.filename}`;
-    const college = await College.findByIdAndUpdate(
-      req.college.collegeId,
-      { profileImage: imageUrl },
-      { new: true }
+    // Update college profileImage in Postgres
+    const result = await pool.query(
+      'UPDATE colleges SET "profileImage" = $1 WHERE id = $2 RETURNING *',
+      [imageUrl, req.college.collegeId]
     );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'College not found' });
     res.json({ imageUrl });
   } catch (err) {
     res.status(500).json({ error: 'Image upload failed' });
@@ -97,11 +82,12 @@ app.post('/api/colleges/upload-image', collegeAuth, upload.single('image'), asyn
 app.post('/api/colleges/upload-gallery', collegeAuth, upload.array('images', 10), async (req, res) => {
   try {
     const imageUrls = req.files.map(file => `/uploads/${file.filename}`);
-    const college = await College.findByIdAndUpdate(
-      req.college.collegeId,
-      { $push: { galleryImages: { $each: imageUrls } } },
-      { new: true }
-    );
+    // Fetch current galleryImages
+    const collegeRes = await pool.query('SELECT "galleryImages" FROM colleges WHERE id = $1', [req.college.collegeId]);
+    if (collegeRes.rows.length === 0) return res.status(404).json({ error: 'College not found' });
+    const currentGallery = collegeRes.rows[0].galleryImages || [];
+    const newGallery = [...currentGallery, ...imageUrls];
+    await pool.query('UPDATE colleges SET "galleryImages" = $1 WHERE id = $2', [newGallery, req.college.collegeId]);
     res.json({ imageUrls });
   } catch (err) {
     res.status(500).json({ error: 'Gallery upload failed' });
@@ -112,11 +98,11 @@ app.post('/api/colleges/upload-gallery', collegeAuth, upload.array('images', 10)
 app.post('/api/colleges/upload-banner', collegeAuth, upload.single('banner'), async (req, res) => {
   try {
     const imageUrl = `/uploads/${req.file.filename}`;
-    const college = await College.findByIdAndUpdate(
-      req.college.collegeId,
-      { bannerImage: imageUrl },
-      { new: true }
+    const result = await pool.query(
+      'UPDATE colleges SET "bannerImage" = $1 WHERE id = $2 RETURNING *',
+      [imageUrl, req.college.collegeId]
     );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'College not found' });
     res.json({ imageUrl });
   } catch (err) {
     res.status(500).json({ error: 'Banner upload failed' });
@@ -126,4 +112,9 @@ app.post('/api/colleges/upload-banner', collegeAuth, upload.single('banner'), as
 app.use('/api/sample', sampleRouter);
 app.use('/api/colleges', collegesRouter);
 app.use('/api/users', usersRouter);
-app.use('/api/careers', careersRouter); 
+app.use('/api/careers', careersRouter);
+
+// Start server directly
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+}); 
