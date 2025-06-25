@@ -46,6 +46,7 @@ const CollegeList = () => {
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [colleges, setColleges] = useState([]);
   const [saving, setSaving] = useState({});
+  const [quickViewCollege, setQuickViewCollege] = useState(null);
 
   const locations = [
     { id: 'all', name: 'All Locations', flag: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400", icon: Globe },
@@ -530,6 +531,7 @@ const CollegeList = () => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="px-4 py-3 border border-gray-300 text-gray-700 rounded-xl hover:border-blue-600 hover:text-blue-600 transition-all duration-300"
+                      onClick={() => setQuickViewCollege(college)}
                     >
                       <BookOpen className="h-4 w-4" />
                     </motion.button>
@@ -562,6 +564,70 @@ const CollegeList = () => {
               <span className="sm:hidden">Continue ({selectedColleges.length})</span>
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
+          </div>
+        )}
+
+        {/* Quick View Modal */}
+        {quickViewCollege && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setQuickViewCollege(null)}>
+            <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full relative animate-fade-in-up" onClick={e => e.stopPropagation()}>
+              <button
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-700"
+                onClick={() => setQuickViewCollege(null)}
+              >
+                <X className="h-6 w-6" />
+              </button>
+              {/* Banner */}
+              <div className="h-40 rounded-t-2xl overflow-hidden relative bg-gradient-to-r from-blue-600 to-indigo-600">
+                {quickViewCollege.bannerImage && (
+                  <img
+                    src={quickViewCollege.bannerImage.startsWith('http') ? quickViewCollege.bannerImage : 'http://localhost:5000' + quickViewCollege.bannerImage}
+                    alt={quickViewCollege.name}
+                    className="w-full h-full object-cover"
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              </div>
+              <div className="px-6 py-6">
+                <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2 mb-2">
+                  {quickViewCollege.name}
+                  {quickViewCollege.type && (
+                    <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">{quickViewCollege.type}</span>
+                  )}
+                </h2>
+                <div className="flex flex-wrap gap-4 text-gray-700 text-sm mb-2">
+                  {quickViewCollege.location && (
+                    <span className="flex items-center gap-1"><MapPin className="h-4 w-4" /> {quickViewCollege.location}</span>
+                  )}
+                  {quickViewCollege.country && (
+                    <span className="flex items-center gap-1"><Globe className="h-4 w-4" /> {quickViewCollege.country}</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 text-yellow-500 font-bold text-lg mb-2">
+                  <Star className="h-5 w-5" /> {quickViewCollege.rating || 'N/A'}
+                </div>
+                <div className="flex items-center gap-2 text-green-700 font-semibold mb-2">
+                  <DollarSign className="h-5 w-5" /> {quickViewCollege.tuition || 'N/A'}
+                </div>
+                <div className="flex gap-2 mt-4">
+                  <button
+                    onClick={() => {
+                      setQuickViewCollege(null);
+                      navigate(`/college/${quickViewCollege._id}`);
+                    }}
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+                  >
+                    View Details
+                  </button>
+                  <button
+                    onClick={() => setQuickViewCollege(null)}
+                    className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>

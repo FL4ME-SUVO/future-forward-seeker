@@ -117,7 +117,7 @@ const getBestValue = (colleges, key) => {
   const best = config.higherBetter
     ? values.reduce((max, item) => item.numericValue > max.numericValue ? item : max)
     : values.reduce((min, item) => item.numericValue < min.numericValue ? item : min);
-  return best.college.id;
+  return best.college._id;
 };
 
 const CollegeComparison = ({ colleges = [], onRemoveCollege, onAddCollege }) => {
@@ -145,19 +145,43 @@ const CollegeComparison = ({ colleges = [], onRemoveCollege, onAddCollege }) => 
   const TableHeader = () => (
     <div className="grid" style={{ gridTemplateColumns: `200px repeat(${colleges.length}, minmax(180px, 1fr))` }}>
       <div className="sticky left-0 z-20 bg-gradient-to-b from-blue-50 to-white rounded-tl-xl border-r border-b p-4 font-semibold text-gray-700 text-left shadow-sm">&nbsp;</div>
-      {colleges.map((college, idx) => (
-        <div
-          key={college.id}
-          className="border-b border-r p-4 pr-8 bg-gradient-to-b from-blue-50 to-white font-semibold text-center whitespace-nowrap min-w-[180px] flex flex-col items-center justify-between relative rounded-tr-xl first:rounded-tr-none shadow-sm"
-        >
-          <div className="flex flex-col items-center justify-center gap-2 w-full">
-            <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold">
-              <Building className="h-5 w-5" />
-            </span>
-            <span className="truncate font-bold text-base mt-1" title={college.name}>{college.name}</span>
+      {colleges.map((college, idx) => {
+        let imageUrl = null;
+        if (college.profileImage) {
+          imageUrl = college.profileImage.startsWith('http')
+            ? college.profileImage
+            : `http://localhost:5000${college.profileImage}`;
+        } else if (college.bannerImage) {
+          imageUrl = college.bannerImage.startsWith('http')
+            ? college.bannerImage
+            : `http://localhost:5000${college.bannerImage}`;
+        }
+        return (
+          <div
+            key={college._id}
+            className="border-b border-r p-4 pr-8 bg-gradient-to-b from-blue-50 to-white font-semibold text-center whitespace-nowrap min-w-[180px] flex flex-col items-center justify-between relative rounded-tr-xl first:rounded-tr-none shadow-sm"
+          >
+            <div className="flex flex-col items-center justify-center gap-2 w-full">
+              {imageUrl ? (
+                <img
+                  src={imageUrl}
+                  alt={college.name + ' logo'}
+                  className="w-12 h-12 rounded-full object-cover border border-blue-200 shadow-sm bg-white"
+                />
+              ) : (
+                <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 font-bold">
+                  <Building className="h-6 w-6" />
+                </span>
+              )}
+              <span className="truncate font-bold text-base mt-1" title={college.name}>{college.name}</span>
+              <span className="text-xs text-gray-500 mt-0.5">{college.location}</span>
+              {college.type && (
+                <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 rounded px-2 py-0.5 mt-0.5">{college.type}</span>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 
@@ -171,15 +195,15 @@ const CollegeComparison = ({ colleges = [], onRemoveCollege, onAddCollege }) => 
           <div key={field.key} className={`grid border-b last:border-b-0 ${rowIdx % 2 === 1 ? 'bg-gray-50' : 'bg-white'}`} style={{ gridTemplateColumns: `200px repeat(${colleges.length}, minmax(180px, 1fr))` }}>
             {/* Sticky field label */}
             <div className="sticky left-0 z-10 bg-gray-100 border-r p-4 flex items-center gap-2 font-medium text-gray-700 min-w-[200px] shadow-sm rounded-bl-xl">
-              <Icon className="h-4 w-4 text-gray-500" />
+              {Icon && <Icon className="h-4 w-4 text-gray-500" />}
               <span>{field.label}</span>
             </div>
             {colleges.map((college) => {
               const value = getFieldValue(college, field.key);
-              const isBest = bestCollegeId === college.id;
+              const isBest = bestCollegeId === college._id;
               return (
                 <div
-                  key={college.id}
+                  key={college._id}
                   className={`p-4 border-r last:border-r-0 flex items-center justify-between min-w-[180px] max-w-xs whitespace-nowrap text-base font-medium transition hover:bg-blue-50 ${
                     isBest ? 'bg-green-50 border-green-200 font-semibold shadow-sm' : 'border-gray-200'
                   }`}

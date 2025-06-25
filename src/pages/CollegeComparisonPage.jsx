@@ -7,6 +7,7 @@ const CollegeComparisonPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedColleges, setSelectedColleges] = useState([]);
+  const [allColleges, setAllColleges] = useState([]);
 
   // Get selected colleges from location state or localStorage
   useEffect(() => {
@@ -20,6 +21,14 @@ const CollegeComparisonPage = () => {
       }
     }
   }, [location.state]);
+
+  // Fetch all colleges from backend
+  useEffect(() => {
+    fetch('/api/colleges')
+      .then(res => res.json())
+      .then(data => setAllColleges(data))
+      .catch(() => setAllColleges([]));
+  }, []);
 
   const handleBackToCollegeList = () => {
     navigate('/college-selection');
@@ -45,76 +54,9 @@ const CollegeComparisonPage = () => {
     // Implement your continue logic here, or navigate to the next page
   };
 
-  // Mock college data - in a real app, this would come from an API
-  const collegesData = [
-    {
-      id: 1,
-      name: 'IIT Bombay',
-      location: 'Mumbai, India',
-      type: 'Public',
-      ranking: 1,
-      rating: 4.8,
-      fees: {
-        tuition: '$3,000 - $5,000',
-        hostel: '$1,000 - $1,500',
-        total: '$4,000 - $6,500'
-      },
-      placement: {
-        averagePackage: '$85,000',
-        highestPackage: '$150,000',
-        placementRate: '95%'
-      },
-      students: 12000,
-      facultyRatio: '1:12',
-      campusSize: '550 acres'
-    },
-    {
-      id: 2,
-      name: 'Stanford University',
-      location: 'San Francisco, USA',
-      type: 'Private',
-      ranking: 2,
-      rating: 4.9,
-      fees: {
-        tuition: '$55,000 - $60,000',
-        hostel: '$15,000 - $20,000',
-        total: '$70,000 - $80,000'
-      },
-      placement: {
-        averagePackage: '$120,000',
-        highestPackage: '$200,000',
-        placementRate: '98%'
-      },
-      students: 17000,
-      facultyRatio: '1:8',
-      campusSize: '8,180 acres'
-    },
-    {
-      id: 3,
-      name: 'Imperial College London',
-      location: 'London, UK',
-      type: 'Public',
-      ranking: 3,
-      rating: 4.7,
-      fees: {
-        tuition: '£35,000 - £40,000',
-        hostel: '£8,000 - £12,000',
-        total: '£43,000 - £52,000'
-      },
-      placement: {
-        averagePackage: '$95,000',
-        highestPackage: '$180,000',
-        placementRate: '96%'
-      },
-      students: 19000,
-      facultyRatio: '1:10',
-      campusSize: '700 acres'
-    }
-  ];
-
-  // Filter colleges based on selected IDs
-  const collegesToCompare = collegesData.filter(college => 
-    selectedColleges.includes(college.id)
+  // Filter colleges based on selected IDs (using _id)
+  const collegesToCompare = allColleges.filter(college => 
+    selectedColleges.includes(college._id)
   );
 
   return (

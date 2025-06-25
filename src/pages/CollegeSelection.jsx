@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   GraduationCap, 
@@ -36,13 +36,21 @@ import CollegeComparison from '../components/CollegeComparison';
 
 const CollegeSelection = () => {
   const navigate = useNavigate();
-  const [selectedColleges, setSelectedColleges] = useState([]);
+  const location = useLocation();
+  const [selectedColleges, setSelectedColleges] = useState(() => {
+    if (location.state?.selectedColleges) {
+      return location.state.selectedColleges;
+    }
+    const stored = localStorage.getItem('selectedColleges');
+    return stored ? JSON.parse(stored) : [];
+  });
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [showComparison, setShowComparison] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [selectedProgram, setSelectedProgram] = useState('all');
   const [priceRange, setPriceRange] = useState('all');
+  const [colleges, setColleges] = useState([]);
 
   const locations = [
     { id: 'all', name: 'All Locations', flag: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400" },
@@ -64,158 +72,18 @@ const CollegeSelection = () => {
     { id: 'science', name: 'Science', icon: Microscope }
   ];
 
-  const colleges = [
-    {
-      id: 1,
-      name: 'IIT Bombay',
-      location: 'mumbai',
-      locationName: 'Mumbai, India',
-      description: 'Premier engineering institute with world-class facilities and research opportunities.',
-      programs: ['engineering', 'technology', 'science'],
-      tuition: '$3,000 - $5,000',
-      acceptanceRate: '2%',
-      ranking: 1,
-      students: 12000,
-      established: 1958,
-      website: 'https://www.iitb.ac.in',
-      phone: '+91-22-2572-2545',
-      email: 'info@iitb.ac.in',
-      topPrograms: ['Computer Science', 'Mechanical Engineering', 'Electrical Engineering'],
-      facilities: ['Research Labs', 'Library', 'Sports Complex', 'Hostels'],
-      favorite: false,
-      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=400",
-      rating: 4.8,
-      placementRate: '95%',
-      avgSalary: '$85,000',
-      researchFunding: '$50M',
-      internationalStudents: '15%'
-    },
-    {
-      id: 2,
-      name: 'Stanford University',
-      location: 'sanfrancisco',
-      locationName: 'San Francisco, USA',
-      description: 'World-renowned university known for innovation and entrepreneurship.',
-      programs: ['engineering', 'technology', 'business', 'science'],
-      tuition: '$55,000 - $60,000',
-      acceptanceRate: '4%',
-      ranking: 2,
-      students: 17000,
-      established: 1885,
-      website: 'https://www.stanford.edu',
-      phone: '+1-650-723-2300',
-      email: 'admission@stanford.edu',
-      topPrograms: ['Computer Science', 'Engineering', 'Business', 'Medicine'],
-      facilities: ['Research Centers', 'Libraries', 'Sports Facilities', 'Dining'],
-      favorite: false,
-      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400",
-      rating: 4.9,
-      placementRate: '98%',
-      avgSalary: '$120,000',
-      researchFunding: '$1.1B',
-      internationalStudents: '25%'
-    },
-    {
-      id: 3,
-      name: 'Imperial College London',
-      location: 'london',
-      locationName: 'London, UK',
-      description: 'Leading science and engineering university in the heart of London.',
-      programs: ['engineering', 'technology', 'science', 'medicine'],
-      tuition: '£35,000 - £40,000',
-      acceptanceRate: '14%',
-      ranking: 3,
-      students: 19000,
-      established: 1907,
-      website: 'https://www.imperial.ac.uk',
-      phone: '+44-20-7589-5111',
-      email: 'admissions@imperial.ac.uk',
-      topPrograms: ['Engineering', 'Medicine', 'Business', 'Science'],
-      facilities: ['Research Labs', 'Library', 'Sports Center', 'Student Union'],
-      favorite: false,
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400",
-      rating: 4.7,
-      placementRate: '96%',
-      avgSalary: '$95,000',
-      researchFunding: '$400M',
-      internationalStudents: '60%'
-    },
-    {
-      id: 4,
-      name: 'BITS Pilani',
-      location: 'mumbai',
-      locationName: 'Mumbai, India',
-      description: 'Private engineering institute with excellent industry connections.',
-      programs: ['engineering', 'technology', 'business'],
-      tuition: '$4,000 - $6,000',
-      acceptanceRate: '8%',
-      ranking: 4,
-      students: 15000,
-      established: 1964,
-      website: 'https://www.bits-pilani.ac.in',
-      phone: '+91-1596-242210',
-      email: 'admission@bits-pilani.ac.in',
-      topPrograms: ['Computer Science', 'Mechanical', 'Chemical Engineering'],
-      facilities: ['Labs', 'Library', 'Sports', 'Hostels'],
-      favorite: false,
-      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=400",
-      rating: 4.6,
-      placementRate: '92%',
-      avgSalary: '$75,000',
-      researchFunding: '$25M',
-      internationalStudents: '8%'
-    },
-    {
-      id: 5,
-      name: 'MIT',
-      location: 'newyork',
-      locationName: 'New York, USA',
-      description: 'Massachusetts Institute of Technology - global leader in technology and innovation.',
-      programs: ['engineering', 'technology', 'science'],
-      tuition: '$55,000 - $60,000',
-      acceptanceRate: '7%',
-      ranking: 5,
-      students: 11500,
-      established: 1861,
-      website: 'https://www.mit.edu',
-      phone: '+1-617-253-1000',
-      email: 'admissions@mit.edu',
-      topPrograms: ['Engineering', 'Computer Science', 'Physics', 'Mathematics'],
-      facilities: ['Research Labs', 'Libraries', 'Museums', 'Sports'],
-      favorite: false,
-      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400",
-      rating: 4.9,
-      placementRate: '99%',
-      avgSalary: '$130,000',
-      researchFunding: '$1.8B',
-      internationalStudents: '30%'
-    },
-    {
-      id: 6,
-      name: 'University of Toronto',
-      location: 'toronto',
-      locationName: 'Toronto, Canada',
-      description: 'Canada\'s leading university with diverse programs and research opportunities.',
-      programs: ['engineering', 'technology', 'business', 'science', 'arts'],
-      tuition: 'C$45,000 - C$50,000',
-      acceptanceRate: '43%',
-      ranking: 6,
-      students: 95000,
-      established: 1827,
-      website: 'https://www.utoronto.ca',
-      phone: '+1-416-978-2011',
-      email: 'admissions@utoronto.ca',
-      topPrograms: ['Engineering', 'Business', 'Medicine', 'Arts & Science'],
-      facilities: ['Libraries', 'Research Centers', 'Sports', 'Student Services'],
-      favorite: false,
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=400",
-      rating: 4.5,
-      placementRate: '89%',
-      avgSalary: '$80,000',
-      researchFunding: '$1.2B',
-      internationalStudents: '20%'
+  useEffect(() => {
+    fetch('/api/colleges')
+      .then(res => res.json())
+      .then(data => setColleges(data))
+      .catch(err => console.error('Failed to fetch colleges:', err));
+  }, []);
+
+  useEffect(() => {
+    if (location.state?.selectedColleges) {
+      setSelectedColleges(location.state.selectedColleges);
     }
-  ];
+  }, [location.state]);
 
   // Helper to determine if a college is in India or International
   const getCountry = (location) => {
@@ -235,7 +103,7 @@ const CollegeSelection = () => {
     const value = e.target.value;
     setSelectedCountry(value);
     setSelectedColleges(prev => prev.filter(id => {
-      const college = colleges.find(c => c.id === id);
+      const college = colleges.find(c => c._id === id);
       return college && getCountry(college.location) === value;
     }));
   };
@@ -250,7 +118,7 @@ const CollegeSelection = () => {
   };
 
   // At the point where you render CollegeComparison:
-  const selectedCollegesData = colleges.filter(college => selectedColleges.includes(college.id));
+  const selectedCollegesData = colleges.filter(college => selectedColleges.includes(college._id));
 
   const handleCompareColleges = () => {
     // Store selected colleges in localStorage for the comparison page
@@ -431,21 +299,23 @@ const CollegeSelection = () => {
                 </button>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {selectedColleges.map(college => (
-                <span
-                  key={college}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
-                >
-                  {college}
-                  <button
-                    onClick={() => toggleSelection(college)}
-                    className="ml-2 text-blue-600 hover:text-blue-800"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </span>
-              ))}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {selectedColleges.map(id => {
+                const college = colleges.find(c => c._id === id);
+                return (
+                  <span key={id} className="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-medium text-sm">
+                    {college ? college.name : id}
+                    <button
+                      type="button"
+                      className="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none"
+                      onClick={() => setSelectedColleges(selectedColleges.filter(cid => cid !== id))}
+                      aria-label="Remove"
+                    >
+                      ×
+                    </button>
+                  </span>
+                );
+              })}
             </div>
           </div>
         )}
@@ -500,23 +370,48 @@ const CollegeSelection = () => {
 
         {/* Colleges Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
-          {filteredColleges.map(college => (
-            <div key={college.id} className="bg-white rounded-xl shadow p-6 flex flex-col items-center">
-              <img src={college.image} alt={college.name} className="w-20 h-20 rounded-full mb-4" />
-              <h3 className="text-lg font-semibold mb-2">{college.name}</h3>
-              <p className="text-gray-500 mb-2">{college.locationName}</p>
-              <button
-                onClick={() => toggleSelection(college.id)}
-                className={`mt-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                  selectedColleges.includes(college.id)
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-blue-100'
-                }`}
-              >
-                {selectedColleges.includes(college.id) ? 'Remove' : 'Compare'}
-              </button>
-            </div>
-          ))}
+          {filteredColleges.map(college => {
+            let imageUrl = null;
+            if (college.profileImage) {
+              imageUrl = college.profileImage.startsWith('http')
+                ? college.profileImage
+                : `http://localhost:5000${college.profileImage}`;
+            } else if (college.bannerImage) {
+              imageUrl = college.bannerImage.startsWith('http')
+                ? college.bannerImage
+                : `http://localhost:5000${college.bannerImage}`;
+            }
+            return (
+              <div key={college._id} className="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={college.name + ' logo'}
+                    className="w-14 h-14 rounded-full object-cover border border-blue-200 shadow-sm bg-white mb-2"
+                  />
+                ) : (
+                  <span className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-blue-100 text-blue-600 font-bold mb-2">
+                    <Building2 className="h-7 w-7" />
+                  </span>
+                )}
+                <h3 className="text-lg font-semibold mb-1 text-center">{college.name}</h3>
+                <span className="text-xs text-gray-500 mb-1 text-center">{college.location}</span>
+                {college.type && (
+                  <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 rounded px-2 py-0.5 mb-2 text-center">{college.type}</span>
+                )}
+                <button
+                  onClick={() => toggleSelection(college._id)}
+                  className={`mt-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                    selectedColleges.includes(college._id)
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-blue-100'
+                  }`}
+                >
+                  {selectedColleges.includes(college._id) ? 'Remove' : 'Compare'}
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         {/* No Results */}
