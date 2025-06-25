@@ -1,10 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { GraduationCap, ArrowRight } from 'lucide-react';
+import supabase from '../lib/supabaseClient'
 
 const StudentSignup = () => {
   const navigate = useNavigate();
+  const [signupData, setSignupData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [signupLoading, setSignupLoading] = useState(false);
+  const [signupError, setSignupError] = useState('');
+  const [signupSuccess, setSignupSuccess] = useState('');
 
   useEffect(() => {
     // Redirect to login page after a brief delay
@@ -14,6 +25,48 @@ const StudentSignup = () => {
 
     return () => clearTimeout(timer);
   }, [navigate]);
+
+  const handleSignupSubmit = async (e) => {
+    e.preventDefault();
+    setSignupLoading(true);
+    setSignupError('');
+    setSignupSuccess('');
+    if (signupData.password !== signupData.confirmPassword) {
+      setSignupError('Passwords do not match');
+      setSignupLoading(false);
+      return;
+    }
+    if (signupData.password.length < 6) {
+      setSignupError('Password must be at least 6 characters long');
+      setSignupLoading(false);
+      return;
+    }
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .insert([
+          {
+            name: signupData.firstName + ' ' + signupData.lastName,
+            email: signupData.email,
+            password: signupData.password
+          }
+        ])
+        .select()
+        .single();
+      if (error) {
+        setSignupError(error.message || 'Signup failed');
+      } else {
+        localStorage.setItem('user', JSON.stringify(data));
+        setSignupSuccess('Account created successfully! Redirecting...');
+        setTimeout(() => {
+          window.location.href = '/student-dashboard';
+        }, 1500);
+      }
+    } catch (err) {
+      setSignupError('Network error');
+    }
+    setSignupLoading(false);
+  };
 
   return (
     <div className="h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden flex items-center justify-center p-4">

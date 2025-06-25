@@ -32,6 +32,7 @@ import {
   Palette,
   Microscope
 } from 'lucide-react';
+import supabase from '../lib/supabaseClient'
 
 const CollegeList = () => {
   const [selectedColleges, setSelectedColleges] = useState([]);
@@ -78,10 +79,18 @@ const CollegeList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('/api/colleges')
-      .then(res => res.json())
-      .then(data => setColleges(data))
-      .catch(err => console.error('Failed to fetch colleges:', err));
+    const fetchColleges = async () => {
+      const { data, error } = await supabase
+        .from('colleges')
+        .select('*')
+      if (error) {
+        console.error('Failed to fetch colleges:', error)
+        setColleges([])
+      } else {
+        setColleges(data)
+      }
+    }
+    fetchColleges()
 
     const token = localStorage.getItem('token');
     if (token) {

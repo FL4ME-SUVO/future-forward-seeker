@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -29,74 +29,15 @@ import {
   Mail,
   Globe
 } from 'lucide-react';
+import supabase from '../lib/supabaseClient'
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('colleges');
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddCollege, setShowAddCollege] = useState(false);
   const [editingCollege, setEditingCollege] = useState(null);
-
-  // Mock data - in real app this would come from backend
-  const [colleges, setColleges] = useState([
-    {
-      id: 1,
-      name: 'IIT Bombay',
-      location: 'Mumbai, India',
-      type: 'Public',
-      programs: ['Engineering', 'Technology', 'Science'],
-      tuition: '$3,000 - $5,000',
-      acceptanceRate: '2%',
-      rating: 4.8,
-      status: 'active',
-      students: 12000,
-      established: 1958,
-      website: 'https://www.iitb.ac.in',
-      phone: '+91-22-2572-2545',
-      email: 'info@iitb.ac.in'
-    },
-    {
-      id: 2,
-      name: 'Stanford University',
-      location: 'San Francisco, USA',
-      type: 'Private',
-      programs: ['Engineering', 'Technology', 'Business', 'Science'],
-      tuition: '$55,000 - $60,000',
-      acceptanceRate: '4%',
-      rating: 4.9,
-      status: 'active',
-      students: 17000,
-      established: 1885,
-      website: 'https://www.stanford.edu',
-      phone: '+1-650-723-2300',
-      email: 'admission@stanford.edu'
-    }
-  ]);
-
-  const [students, setStudents] = useState([
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      phone: '+91-9876543210',
-      location: 'Mumbai, India',
-      status: 'active',
-      testScore: 85,
-      selectedColleges: ['IIT Bombay', 'BITS Pilani'],
-      registrationDate: '2024-01-15'
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      phone: '+91-9876543211',
-      location: 'Delhi, India',
-      status: 'active',
-      testScore: 92,
-      selectedColleges: ['Stanford University'],
-      registrationDate: '2024-01-20'
-    }
-  ]);
-
+  const [colleges, setColleges] = useState([]);
+  const [students, setStudents] = useState([]);
   const [newCollege, setNewCollege] = useState({
     name: '',
     location: '',
@@ -108,6 +49,33 @@ const AdminDashboard = () => {
     phone: '',
     email: ''
   });
+  const [careers, setCareers] = useState([]);
+
+  useEffect(() => {
+    const fetchCareers = async () => {
+      const { data, error } = await supabase
+        .from('careers')
+        .select('*')
+      if (error) {
+        setCareers([])
+      } else {
+        setCareers(data)
+      }
+    }
+    fetchCareers()
+
+    const fetchColleges = async () => {
+      const { data, error } = await supabase
+        .from('colleges')
+        .select('*')
+      if (error) {
+        setColleges([])
+      } else {
+        setColleges(data)
+      }
+    }
+    fetchColleges()
+  }, [])
 
   const addCollege = () => {
     const college = {

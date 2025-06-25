@@ -13,6 +13,7 @@ import {
   AlertCircle,
   CheckCircle
 } from 'lucide-react';
+import supabase from '../lib/supabaseClient'
 
 const StudentLogin = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -44,17 +45,16 @@ const StudentLogin = () => {
     setIsLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/users/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || 'Login failed');
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', email)
+        .eq('password', password)
+        .single();
+      if (error || !data) {
+        setError('Invalid credentials');
       } else {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('user', JSON.stringify(data));
         window.location.href = '/student-dashboard';
       }
     } catch (err) {

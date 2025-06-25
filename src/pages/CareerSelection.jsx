@@ -33,6 +33,7 @@ import {
   User,
   Activity
 } from 'lucide-react';
+import supabase from '../lib/supabaseClient'
 
 // Icon mapping for dynamic rendering
 const iconMap = {
@@ -90,16 +91,20 @@ const CareerSelection = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch('http://localhost:5000/api/careers')
-      .then(res => res.json())
-      .then(data => {
-        setCareers(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError('Failed to load careers.');
-        setLoading(false);
-      });
+    const fetchCareers = async () => {
+      const { data, error } = await supabase
+        .from('careers')
+        .select('*')
+      if (error) {
+        setCareers([])
+        setError('Failed to load careers.')
+      } else {
+        setCareers(data)
+        setError(null)
+      }
+      setLoading(false);
+    }
+    fetchCareers();
   }, []);
 
   const toggleFavorite = (careerId) => {

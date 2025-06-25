@@ -33,6 +33,7 @@ import {
   Microscope
 } from 'lucide-react';
 import CollegeComparison from '../components/CollegeComparison';
+import supabase from '../lib/supabaseClient'
 
 const CollegeSelection = () => {
   const navigate = useNavigate();
@@ -73,11 +74,18 @@ const CollegeSelection = () => {
   ];
 
   useEffect(() => {
-    fetch('/api/colleges')
-      .then(res => res.json())
-      .then(data => setColleges(data))
-      .catch(err => console.error('Failed to fetch colleges:', err));
-  }, []);
+    const fetchColleges = async () => {
+      const { data, error } = await supabase
+        .from('colleges')
+        .select('*')
+      if (error) {
+        setColleges([])
+      } else {
+        setColleges(data)
+      }
+    }
+    fetchColleges()
+  }, [])
 
   useEffect(() => {
     if (location.state?.selectedColleges) {

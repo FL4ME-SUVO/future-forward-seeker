@@ -33,6 +33,7 @@ import {
   Microscope,
   Flag
 } from 'lucide-react';
+import supabase from '../lib/supabaseClient'
 
 const LocationSelection = () => {
   const [selectedLocations, setSelectedLocations] = useState([]);

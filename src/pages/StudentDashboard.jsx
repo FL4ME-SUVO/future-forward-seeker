@@ -30,6 +30,7 @@ import {
   ArrowLeft,
   Building
 } from 'lucide-react';
+import supabase from '../lib/supabaseClient'
 
 const StudentDashboard = () => {
   const [selectedTab, setSelectedTab] = useState('overview');
@@ -77,31 +78,25 @@ const StudentDashboard = () => {
   const fetchUserData = async (token) => {
     try {
       // Fetch test results
-      const testsRes = await fetch('http://localhost:5000/api/users/test-results', {
-        headers: token ? { 'Authorization': 'Bearer ' + token } : {}
-      });
-      if (testsRes.ok) {
-        const testsData = await testsRes.json();
-        setRecentTests(testsData);
-      }
+      const { data: testsData, error: testsError } = await supabase
+        .from('test_results')
+        .select('*')
+        .eq('user_id', userData?.id)
+      if (!testsError) setRecentTests(testsData)
 
-      // Fetch saved colleges
-      const collegesRes = await fetch('http://localhost:5000/api/users/saved-colleges', {
-        headers: token ? { 'Authorization': 'Bearer ' + token } : {}
-      });
-      if (collegesRes.ok) {
-        const collegesData = await collegesRes.json();
-        setSavedColleges(collegesData);
-      }
+      // Fetch saved colleges (join with colleges table)
+      const { data: savedCollegesData, error: savedCollegesError } = await supabase
+        .from('saved_colleges')
+        .select('college_id, colleges(*)')
+        .eq('user_id', userData?.id)
+      if (!savedCollegesError) setSavedColleges(savedCollegesData.map(sc => sc.colleges))
 
       // Fetch recommendations
-      const recsRes = await fetch('http://localhost:5000/api/users/recommendations', {
-        headers: token ? { 'Authorization': 'Bearer ' + token } : {}
-      });
-      if (recsRes.ok) {
-        const recsData = await recsRes.json();
-        setRecommendations(recsData);
-      }
+      const { data: recsData, error: recsError } = await supabase
+        .from('recommendations')
+        .select('*')
+        .eq('user_id', userData?.id)
+      if (!recsError) setRecommendations(recsData)
     } catch (error) {
       console.error('Error fetching user data:', error);
     } finally {

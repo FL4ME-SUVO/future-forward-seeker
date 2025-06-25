@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import CollegeComparison from '../components/CollegeComparison';
+import supabase from '../lib/supabaseClient'
 
 const CollegeComparisonPage = () => {
   const navigate = useNavigate();
@@ -24,11 +25,18 @@ const CollegeComparisonPage = () => {
 
   // Fetch all colleges from backend
   useEffect(() => {
-    fetch('/api/colleges')
-      .then(res => res.json())
-      .then(data => setAllColleges(data))
-      .catch(() => setAllColleges([]));
-  }, []);
+    const fetchColleges = async () => {
+      const { data, error } = await supabase
+        .from('colleges')
+        .select('*')
+      if (error) {
+        setAllColleges([])
+      } else {
+        setAllColleges(data)
+      }
+    }
+    fetchColleges()
+  }, [])
 
   const handleBackToCollegeList = () => {
     navigate('/college-selection');

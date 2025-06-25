@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { MapPin, Building, Globe, Mail, Phone, Users, DollarSign, Star, BookOpen, ArrowLeft, Image as ImageIcon, Quote, Compass } from 'lucide-react';
+import supabase from '../lib/supabaseClient'
 
 const TABS = [
   { key: 'overview', label: 'Overview' },
@@ -14,15 +15,25 @@ const CollegeDetails = () => {
   const [college, setCollege] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('overview');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`/api/colleges/${id}`)
-      .then(res => res.json())
-      .then(data => {
-        setCollege(data);
-        setLoading(false);
-      });
-  }, [id]);
+    const fetchCollege = async () => {
+      const { data, error } = await supabase
+        .from('colleges')
+        .select('*')
+        .eq('_id', id)
+        .single()
+      if (error) {
+        setError('Failed to fetch college details.')
+        setCollege(null)
+      } else {
+        setCollege(data)
+      }
+      setLoading(false)
+    }
+    fetchCollege()
+  }, [id])
 
   if (loading) return <div className="p-8 text-center">Loading...</div>;
   if (!college) return <div className="p-8 text-center text-red-600">College not found.</div>;

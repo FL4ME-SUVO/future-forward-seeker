@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Badge } from '../components/ui/badge';
 import { Building, Mail, Globe, Star, Trophy, Users, LogOut, Settings, Bell, GraduationCap, ArrowLeft, Camera, Phone, Globe as GlobeIcon, Facebook, Instagram, Twitter, MapPin, Image as ImageIcon, Quote, Trash2 } from 'lucide-react';
+import supabase from '../lib/supabaseClient'
 
 const statsMock = [
   { label: 'Ranking', value: '12', icon: Trophy, color: 'bg-yellow-100 text-yellow-800' },
@@ -72,6 +73,21 @@ const CollegeDashboard = () => {
     clubs: '',
     highlights: ''
   });
+  const [colleges, setColleges] = useState([]);
+
+  useEffect(() => {
+    const fetchColleges = async () => {
+      const { data, error } = await supabase
+        .from('colleges')
+        .select('*')
+      if (error) {
+        setColleges([])
+      } else {
+        setColleges(data)
+      }
+    }
+    fetchColleges()
+  }, [])
 
   useEffect(() => {
     const token = localStorage.getItem('collegeToken');

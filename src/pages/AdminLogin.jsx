@@ -10,6 +10,7 @@ import {
   Sparkles,
   AlertCircle
 } from 'lucide-react';
+import supabase from '../lib/supabaseClient'
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
