@@ -329,22 +329,22 @@ const Index = () => {
               ) : (
                 <>
                   <Link to="/student-login" className={`transition-all duration-200 ease-out font-medium text-sm px-3 py-2 rounded-lg transform hover:scale-105 navbar-item ${
-                    isScrolled 
-                      ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
-                      : 'text-white hover:bg-white/20'
-                  }`}>
-                    Student Login
-                  </Link>
+                isScrolled 
+                  ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
+                  : 'text-white hover:bg-white/20'
+              }`}>
+                Student Login
+              </Link>
                   <Link to="/college-login" className={`transition-all duration-200 ease-out font-medium text-sm px-3 py-2 rounded-lg transform hover:scale-105 navbar-item ${
-                    isScrolled 
-                      ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
-                      : 'text-white hover:bg-white/20'
-                  }`}>
-                    College Portal
-                  </Link>
+                isScrolled 
+                  ? 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' 
+                  : 'text-white hover:bg-white/20'
+              }`}>
+                College Portal
+              </Link>
                   <Link to="/student-signup" className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-200 ease-out transform hover:scale-105 font-medium text-sm navbar-item">
-                    Get Started
-                  </Link>
+                Get Started
+              </Link>
                 </>
               )}
             </nav>
@@ -365,27 +365,27 @@ const Index = () => {
       </header>
 
       {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
+        {isMobileMenuOpen && (
         <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md animate-fade-in mobile-menu-optimized">
           <div className="absolute top-0 left-0 right-0 bg-slate-900/95 shadow-2xl p-8 animate-slide-down mobile-menu-optimized">
-            <button
-              onClick={() => setIsMobileMenuOpen(false)}
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
               className="absolute top-5 right-5 p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-all duration-300 ease-out transform hover:scale-110 navbar-item"
-              aria-label="Close menu"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            <div className="flex flex-col items-center space-y-8 text-center pt-16">
+                aria-label="Close menu"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              <div className="flex flex-col items-center space-y-8 text-center pt-16">
               <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-semibold text-slate-100 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
-                About
-              </a>
+                  About
+                </a>
               <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-semibold text-slate-100 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
-                Features
-              </a>
+                  Features
+                </a>
               <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-semibold text-slate-100 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
-                Contact
-              </a>
-              <div className="w-4/5 h-px bg-slate-700 my-4"></div>
+                  Contact
+                </a>
+                <div className="w-4/5 h-px bg-slate-700 my-4"></div>
               {user ? (
                 <div className="w-full flex flex-col items-center space-y-2">
                   <Link to="/student-dashboard" className="w-full bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-medium hover:bg-blue-200 transition mb-2 text-center">
@@ -411,20 +411,20 @@ const Index = () => {
               ) : (
                 <>
                   <Link to="/student-login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
-                    Student Login
-                  </Link>
+                  Student Login
+                </Link>
                   <Link to="/college-login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-medium text-slate-200 hover:text-blue-400 transition-all duration-300 ease-out transform hover:scale-105 navbar-item">
-                    College Portal
-                  </Link>
+                  College Portal
+                </Link>
                   <Link to="/student-signup" onClick={() => setIsMobileMenuOpen(false)} className="mt-6 w-full max-w-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all duration-300 ease-out transform hover:scale-105 font-semibold text-lg navbar-item">
-                    Get Started
-                  </Link>
+                  Get Started
+                </Link>
                 </>
               )}
-            </div>
+              </div>
           </div>
         </div>
-      )}
+        )}
 
       {/* Hero Section */}
       <section className="relative pt-24 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-900 w-full">
@@ -579,8 +579,20 @@ const Index = () => {
                   Browse Colleges
                 </Link>
               </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full sm:w-auto"
+              >
+                <Link
+                  to="/career-selection"
+                  className="group border-2 border-gray-300 text-gray-700 px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-semibold hover:border-green-600 hover:text-green-600 transition-all duration-300 flex items-center justify-center text-base sm:text-lg bg-white w-full"
+                >
+                  <Briefcase className="mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6" />
+                  Browse Careers
+                </Link>
             </motion.div>
-            
+            </motion.div>
             {/* Stats */}
             <motion.div 
               initial={{ opacity: 0, y: 30 }}

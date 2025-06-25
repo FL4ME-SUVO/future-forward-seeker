@@ -1,5 +1,6 @@
 import express from 'express';
 import Career from '../models/Career.js';
+import usersRouter, { auth, isAdmin } from './users.js';
 
 const router = express.Router();
 
@@ -24,8 +25,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create a new career
-router.post('/', async (req, res) => {
+// Create a new career (admin only)
+router.post('/', auth, isAdmin, async (req, res) => {
   try {
     const career = new Career(req.body);
     await career.save();

@@ -52,6 +52,30 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Admin login
+router.post('/admin/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+    const user = await User.findOne({ email });
+    if (!user || !user.isAdmin) {
+      return res.status(401).json({ error: 'Not an admin or invalid credentials' });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    const token = jwt.sign({ userId: user._id, isAdmin: true }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
+    const userObj = user.toObject();
+    delete userObj.password;
+    res.json({ token, user: userObj });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // JWT auth middleware
 function auth(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -141,5 +165,15 @@ router.get('/recommendations', auth, async (req, res) => {
   if (!user) return res.status(404).json({ error: 'User not found' });
   res.json(user.recommendations);
 });
+
+// Admin-only middleware
+export function isAdmin(req, res, next) {
+  if (!req.user || !req.user.isAdmin) {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+  next();
+}
+
+export { auth };
 
 export default router; 

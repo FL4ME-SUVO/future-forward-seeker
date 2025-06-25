@@ -110,8 +110,8 @@ const CollegeSelection = () => {
 
   // Toggle college selection
   const toggleSelection = (collegeId) => {
-    setSelectedColleges(prev =>
-      prev.includes(collegeId)
+    setSelectedColleges(prev => 
+      prev.includes(collegeId) 
         ? prev.filter(id => id !== collegeId)
         : [...prev, collegeId]
     );
@@ -305,15 +305,15 @@ const CollegeSelection = () => {
                 return (
                   <span key={id} className="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-medium text-sm">
                     {college ? college.name : id}
-                    <button
+                  <button
                       type="button"
                       className="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none"
                       onClick={() => setSelectedColleges(selectedColleges.filter(cid => cid !== id))}
                       aria-label="Remove"
                     >
                       ×
-                    </button>
-                  </span>
+                  </button>
+                </span>
                 );
               })}
             </div>
@@ -323,10 +323,10 @@ const CollegeSelection = () => {
         {/* Comparison Modal/Section */}
         <AnimatePresence>
           {showComparison && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
               className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
             >
               <div className="bg-white rounded-2xl shadow-2xl border max-w-full w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[90vh] flex flex-col overflow-y-auto p-0 relative">
@@ -342,14 +342,14 @@ const CollegeSelection = () => {
                     </button>
                     <h2 className="text-xl sm:text-2xl font-bold text-gray-900">College Comparison</h2>
                   </div>
-                </div>
+                    </div>
                 <div className="flex-1 min-h-0 px-2 sm:px-6 py-4 overflow-x-auto">
                   <CollegeComparison
                     colleges={selectedCollegesData}
                     onRemoveCollege={id => setSelectedColleges(selectedColleges.filter(cid => cid !== id))}
                     onAddCollege={() => {}}
                   />
-                </div>
+                    </div>
                 {/* Modern action buttons row including Close */}
                 <div className="sticky bottom-0 z-20 flex flex-wrap gap-3 justify-center pt-4 pb-4 border-t bg-white px-2 sm:px-6">
                   <button className="px-5 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition border border-gray-300">Export Comparison</button>
@@ -363,8 +363,8 @@ const CollegeSelection = () => {
                     Close
                   </button>
                 </div>
-              </div>
-            </motion.div>
+                </div>
+              </motion.div>
           )}
         </AnimatePresence>
 

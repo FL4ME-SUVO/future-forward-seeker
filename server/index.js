@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import sampleRouter from './routes/sample.js';
 import collegesRouter from './routes/colleges.js';
 import usersRouter from './routes/users.js';
+import careersRouter from './routes/careers.js';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -124,4 +125,5 @@ app.post('/api/colleges/upload-banner', collegeAuth, upload.single('banner'), as
 
 app.use('/api/sample', sampleRouter);
 app.use('/api/colleges', collegesRouter);
-app.use('/api/users', usersRouter); 
+app.use('/api/users', usersRouter);
+app.use('/api/careers', careersRouter); 

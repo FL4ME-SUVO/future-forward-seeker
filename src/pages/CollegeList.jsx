@@ -119,17 +119,15 @@ const CollegeList = () => {
   };
 
   // Helper to determine if a college is in India or International
-  const getCountry = (location) => {
-    const indiaLocations = ['mumbai', 'bangalore', 'delhi'];
-    if (!location) return 'international';
-    if (indiaLocations.includes(location.toLowerCase())) return 'india';
-    return 'international';
+  const getCountry = (college) => {
+    if (!college.country) return 'international';
+    return college.country.toLowerCase() === 'india' ? 'india' : 'international';
   };
 
   // Filter colleges based on selected country
   const filteredColleges = colleges.filter(college => {
     if (selectedCountry === 'all') return true;
-    return getCountry(college.location) === selectedCountry;
+    return getCountry(college) === selectedCountry;
   })
   .filter(college =>
     (selectedLocation === 'all' || (college.location && college.location.toLowerCase() === selectedLocation)) &&
