@@ -3,10 +3,10 @@ import express from 'express';
 // import College from '../models/College.js'; // REMOVE
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { Pool } from 'pg'; // ADD
+import { createClient } from '@supabase/supabase-js';
 
 const router = express.Router();
-const pool = new Pool({ connectionString: process.env.SUPABASE_DB_URL }); // ADD
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
 // User signup
 router.post('/signup', async (req, res) => {
@@ -15,13 +15,15 @@ router.post('/signup', async (req, res) => {
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
-    const existingUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    if (existingUser.rows.length > 0) {
+    const { data: existingUser, error: findError } = await supabase.from('users').select('*').eq('email', email);
+    if (findError) throw findError;
+    if (existingUser && existingUser.length > 0) {
       return res.status(409).json({ error: 'Email already in use' });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await pool.query('INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email, isAdmin, createdAt', [name, email, hashedPassword]);
-    res.status(201).json(result.rows[0]);
+    const { data, error } = await supabase.from('users').insert([{ name, email, password: hashedPassword }]).select('id, name, email, isAdmin, createdAt');
+    if (error) throw error;
+    res.status(201).json(data[0]);
   } catch (err) {
     console.error('Signup error:', err);
     res.status(500).json({ error: err.message });
@@ -35,11 +37,12 @@ router.post('/login', async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
-    const userRes = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    if (userRes.rows.length === 0) {
+    const { data: userRes, error } = await supabase.from('users').select('*').eq('email', email);
+    if (error) throw error;
+    if (!userRes || userRes.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    const user = userRes.rows[0];
+    const user = userRes[0];
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -59,11 +62,12 @@ router.post('/admin/login', async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
-    const userRes = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    if (userRes.rows.length === 0 || !userRes.rows[0].isadmin) {
+    const { data: userRes, error } = await supabase.from('users').select('*').eq('email', email);
+    if (error) throw error;
+    if (!userRes || userRes.length === 0 || !userRes[0].isadmin) {
       return res.status(401).json({ error: 'Not an admin or invalid credentials' });
     }
-    const user = userRes.rows[0];
+    const user = userRes[0];
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -95,9 +99,10 @@ function auth(req, res, next) {
 // Get current user
 router.get('/me', auth, async (req, res) => {
   try {
-    const userRes = await pool.query('SELECT id, name, email, isAdmin, createdAt FROM users WHERE id = $1', [req.user.userId]);
-    if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
-    res.json(userRes.rows[0]);
+    const { data: userRes, error } = await supabase.from('users').select('id, name, email, isAdmin, createdAt').eq('id', req.user.userId);
+    if (error) throw error;
+    if (!userRes || userRes.length === 0) return res.status(404).json({ error: 'User not found' });
+    res.json(userRes[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -107,12 +112,14 @@ router.get('/me', auth, async (req, res) => {
 router.post('/saved-colleges/:collegeId', auth, async (req, res) => {
   try {
     // Prevent duplicates
-    const exists = await pool.query('SELECT * FROM saved_colleges WHERE user_id = $1 AND college_id = $2', [req.user.userId, req.params.collegeId]);
-    if (exists.rows.length === 0) {
-      await pool.query('INSERT INTO saved_colleges (user_id, college_id) VALUES ($1, $2)', [req.user.userId, req.params.collegeId]);
+    const { data: exists, error: existsError } = await supabase.from('saved_colleges').select('*').eq('user_id', req.user.userId).eq('college_id', req.params.collegeId);
+    if (existsError) throw existsError;
+    if (!exists || exists.length === 0) {
+      await supabase.from('saved_colleges').insert([{ user_id: req.user.userId, college_id: req.params.collegeId }]);
     }
-    const saved = await pool.query('SELECT college_id FROM saved_colleges WHERE user_id = $1', [req.user.userId]);
-    res.json({ savedColleges: saved.rows.map(r => r.college_id) });
+    const { data: saved, error: savedError } = await supabase.from('saved_colleges').select('college_id').eq('user_id', req.user.userId);
+    if (savedError) throw savedError;
+    res.json({ savedColleges: saved.map(r => r.college_id) });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -121,9 +128,10 @@ router.post('/saved-colleges/:collegeId', auth, async (req, res) => {
 // Remove a saved college
 router.delete('/saved-colleges/:collegeId', auth, async (req, res) => {
   try {
-    await pool.query('DELETE FROM saved_colleges WHERE user_id = $1 AND college_id = $2', [req.user.userId, req.params.collegeId]);
-    const saved = await pool.query('SELECT college_id FROM saved_colleges WHERE user_id = $1', [req.user.userId]);
-    res.json({ savedColleges: saved.rows.map(r => r.college_id) });
+    await supabase.from('saved_colleges').delete().eq('user_id', req.user.userId).eq('college_id', req.params.collegeId);
+    const { data: saved, error: savedError } = await supabase.from('saved_colleges').select('college_id').eq('user_id', req.user.userId);
+    if (savedError) throw savedError;
+    res.json({ savedColleges: saved.map(r => r.college_id) });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -132,8 +140,9 @@ router.delete('/saved-colleges/:collegeId', auth, async (req, res) => {
 // Get saved colleges (populated)
 router.get('/saved-colleges', auth, async (req, res) => {
   try {
-    const saved = await pool.query('SELECT c.* FROM saved_colleges sc JOIN colleges c ON sc.college_id = c.id WHERE sc.user_id = $1', [req.user.userId]);
-    res.json(saved.rows);
+    const { data: saved, error } = await supabase.rpc('get_saved_colleges', { user_id: req.user.userId });
+    if (error) throw error;
+    res.json(saved);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -143,9 +152,10 @@ router.get('/saved-colleges', auth, async (req, res) => {
 router.post('/test-results', auth, async (req, res) => {
   try {
     const { testName, score } = req.body;
-    await pool.query('INSERT INTO test_results (user_id, test_name, score, completed_at) VALUES ($1, $2, $3, NOW())', [req.user.userId, testName, score]);
-    const results = await pool.query('SELECT * FROM test_results WHERE user_id = $1', [req.user.userId]);
-    res.json(results.rows);
+    await supabase.from('test_results').insert([{ user_id: req.user.userId, test_name: testName, score, completed_at: new Date() }]);
+    const { data: results, error } = await supabase.from('test_results').select('*').eq('user_id', req.user.userId);
+    if (error) throw error;
+    res.json(results);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -154,8 +164,8 @@ router.post('/test-results', auth, async (req, res) => {
 // Get test results
 router.get('/test-results', auth, async (req, res) => {
   try {
-    const results = await pool.query('SELECT * FROM test_results WHERE user_id = $1', [req.user.userId]);
-    res.json(results.rows);
+    const results = await supabase.from('test_results').select('*').eq('user_id', req.user.userId);
+    res.json(results);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -165,9 +175,10 @@ router.get('/test-results', auth, async (req, res) => {
 router.post('/recommendations', auth, async (req, res) => {
   try {
     const { career, reason, score, recommendedColleges } = req.body;
-    await pool.query('INSERT INTO recommendations (user_id, career, reason, score, recommended_colleges) VALUES ($1, $2, $3, $4, $5)', [req.user.userId, career, reason, score, recommendedColleges]);
-    const recs = await pool.query('SELECT * FROM recommendations WHERE user_id = $1', [req.user.userId]);
-    res.json(recs.rows);
+    await supabase.from('recommendations').insert([{ user_id: req.user.userId, career, reason, score, recommended_colleges: recommendedColleges }]);
+    const { data: recs, error } = await supabase.from('recommendations').select('*').eq('user_id', req.user.userId);
+    if (error) throw error;
+    res.json(recs);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -176,8 +187,9 @@ router.post('/recommendations', auth, async (req, res) => {
 // Get recommendations
 router.get('/recommendations', auth, async (req, res) => {
   try {
-    const recs = await pool.query('SELECT * FROM recommendations WHERE user_id = $1', [req.user.userId]);
-    res.json(recs.rows);
+    const { data: recs, error } = await supabase.from('recommendations').select('*').eq('user_id', req.user.userId);
+    if (error) throw error;
+    res.json(recs);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

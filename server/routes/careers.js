@@ -1,15 +1,16 @@
 import express from 'express';
 // import Career from '../models/Career.js'; // REMOVE
-import { Pool } from 'pg'; // ADD
+import { createClient } from '@supabase/supabase-js';
 
 const router = express.Router();
-const pool = new Pool({ connectionString: process.env.SUPABASE_DB_URL }); // ADD
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
 // Get all careers
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM careers');
-    res.json(result.rows);
+    const { data, error } = await supabase.from('careers').select('*');
+    if (error) throw error;
+    res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -18,9 +19,10 @@ router.get('/', async (req, res) => {
 // Get a single career by ID
 router.get('/:id', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM careers WHERE id = $1', [req.params.id]);
-    if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
-    res.json(result.rows[0]);
+    const { data, error } = await supabase.from('careers').select('*').eq('id', req.params.id);
+    if (error) throw error;
+    if (data.length === 0) return res.status(404).json({ error: 'Not found' });
+    res.json(data[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -30,11 +32,9 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { title, category, description, salary, growth, demand, duration, skills, icon, color } = req.body;
-    const result = await pool.query(
-      'INSERT INTO careers (title, category, description, salary, growth, demand, duration, skills, icon, color) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
-      [title, category, description, salary, growth, demand, duration, skills, icon, color]
-    );
-    res.status(201).json(result.rows[0]);
+    const { data, error } = await supabase.from('careers').insert([{ title, category, description, salary, growth, demand, duration, skills, icon, color }]).select();
+    if (error) throw error;
+    res.status(201).json(data[0]);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

@@ -9,13 +9,13 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
-import { Pool } from 'pg';
+import { createClient } from '@supabase/supabase-js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const pool = new Pool({ connectionString: process.env.SUPABASE_DB_URL });
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
 app.use(cors({
   origin: ['https://future-forward-seeker.vercel.app', 'http://localhost:5173'],
@@ -69,12 +69,14 @@ function collegeAuth(req, res, next) {
 app.post('/api/colleges/upload-image', collegeAuth, upload.single('image'), async (req, res) => {
   try {
     const imageUrl = `/uploads/${req.file.filename}`;
-    // Update college profileImage in Postgres
-    const result = await pool.query(
-      'UPDATE colleges SET "profileImage" = $1 WHERE id = $2 RETURNING *',
-      [imageUrl, req.college.collegeId]
-    );
-    if (result.rows.length === 0) return res.status(404).json({ error: 'College not found' });
+    // Update college profileImage in Supabase
+    const { data, error } = await supabase
+      .from('colleges')
+      .update({ profileImage: imageUrl })
+      .eq('id', req.college.collegeId)
+      .select();
+    if (error) return res.status(404).json({ error: error.message });
+    if (!data || data.length === 0) return res.status(404).json({ error: 'College not found' });
     res.json({ imageUrl });
   } catch (err) {
     res.status(500).json({ error: 'Image upload failed' });
@@ -86,11 +88,19 @@ app.post('/api/colleges/upload-gallery', collegeAuth, upload.array('images', 10)
   try {
     const imageUrls = req.files.map(file => `/uploads/${file.filename}`);
     // Fetch current galleryImages
-    const collegeRes = await pool.query('SELECT "galleryImages" FROM colleges WHERE id = $1', [req.college.collegeId]);
-    if (collegeRes.rows.length === 0) return res.status(404).json({ error: 'College not found' });
-    const currentGallery = collegeRes.rows[0].galleryImages || [];
+    const { data: collegeRes, error: fetchError } = await supabase
+      .from('colleges')
+      .select('galleryImages')
+      .eq('id', req.college.collegeId);
+    if (fetchError) return res.status(404).json({ error: fetchError.message });
+    if (!collegeRes || collegeRes.length === 0) return res.status(404).json({ error: 'College not found' });
+    const currentGallery = collegeRes[0].galleryImages || [];
     const newGallery = [...currentGallery, ...imageUrls];
-    await pool.query('UPDATE colleges SET "galleryImages" = $1 WHERE id = $2', [newGallery, req.college.collegeId]);
+    const { error: updateError } = await supabase
+      .from('colleges')
+      .update({ galleryImages: newGallery })
+      .eq('id', req.college.collegeId);
+    if (updateError) return res.status(500).json({ error: updateError.message });
     res.json({ imageUrls });
   } catch (err) {
     res.status(500).json({ error: 'Gallery upload failed' });
@@ -101,11 +111,13 @@ app.post('/api/colleges/upload-gallery', collegeAuth, upload.array('images', 10)
 app.post('/api/colleges/upload-banner', collegeAuth, upload.single('banner'), async (req, res) => {
   try {
     const imageUrl = `/uploads/${req.file.filename}`;
-    const result = await pool.query(
-      'UPDATE colleges SET "bannerImage" = $1 WHERE id = $2 RETURNING *',
-      [imageUrl, req.college.collegeId]
-    );
-    if (result.rows.length === 0) return res.status(404).json({ error: 'College not found' });
+    const { data, error } = await supabase
+      .from('colleges')
+      .update({ bannerImage: imageUrl })
+      .eq('id', req.college.collegeId)
+      .select();
+    if (error) return res.status(404).json({ error: error.message });
+    if (!data || data.length === 0) return res.status(404).json({ error: 'College not found' });
     res.json({ imageUrl });
   } catch (err) {
     res.status(500).json({ error: 'Banner upload failed' });
