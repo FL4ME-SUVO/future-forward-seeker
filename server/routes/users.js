@@ -21,7 +21,7 @@ router.post('/signup', async (req, res) => {
       return res.status(409).json({ error: 'Email already in use' });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const { data, error } = await supabase.from('users').insert([{ name, email, password: hashedPassword }]).select('id, name, email, isAdmin, createdAt');
+    const { data, error } = await supabase.from('users').insert([{ name, email, password: hashedPassword }]).select('id, name, email, isAdmin, createdat');
     if (error) throw error;
     res.status(201).json(data[0]);
   } catch (err) {
@@ -99,7 +99,7 @@ function auth(req, res, next) {
 // Get current user
 router.get('/me', auth, async (req, res) => {
   try {
-    const { data: userRes, error } = await supabase.from('users').select('id, name, email, isAdmin, createdAt').eq('id', req.user.userId);
+    const { data: userRes, error } = await supabase.from('users').select('id, name, email, isAdmin, createdat').eq('id', req.user.userId);
     if (error) throw error;
     if (!userRes || userRes.length === 0) return res.status(404).json({ error: 'User not found' });
     res.json(userRes[0]);
